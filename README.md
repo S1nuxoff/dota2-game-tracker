@@ -23,8 +23,22 @@ https://huggingface.co/datasets/<user>/dota2-models/resolve/main/models/heroes/p
 
 A hero model is the bare body: arms, weapons and other parts are default items worn on top, like any other cosmetic.
 
+## Material variants and styles
+
+Items that show a model with another material (golden versions and the like) or have styles get `<model>.skins.json` next to the model: the swapped materials with their textures in `textures/`. Models of styles are exported too and listed per item in `index.json`.
+
+## Running locally
+
+A first full export is much faster from a local Dota 2 install than from Steam:
+
+```bash
+HF_TOKEN=... node index.js --game "<steam library>/steamapps/common/dota 2 beta/game/dota"
+```
+
+with Source2Viewer-CLI in `./vrf`. `--hero pudge` exports one hero with its items, `--limit N` stops after N models. Commit `state.json` afterwards so the workflow only exports what changes later. An `items_game.json` next to the script is read instead of downloading it.
+
 ## How it runs
 
-The **Export Models** workflow exports the models that are new or whose game files changed (`state.json` keeps the files each model was made from), in batches of 100, and continues in the next run if it takes longer than five hours.
+The **Export Models** workflow runs every six hours and exports the models that are new or whose game files changed (`state.json` keeps the files each model was made from), in batches of 100, continuing in the next run if it takes longer than five hours. The index is updated after every batch, so the viewer shows new models as they arrive.
 
 Secrets: `USERNAME` and `PASSWORD` of a Steam account without Steam Guard, `HF_TOKEN` with write access on Hugging Face.

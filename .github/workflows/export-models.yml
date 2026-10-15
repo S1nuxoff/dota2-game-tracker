@@ -1,12 +1,15 @@
 name: Export Models
 
 on:
+  schedule:
+    # Exports what a game update added or changed, the rest is skipped
+    - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
       limit:
         description: "Export at most this many models (empty for all)"
         required: false
-        default: "20"
+        default: ""
       force:
         description: "Export again models that did not change"
         required: false

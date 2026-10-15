@@ -28,12 +28,24 @@ async function upload(repo, accessToken, files, title) {
     if (part.length === 0) {
       return;
     }
-    await uploadFiles({
-      repo,
-      accessToken,
-      commitTitle: title,
-      files: part.map(({ path, file }) => ({ path, content: new Blob([fs.readFileSync(file)]) })),
-    });
+    // Connections to the Hub drop now and then on long uploads, so retry a few times
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await uploadFiles({
+          repo,
+          accessToken,
+          commitTitle: title,
+          files: part.map(({ path, file }) => ({ path, content: new Blob([fs.readFileSync(file)]) })),
+        });
+        break;
+      } catch (error) {
+        if (attempt >= 5) {
+          throw error;
+        }
+        console.log(`Upload failed (${error.cause?.message ?? error.message}), retrying in ${attempt * 10} s`);
+        await new Promise((resolve) => setTimeout(resolve, attempt * 10000));
+      }
+    }
     console.log(`Uploaded ${part.length} files (${(partBytes / 1e6).toFixed(1)} MB)`);
     part = [];
     partBytes = 0;

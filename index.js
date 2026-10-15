@@ -1,17 +1,17 @@
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const zlib = require("zlib");
 const { spawnSync } = require("child_process");
-const vpk = require("vpk");
 const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
-const steam = require("./steam");
 const hf = require("./hf");
+const { steamSource, localSource } = require("./source");
+const { exportSkins } = require("./skins");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
 
 const temp = "./temp";
-const dirPath = `${temp}/pak01_dir.vpk`;
 const packPath = `${temp}/models.vpk`;
 const exportDir = `${temp}/export`;
 const distDir = `${temp}/dist`;
@@ -21,12 +21,13 @@ const ITEMS_URL =
   "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const HEROES_FILE = "scripts/npc/npc_heroes.txt";
 const HERO_FILES = /^scripts\/npc\/heroes\/npc_dota_hero_\w+\.txt$/;
-const DECOMPILER = "./vrf/Source2Viewer-CLI";
+const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
+const THREADS = String(Math.max(2, os.cpus().length - 1));
 
 const BATCH_SIZE = 100;
 const START_TIME = Date.now();
 // GitHub stops a job after 6 hours, leave time to save the state
-const MAX_DURATION = 5 * 3600 * 1000;
+const CI_MAX_DURATION = 5 * 3600 * 1000;
 
 // Dependencies needed for a model with its materials, textures and animations.
 // Particles, sounds and the rest are not part of a glTF export.
@@ -45,76 +46,121 @@ const FOLLOW = new Set([
   "vnmgraph",
 ]);
 
+const USAGE = `Usage:
+  HF_TOKEN=... node index.js <STEAM USERNAME> <STEAM PASSWORD> [options]   download from Steam
+  HF_TOKEN=... node index.js --game "<...>/dota 2 beta/game/dota" [options] read a local install
+
+Options:
+  --limit N      export at most N models
+  --hero NAME    only this hero and its items, e.g. --hero pudge
+  --force        export again models whose game files did not change`;
+
 async function main() {
-  const positional = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
-  const [username, password] = positional;
+  const positional = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && !args[index - 1]?.match(/^--(limit|hero|game)$/));
+  const game = argValue("--game");
   const limit = Number(argValue("--limit")) || Infinity;
+  const onlyHero = argValue("--hero");
   const force = process.argv.includes("--force");
   const accessToken = process.env.HF_TOKEN;
 
-  if (!username || !password || !accessToken) {
-    console.error("Usage: HF_TOKEN=... node index.js <USERNAME> <PASSWORD> [--limit N] [--force]");
+  if (!accessToken || (!game && positional.length < 2)) {
+    console.error(USAGE);
     process.exit(1);
+  }
+  if (!fs.existsSync(DECOMPILER)) {
+    throw new Error(`${DECOMPILER} not found, put Source2Viewer-CLI in ./vrf`);
   }
 
   const repo = await hf.prepareRepo(accessToken, process.env.HF_REPO);
   console.log(`Dataset: https://huggingface.co/datasets/${repo.name}`);
 
-  await steam.logOn(username, password);
-  const manifests = await steam.getManifests();
-
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  await steam.downloadVpkDir(manifests, dirPath);
-  const vpkDir = new vpk(dirPath);
-  vpkDir.load();
+  const source = game ? localSource(game) : await steamSource(positional[0], positional[1], temp);
+  const { vpkDir } = source;
+  const maxDuration = game ? Infinity : CI_MAX_DURATION;
 
   const items = await loadItems();
-  const heroes = await loadHeroModels(vpkDir, manifests);
+  const heroes = await loadHeroModels(source);
+
   // Heroes and what they wear by default first, so heroes show up complete early on
-  const modelsWhere = (filter) => Object.values(items).filter(filter).flatMap((item) => item.models);
+  const forHero = (item) => !onlyHero || item.heroes.includes(`npc_dota_hero_${onlyHero}`);
+  // Every model an item can show: its default ones and those of its styles
+  const modelsWhere = (filter) =>
+    Object.values(items)
+      .filter((item) => forHero(item) && filter(item))
+      .flatMap((item) => [...item.models, ...(item.styles ?? []).flatMap((style) => style.models)]);
   const all = [
     ...new Set([
-      ...Object.values(heroes),
+      ...Object.entries(heroes)
+        .filter(([key]) => !onlyHero || key === `npc_dota_hero_${onlyHero}`)
+        .map(([, model]) => model),
       ...modelsWhere((item) => item.prefab === "default_item"),
       ...modelsWhere((item) => item.prefab !== "default_item"),
     ]),
   ];
   const available = all.filter((model) => vpkDir.tree[`${model}_c`]);
+  const wantedSkins = skinsWanted(items);
 
   const state = loadState();
   const todo = available.filter((model) => force || hasChanged(state.models[model], vpkDir)).slice(0, limit);
 
   console.log(
     `${Object.keys(heroes).length} heroes, ${Object.keys(items).length} items, ` +
-      `${all.length} models, ${all.length - available.length} not in the game files, ` +
+      `${all.length} models${onlyHero ? ` for ${onlyHero}` : ""}, ${all.length - available.length} not in the game files, ` +
       `${todo.length} to export in this run.`
   );
 
   for (let i = 0; i < todo.length; i += BATCH_SIZE) {
-    if (Date.now() - START_TIME >= MAX_DURATION) {
+    if (Date.now() - START_TIME >= maxDuration) {
       console.log("Max duration reached, the rest is left for the next run.");
       break;
     }
 
     const batch = todo.slice(i, i + BATCH_SIZE);
     console.log(`\nBatch ${i / BATCH_SIZE + 1}/${Math.ceil(todo.length / BATCH_SIZE)}: ${batch.length} models`);
-    const exported = await exportBatch(batch, vpkDir, manifests);
+    const { exported, skins } = await exportBatch(batch, source, wantedSkins);
 
-    const files = Object.keys(exported).map((model) => ({ path: glbPath(model), file: path.join(distDir, glbPath(model)) }));
-    await hf.upload(repo, accessToken, files, `Export ${files.length} models`);
+    // Textures of material variants are shared, each is uploaded once
+    const newTextures = skins.textures.filter((texture) => !state.textures[texture.path]);
+    const files = [
+      ...Object.keys(exported).map((model) => ({ path: glbPath(model), file: path.join(distDir, glbPath(model)) })),
+      ...skins.json,
+      ...newTextures,
+    ];
+    await hf.upload(repo, accessToken, files, `Export ${Object.keys(exported).length} models`);
 
     for (const [model, deps] of Object.entries(exported)) {
       state.models[model] = { hash: depsHash(deps, vpkDir), deps };
     }
+    for (const { path: datasetPath } of skins.json) {
+      state.models[datasetPath.replace(/\.skins\.json$/, ".vmdl")].skins = true;
+    }
+    for (const texture of newTextures) {
+      state.textures[texture.path] = true;
+    }
     saveState(state);
+    source.release();
+    // The viewer reads the index, so models show up there batch by batch
+    await uploadIndex(repo, accessToken, items, heroes, state);
+
+    const done = Math.min(i + BATCH_SIZE, todo.length);
+    const minutes = (Date.now() - START_TIME) / 60000;
+    const left = (minutes / done) * (todo.length - done);
+    console.log(
+      `Progress: ${done}/${todo.length} models (${Math.round((done / todo.length) * 100)}%), ` +
+        `${Math.round(minutes)} min so far, about ${left >= 60 ? `${(left / 60).toFixed(1)} h` : `${Math.round(left)} min`} left`
+    );
   }
 
-  state.manifest = manifests[373301].manifestId;
+  state.manifest = source.manifestId ?? state.manifest;
   saveState(state);
+  await uploadIndex(repo, accessToken, items, heroes, state);
+}
 
+async function uploadIndex(repo, accessToken, items, heroes, state) {
   const indexFile = `${temp}/index.json`;
-  fs.writeFileSync(indexFile, JSON.stringify(buildIndex(items, heroes, state), null, 1));
+  fs.writeFileSync(indexFile, JSON.stringify(buildIndex(items, heroes, state)));
   await hf.upload(repo, accessToken, [{ path: "index.json", file: indexFile }], "Update index");
 }
 
@@ -123,19 +169,33 @@ function argValue(name) {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-// { id: { name, models } } for every item that has a model
+// { id: { name, prefab, heroes, models, skin?, styles? } } for every item that has a model
 async function loadItems() {
-  console.log("Loading items_game.json");
-  const res = await fetch(ITEMS_URL);
-  if (!res.ok) {
-    throw new Error(`Could not load items: HTTP ${res.status}`);
+  // An items_game.json next to the script is used instead of downloading it
+  let data;
+  if (fs.existsSync("items_game.json")) {
+    console.log("Reading items_game.json");
+    data = JSON.parse(fs.readFileSync("items_game.json", "utf8"));
+  } else {
+    console.log("Loading items_game.json");
+    const res = await fetch(ITEMS_URL);
+    if (!res.ok) {
+      throw new Error(`Could not load items: HTTP ${res.status}`);
+    }
+    data = await res.json();
   }
 
   const items = {};
-  for (const [id, item] of Object.entries((await res.json()).items_game.items)) {
+  for (const [id, item] of Object.entries(data.items_game.items)) {
     const models = modelsOf(item);
     if (models.length > 0) {
-      items[id] = { name: item.name, prefab: item.prefab, models };
+      items[id] = {
+        name: item.name,
+        prefab: item.prefab,
+        heroes: Object.keys(item.used_by_heroes ?? {}),
+        models,
+        ...stylesOf(item, models),
+      };
     }
   }
   return items;
@@ -157,12 +217,58 @@ function modelsOf(item) {
   return [...models];
 }
 
+// Styles change the material (a skin of the model) and sometimes the model itself:
+// { skin, styles: [{ models, skin }] } with the models each style shows
+function stylesOf(item, models) {
+  const visuals = item.visuals ?? {};
+  const isModel = (value) => typeof value === "string" && value.endsWith(".vmdl");
+  const result = {};
+  if (visuals.skin !== undefined) {
+    result.skin = Number(visuals.skin);
+  }
+  const styles = Object.entries(visuals.styles ?? {}).sort(([a], [b]) => Number(a) - Number(b));
+  if (styles.length > 1) {
+    result.styles = styles.map(([, style]) => {
+      const own = isModel(style.model_player) ? style.model_player : null;
+      return {
+        // A style's model replaces the item's own model_player, other models stay
+        models: own ? [own, ...models.filter((model) => model !== item.model_player)] : models,
+        skin: style.skin !== undefined ? Number(style.skin) : (result.skin ?? 0),
+      };
+    });
+  }
+  return result;
+}
+
+// Model -> the skins (material groups other than the default) items show it with
+function skinsWanted(items) {
+  const wanted = new Map();
+  const add = (models, skin) => {
+    if (!skin) {
+      return;
+    }
+    for (const model of models) {
+      if (!wanted.has(model)) {
+        wanted.set(model, new Set());
+      }
+      wanted.get(model).add(skin);
+    }
+  };
+  for (const item of Object.values(items)) {
+    add(item.models, item.skin);
+    for (const style of item.styles ?? []) {
+      add(style.models, style.skin);
+    }
+  }
+  return wanted;
+}
+
 // { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }
 // npc_heroes.txt may only #base the per-hero files in scripts/npc/heroes/
-async function loadHeroModels(vpkDir, manifests) {
-  const paths = vpkDir.files.filter((file) => file === HEROES_FILE || HERO_FILES.test(file));
+async function loadHeroModels(source) {
+  const paths = source.vpkDir.files.filter((file) => file === HEROES_FILE || HERO_FILES.test(file));
   const files = new Map();
-  await steam.readFiles(vpkDir, dirPath, paths, manifests, files);
+  await source.readFiles(paths, files);
 
   const heroes = {};
   for (const content of files.values()) {
@@ -191,10 +297,11 @@ function depsHash(deps, vpkDir) {
   return zlib.crc32(deps.map((file) => `${file}:${vpkDir.tree[file].crc}`).join("\n")).toString(16);
 }
 
-// Returns { model: [game files it uses] } for the models that were exported
-async function exportBatch(batch, vpkDir, manifests) {
+// Returns { exported: { model: [game files it uses] }, skins: { json, textures } }
+async function exportBatch(batch, source, wantedSkins) {
   const files = new Map();
-  await collect(batch, vpkDir, manifests, files);
+  const collectMore = (paths) => collect(paths.map((file) => file.replace(/_c$/, "")), source, files);
+  await collect(batch, source, files);
 
   fs.rmSync(exportDir, { recursive: true, force: true });
   fs.rmSync(distDir, { recursive: true, force: true });
@@ -218,20 +325,28 @@ async function exportBatch(batch, vpkDir, manifests) {
     exported[model] = dependencies(`${model}_c`, files);
   }
 
-  steam.clearChunkCache();
-  console.log(`Exported ${Object.keys(exported).length}/${batch.length}, game files: ${files.size}`);
-  return exported;
+  const wanted = new Map(Object.keys(exported).filter((model) => wantedSkins.has(model)).map((model) => [model, wantedSkins.get(model)]));
+  const skins = wanted.size
+    ? await exportSkins({ wanted, files, collect: collectMore, decompiler: DECOMPILER, temp, distDir })
+    : { json: [], textures: [] };
+
+  console.log(
+    `Exported ${Object.keys(exported).length}/${batch.length}, game files: ${files.size}` +
+      (wanted.size ? `, material variants for ${skins.json.length} models, ${skins.textures.length} textures` : "")
+  );
+  return { exported, skins };
 }
 
-// Follows the dependencies of the models until nothing new comes up
-async function collect(models, vpkDir, manifests, files) {
-  const seen = new Set();
+// Follows the dependencies of the models (paths without the _c of compiled files)
+// until nothing new comes up, skipping what files already holds
+async function collect(models, source, files) {
+  const seen = new Set(files.keys());
   let pending = models.map((model) => `${model}_c`);
 
   while (pending.length > 0) {
-    const fresh = [...new Set(pending)].filter((file) => !seen.has(file) && vpkDir.tree[file]);
+    const fresh = [...new Set(pending)].filter((file) => !seen.has(file) && source.vpkDir.tree[file]);
     fresh.forEach((file) => seen.add(file));
-    await steam.readFiles(vpkDir, dirPath, fresh, manifests, files);
+    await source.readFiles(fresh, files);
     pending = fresh.flatMap((file) => refsOf(files.get(file)));
   }
 }
@@ -264,7 +379,7 @@ function runDecompiler(models) {
     "-f", models.map((model) => `${model}_c`).join(","),
     "-o", output,
     "-d",
-    "--threads", "4",
+    "--threads", THREADS,
     "--gltf_export_format", "glb",
     "--gltf_export_materials",
     "--gltf_export_animations",
@@ -286,27 +401,34 @@ function glbPath(model) {
   return model.replace(/\.vmdl$/, ".glb");
 }
 
-// What the viewer needs: which models show an item and a hero
+// What the viewer needs: which models show each hero and item, which of them are
+// exported so far, and which have material variants
 function buildIndex(items, heroes, state) {
-  const has = (model) => Boolean(state.models[model]);
-  const index = { manifest: state.manifest, heroes: {}, items: {} };
-
+  const index = {
+    manifest: state.manifest,
+    updated: new Date().toISOString(),
+    heroes: {},
+    items: {},
+    exported: Object.keys(state.models).map(glbPath).sort(),
+    skins: Object.keys(state.models).filter((model) => state.models[model].skins).map(glbPath).sort(),
+  };
   for (const [hero, model] of Object.entries(heroes)) {
-    if (has(model)) {
-      index.heroes[hero] = glbPath(model);
-    }
+    index.heroes[hero] = glbPath(model);
   }
   for (const [id, item] of Object.entries(items)) {
-    if (item.models.every(has)) {
-      index.items[id] = { name: item.name, models: item.models.map(glbPath) };
-    }
+    index.items[id] = {
+      name: item.name,
+      models: item.models.map(glbPath),
+      ...(item.skin !== undefined && { skin: item.skin }),
+      ...(item.styles && { styles: item.styles.map((style) => ({ models: style.models.map(glbPath), skin: style.skin })) }),
+    };
   }
   return index;
 }
 
 function loadState() {
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
-  return { manifest: state.manifest ?? null, models: state.models ?? {} };
+  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {} };
 }
 
 function saveState(state) {
@@ -323,4 +445,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { modelsOf, collect, exportBatch, dependencies, buildIndex, hasChanged };
+module.exports = { modelsOf, stylesOf, skinsWanted, collect, exportBatch, dependencies, buildIndex, hasChanged };

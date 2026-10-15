@@ -1,0 +1,28 @@
+---------------
+Parent file: E:\Production\Coding Production\dota2-trackers\dota2-model-tracker\temp\models.vpk
+File: models\items\alchemist\crazy_experiment_back\crazy_experiment_back.vmdl_c
+Exception: System.IndexOutOfRangeException: Index was outside the bounds of the array.
+   at ValveResourceFormat.ResourceTypes.ModelAnimation.SegmentDecoders.CCompressedStaticFloat.Read(Int32 frameIndex, Frame outFrame) in /_/ValveResourceFormat/Resource/ResourceTypes/ModelAnimation/SegmentDecoders/CCompressedStaticFloat.cs:line 13
+   at ValveResourceFormat.ResourceTypes.ModelAnimation.SequenceAnimation.DecodeFrame(Frame outFrame) in /_/ValveResourceFormat/Resource/ResourceTypes/ModelAnimation/SequenceAnimation.cs:line 601
+   at ValveResourceFormat.IO.GltfModelExporter.AnimationWriter.DecodeFrameLocals(Animation animation, Int32 frameIndex, Boolean writeDeltas) in /_/ValveResourceFormat/IO/GltfModelExporter.Anim.cs:line 291
+   at ValveResourceFormat.IO.GltfModelExporter.AnimationWriter.WriteCore(ModelRoot model, Node[] joints, Animation animation, String animationName, SkeletonRetargeter retargeter) in /_/ValveResourceFormat/IO/GltfModelExporter.Anim.cs:line 161
+   at ValveResourceFormat.IO.GltfModelExporter.LoadModel(ModelRoot exportedModel, Scene scene, Model model, String name, Matrix4x4 transform, Vector4 tintColor, String skinName, Entity entity) in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 719
+   at ValveResourceFormat.IO.GltfModelExporter.ExportToFile(String resourceName, String fileName, Model model) in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 598
+   at ValveResourceFormat.IO.GltfModelExporter.<>c__DisplayClass71_0.<Export>b__0() in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 242
+   at ValveResourceFormat.IO.GltfModelExporter.RunExport(Action exportAction, String targetPath, CancellationToken cancellationToken) in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 164
+   at CLI.Decompiler.ProcessVPKEntries(String parentPath, Package package, IFileLoader fileLoader, String type, Dictionary`2 manifestData, Boolean useOutputAsDirectory) in /_/CLI/Decompiler.cs:line 1372
+
+---------------
+Parent file: E:\Production\Coding Production\dota2-trackers\dota2-model-tracker\temp\models.vpk
+File: models\items\techies\techies_mad_tex_arms\techies_mad_tex_arms.vmdl_c
+Exception: System.IndexOutOfRangeException: Index was outside the bounds of the array.
+   at ValveResourceFormat.ResourceTypes.ModelAnimation.SegmentDecoders.CCompressedStaticFloat.Read(Int32 frameIndex, Frame outFrame) in /_/ValveResourceFormat/Resource/ResourceTypes/ModelAnimation/SegmentDecoders/CCompressedStaticFloat.cs:line 13
+   at ValveResourceFormat.ResourceTypes.ModelAnimation.SequenceAnimation.DecodeFrame(Frame outFrame) in /_/ValveResourceFormat/Resource/ResourceTypes/ModelAnimation/SequenceAnimation.cs:line 601
+   at ValveResourceFormat.IO.GltfModelExporter.AnimationWriter.DecodeFrameLocals(Animation animation, Int32 frameIndex, Boolean writeDeltas) in /_/ValveResourceFormat/IO/GltfModelExporter.Anim.cs:line 291
+   at ValveResourceFormat.IO.GltfModelExporter.AnimationWriter.WriteCore(ModelRoot model, Node[] joints, Animation animation, String animationName, SkeletonRetargeter retargeter) in /_/ValveResourceFormat/IO/GltfModelExporter.Anim.cs:line 161
+   at ValveResourceFormat.IO.GltfModelExporter.LoadModel(ModelRoot exportedModel, Scene scene, Model model, String name, Matrix4x4 transform, Vector4 tintColor, String skinName, Entity entity) in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 719
+   at ValveResourceFormat.IO.GltfModelExporter.ExportToFile(String resourceName, String fileName, Model model) in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 598
+   at ValveResourceFormat.IO.GltfModelExporter.<>c__DisplayClass71_0.<Export>b__0() in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 242
+   at ValveResourceFormat.IO.GltfModelExporter.RunExport(Action exportAction, String targetPath, CancellationToken cancellationToken) in /_/ValveResourceFormat/IO/GltfModelExporter.cs:line 164
+   at CLI.Decompiler.ProcessVPKEntries(String parentPath, Package package, IFileLoader fileLoader, String type, Dictionary`2 manifestData, Boolean useOutputAsDirectory) in /_/CLI/Decompiler.cs:line 1372
+

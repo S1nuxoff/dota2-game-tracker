@@ -292,6 +292,56 @@
     "materials/models/heroes/sven/sven_glow_detail_psd_8143779e.vtex_c",
     "models/heroes/sven/sven_shoulder.vmdl_c"
    ]
+  },
+  "models/heroes/abaddon/abaddon.vmdl": {
+   "hash": "fad4b161",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/abaddon/abaddon_body.vmat_c",
+    "materials/models/heroes/abaddon/abaddon_body_color_psd_70154d32.vtex_c",
+    "materials/models/heroes/abaddon/abaddon_body_detailmask_tga_aa9a3101.vtex_c",
+    "materials/models/heroes/abaddon/abaddon_body_normal_psd_1614bb18.vtex_c",
+    "materials/models/heroes/abaddon/abaddon_body_specmask_tga_2e960d3d.vtex_c",
+    "materials/models/heroes/abaddon/abaddon_detail_psd_45c064ed.vtex_c",
+    "models/heroes/abaddon/abaddon.vmdl_c",
+    "models/heroes/abaddon/abaddon/abaddon_model_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/abyssal_underlord/abyssal_underlord_v2.vmdl": {
+   "hash": "6f284137",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/abyssal_underlord/underlord_body_color.vmat_c",
+    "materials/models/heroes/abyssal_underlord/underlord_body_color_psd_4271070e.vtex_c",
+    "materials/models/heroes/abyssal_underlord/underlord_body_detailmask_psd_baede37d.vtex_c",
+    "materials/models/heroes/abyssal_underlord/underlord_body_normal_tga_9a130e53.vtex_c",
+    "materials/models/heroes/abyssal_underlord/underlord_body_specmask_psd_26fd9f9b.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_motion_detail_psd_7fe1f23d.vtex_c",
+    "models/heroes/abyssal_underlord/abyssal_underlord_v2.vmdl_c",
+    "models/heroes/abyssal_underlord/abyssal_underlord_v2/abyssal_underlord_v2_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/alchemist/alchemist.vmdl": {
+   "hash": "62765d79",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color.vmat_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_cube_psd_350ada0.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_detailmask_tga_cc030d2a.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_fresnelwarprim_tga_483aee0d.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_psd_421cc63c.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_specmask_tga_20f7fc27.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_normal_psd_80d00db7.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_rage_detail_psd_15f04935.vtex_c",
+    "materials/models/heroes/sven/sven_diffusewarp_psd_30cf60b.vtex_c",
+    "materials/models/heroes/sven/sven_fresnelwarprim_tga_574afdef.vtex_c",
+    "materials/models/items/heroes/fall20/alchemist/alchemist_body_color.vmat_c",
+    "materials/models/items/heroes/fall20/alchemist/alchemist_fall20_body_color_psd_c6a063a2.vtex_c",
+    "models/heroes/alchemist/alchemist.vmdl_c",
+    "models/heroes/alchemist/alchemist/alchemist_model_vmorf.vtex_c"
+   ]
   }
  }
 }

@@ -1,0 +1,42 @@
+name: Export Models
+
+on:
+  workflow_dispatch:
+    inputs:
+      items:
+        description: "Item IDs, item names or .vmdl paths, comma separated"
+        required: true
+        default: "4007,4794,6914,7247,2,10096,596,models/heroes/pudge/pudge.vmdl"
+
+env:
+  VRF_VERSION: "20.1"
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm ci
+      - name: Download Source2Viewer ${{ env.VRF_VERSION }}
+        run: |
+          curl -sSL -o vrf.zip "https://github.com/ValveResourceFormat/ValveResourceFormat/releases/download/${VRF_VERSION}/cli-linux-x64.zip"
+          unzip -q vrf.zip -d vrf
+          chmod +x vrf/Source2Viewer-CLI
+          rm vrf.zip
+      - name: Export models
+        env:
+          ITEMS: ${{ inputs.items }}
+        run: node index.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' "$ITEMS"
+      - name: Upload models
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: models
+          path: out/
+          retention-days: 14

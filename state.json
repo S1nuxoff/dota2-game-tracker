@@ -1,0 +1,297 @@
+{
+ "manifest": "3698789421986436638",
+ "models": {
+  "models/heroes/antimage/antimage_weapon.vmdl": {
+   "hash": "f1fb0cb6",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/default_gray_cube_tga_a8e02caf.vtex_c",
+    "materials/models/heroes/antimage/antimage_weapon.vmat_c",
+    "materials/models/heroes/antimage/antimage_weapon_color_psd_7f5491d8.vtex_c",
+    "materials/models/heroes/antimage/antimage_weapon_metalnessmask_tga_75bde601.vtex_c",
+    "materials/models/heroes/antimage/antimage_weapon_normal_psd_a38f062a.vtex_c",
+    "materials/models/heroes/antimage/antimage_weapon_specmask_tga_34648cdb.vtex_c",
+    "models/heroes/antimage/antimage_weapon.vmdl_c"
+   ]
+  },
+  "models/heroes/axe/axe_weapon.vmdl": {
+   "hash": "1a4921fb",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/dota_default_cube_tga_c95513b9.vtex_c",
+    "materials/models/heroes/axe/axe_weapon_color.vmat_c",
+    "materials/models/heroes/axe/axe_weapon_color_psd_2b2191bd.vtex_c",
+    "materials/models/heroes/axe/axe_weapon_normal_psd_60632592.vtex_c",
+    "materials/models/heroes/axe/weapon_metalnessmask_tga_caee59d4.vtex_c",
+    "materials/models/heroes/axe/weapon_specmask_tga_b3b64255.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "materials/models/items/heroes/fall20/axe/axe_fall20_weapon.vmat_c",
+    "materials/models/items/heroes/fall20/axe/axe_spooky_weapon_color_psd_4098281e.vtex_c",
+    "models/heroes/axe/axe_weapon.vmdl_c"
+   ]
+  },
+  "models/heroes/axe/axe_armor.vmdl": {
+   "hash": "8c748aa",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/axe/axe_armor_color.vmat_c",
+    "materials/models/heroes/axe/axe_armor_color_psd_9b56091c.vtex_c",
+    "materials/models/heroes/axe/axe_armor_metalnessmask_tga_d2981239.vtex_c",
+    "materials/models/heroes/axe/axe_armor_normal_psd_b5823dff.vtex_c",
+    "materials/models/heroes/axe/axe_armor_specmask_tga_6571b90a.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "materials/models/items/heroes/fall20/axe/axe_fall20_armor.vmat_c",
+    "materials/models/items/heroes/fall20/axe/axe_spooky_armor_color_psd_cb002c68.vtex_c",
+    "models/heroes/axe/axe_armor.vmdl_c"
+   ]
+  },
+  "models/heroes/axe/axe_ponytail.vmdl": {
+   "hash": "aabb4036",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/axe/axe_hair_color.vmat_c",
+    "materials/models/heroes/axe/axe_hair_color_psd_8b3c45d8.vtex_c",
+    "materials/models/heroes/axe/axe_hair_normal_psd_4140ebda.vtex_c",
+    "materials/models/heroes/axe/axe_hair_selfillummask_tga_1d45bde7.vtex_c",
+    "materials/models/heroes/axe/axe_hair_specmask_tga_d6d7debd.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "materials/models/items/heroes/fall20/axe/axe_fall20_hair.vmat_c",
+    "materials/models/items/heroes/fall20/axe/axe_spooky_hair_color_psd_966bda69.vtex_c",
+    "models/heroes/axe/axe_ponytail.vmdl_c"
+   ]
+  },
+  "models/heroes/axe/axe_belt.vmdl": {
+   "hash": "a8a9ee75",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/axe/axe_belt_color.vmat_c",
+    "materials/models/heroes/axe/axe_belt_color_psd_1efcc84c.vtex_c",
+    "materials/models/heroes/axe/axe_belt_metalnessmask_tga_ca0648de.vtex_c",
+    "materials/models/heroes/axe/axe_belt_normal_psd_bf73380f.vtex_c",
+    "materials/models/heroes/axe/axe_belt_specmask_tga_bfbf3100.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "materials/models/items/heroes/fall20/axe/axe_fall20_belt.vmat_c",
+    "materials/models/items/heroes/fall20/axe/axe_spooky_belt_color_psd_6a86d781.vtex_c",
+    "models/heroes/axe/axe_belt.vmdl_c"
+   ]
+  },
+  "models/heroes/juggernaut/jugg_mask.vmdl": {
+   "hash": "a8403e68",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_diffusewarp_psd_7064ba4f.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_mask.vmat_c",
+    "materials/models/heroes/juggernaut/juggernaut_mask_color_psd_f882c5e1.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_mask_detailmask_psd_2998d941.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_mask_normal_psd_8861611b.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_mask_specmask_psd_a792f7eb.vtex_c",
+    "models/heroes/juggernaut/jugg_mask.vmdl_c"
+   ]
+  },
+  "models/heroes/juggernaut/jugg_sword.vmdl": {
+   "hash": "16a5c1c6",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_diffusewarp_psd_7064ba4f.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_sword.vmat_c",
+    "materials/models/heroes/juggernaut/juggernaut_sword_color_psd_107830ae.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_sword_detailmask_psd_3433925b.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_sword_normal_psd_a2f8f78e.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_sword_specmask_psd_e8fcfae3.vtex_c",
+    "models/heroes/juggernaut/jugg_sword.vmdl_c"
+   ]
+  },
+  "models/heroes/juggernaut/jugg_cape.vmdl": {
+   "hash": "bb08a6c0",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_diffusewarp_psd_7064ba4f.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_fur.vmat_c",
+    "materials/models/heroes/juggernaut/juggernaut_fur_color_psd_d9300f6c.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_fur_detailmask_psd_519f33e7.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_fur_normal_psd_19459511.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_fur_specmask_psd_101a70da.vtex_c",
+    "models/heroes/juggernaut/jugg_cape.vmdl_c"
+   ]
+  },
+  "models/heroes/juggernaut/jugg_bracers.vmdl": {
+   "hash": "45f1ddbf",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_bracers.vmat_c",
+    "materials/models/heroes/juggernaut/juggernaut_bracers_color_psd_e3f9c4d3.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_bracers_detailmask_psd_b5a5b92d.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_bracers_normal_psd_e6cc3a29.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_bracers_specmask_psd_55ad6ce4.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_diffusewarp_psd_7064ba4f.vtex_c",
+    "models/heroes/juggernaut/jugg_bracers.vmdl_c"
+   ]
+  },
+  "models/heroes/kunkka/kunkka_feet.vmdl": {
+   "hash": "21605e06",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_boots.vmat_c",
+    "materials/models/heroes/kunkka/kunkka2_boots_color_psd_bd1ae23c.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_boots_detailmask_tga_b76d9bd1.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_boots_normal_psd_bbb9323d.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_boots_specmask_tga_790ef089.vtex_c",
+    "models/heroes/kunkka/kunkka_feet.vmdl_c"
+   ]
+  },
+  "models/heroes/kunkka/kunkka_hands.vmdl": {
+   "hash": "43331862",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hands.vmat_c",
+    "materials/models/heroes/kunkka/kunkka2_hands_color_psd_f21fab0a.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hands_detailmask_tga_63046fd7.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hands_normal_psd_e8dcc992.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hands_specmask_tga_386eb16a.vtex_c",
+    "models/heroes/kunkka/kunkka_hands.vmdl_c"
+   ]
+  },
+  "models/heroes/kunkka/kunkka_sword.vmdl": {
+   "hash": "fbd40e33",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_tidebringer.vmat_c",
+    "materials/models/heroes/kunkka/kunkka2_tidebringer_color_psd_adfad23b.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_tidebringer_detailmask_tga_223056e9.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_tidebringer_normal_psd_72cd0560.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_tidebringer_specmask_tga_9b92b121.vtex_c",
+    "models/heroes/kunkka/kunkka_sword.vmdl_c"
+   ]
+  },
+  "models/heroes/omniknight/bracer.vmdl": {
+   "hash": "b6498909",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_ram_gold_cube_tga_f91d133c.vtex_c",
+    "materials/models/heroes/omniknight/bracer_color.vmat_c",
+    "materials/models/heroes/omniknight/bracer_color_psd_a7ffcf64.vtex_c",
+    "materials/models/heroes/omniknight/bracer_normal_tga_67fa4288.vtex_c",
+    "materials/models/heroes/omniknight/bracer_selfillummask_tga_d76a3239.vtex_c",
+    "materials/models/heroes/omniknight/bracer_specmask_tga_9fbbe152.vtex_c",
+    "models/heroes/omniknight/bracer.vmdl_c"
+   ]
+  },
+  "models/heroes/kunkka/kunkka_hair.vmdl": {
+   "hash": "10a71352",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hair.vmat_c",
+    "materials/models/heroes/kunkka/kunkka2_hair_color_psd_45e01a06.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hair_detailmask_tga_7f2bedcb.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hair_normal_psd_c8a13b76.vtex_c",
+    "materials/models/heroes/kunkka/kunkka2_hair_specmask_tga_e82dff65.vtex_c",
+    "models/heroes/kunkka/kunkka_hair.vmdl_c"
+   ]
+  },
+  "models/heroes/faceless_void/faceless_void_weapon.vmdl": {
+   "hash": "1473090f",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/faceless_void/weapon_color.vmat_c",
+    "materials/models/heroes/faceless_void/weapon_color_psd_f2959a37.vtex_c",
+    "materials/models/heroes/faceless_void/weapon_metalnessmask_tga_31d2889.vtex_c",
+    "materials/models/heroes/faceless_void/weapon_normal_tga_53762821.vtex_c",
+    "materials/models/heroes/faceless_void/weapon_specmask_tga_7abee89f.vtex_c",
+    "models/heroes/faceless_void/faceless_void_weapon.vmdl_c"
+   ]
+  },
+  "models/heroes/sven/sven_mask.vmdl": {
+   "hash": "237113b4",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/sven/helmet_color.vmat_c",
+    "materials/models/heroes/sven/helmet_color_tga_72202aee.vtex_c",
+    "materials/models/heroes/sven/helmet_detailmask_tga_4a182418.vtex_c",
+    "materials/models/heroes/sven/helmet_normal_tga_eccc22b.vtex_c",
+    "materials/models/heroes/sven/helmet_specmask_tga_96554f15.vtex_c",
+    "materials/models/heroes/sven/sven_glow_detail_psd_8143779e.vtex_c",
+    "models/heroes/sven/sven_mask.vmdl_c"
+   ]
+  },
+  "models/heroes/sven/sven_sword.vmdl": {
+   "hash": "ec7f2497",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/sven/blade_color.vmat_c",
+    "materials/models/heroes/sven/blade_color_psd_15c5096.vtex_c",
+    "materials/models/heroes/sven/blade_detailmask_tga_f73768f2.vtex_c",
+    "materials/models/heroes/sven/blade_normal_psd_a67459cb.vtex_c",
+    "materials/models/heroes/sven/blade_specmask_tga_a274f8c6.vtex_c",
+    "models/heroes/sven/sven_sword.vmdl_c"
+   ]
+  },
+  "models/heroes/sven/sven_belt.vmdl": {
+   "hash": "bb0c8b6",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/sven/belt_color.vmat_c",
+    "materials/models/heroes/sven/belt_color_tga_6b612c30.vtex_c",
+    "materials/models/heroes/sven/belt_detailmask_tga_ec74c413.vtex_c",
+    "materials/models/heroes/sven/belt_normal_tga_271874dc.vtex_c",
+    "materials/models/heroes/sven/belt_specmask_tga_2bc277e2.vtex_c",
+    "materials/models/heroes/sven/sven_glow_detail_psd_8143779e.vtex_c",
+    "models/heroes/sven/sven_belt.vmdl_c"
+   ]
+  },
+  "models/heroes/sven/sven_gauntlet.vmdl": {
+   "hash": "846585a4",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/sven/gauntlet_color.vmat_c",
+    "materials/models/heroes/sven/gauntlet_color_tga_95a5a73f.vtex_c",
+    "materials/models/heroes/sven/gauntlet_detailmask_tga_cd05b037.vtex_c",
+    "materials/models/heroes/sven/gauntlet_normal_tga_62fc45d5.vtex_c",
+    "materials/models/heroes/sven/gauntlet_specmask_tga_e4d6394e.vtex_c",
+    "materials/models/heroes/sven/sven_glow_detail_psd_8143779e.vtex_c",
+    "models/heroes/sven/sven_gauntlet.vmdl_c"
+   ]
+  },
+  "models/heroes/sven/sven_shoulder.vmdl": {
+   "hash": "d1ce2733",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/sven/shoulder_color.vmat_c",
+    "materials/models/heroes/sven/shoulder_color_tga_6c95f2b0.vtex_c",
+    "materials/models/heroes/sven/shoulder_detailmask_tga_a71fe08b.vtex_c",
+    "materials/models/heroes/sven/shoulder_normal_tga_8337a9fa.vtex_c",
+    "materials/models/heroes/sven/shoulder_specmask_tga_f20ad399.vtex_c",
+    "materials/models/heroes/sven/sven_glow_detail_psd_8143779e.vtex_c",
+    "models/heroes/sven/sven_shoulder.vmdl_c"
+   ]
+  }
+ }
+}

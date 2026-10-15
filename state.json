@@ -172738,6 +172738,54 @@
     "materials/models/heroes/terrorblade/terrorblade_detail_psd_c6767e0e.vtex_c",
     "models/heroes/terrorblade/horns_arcana.vmdl_c"
    ]
+  },
+  "models/items/alchemist/crazy_experiment_back/crazy_experiment_back.vmdl": {
+   "hash": "12d3cb7c",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color.vmat_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_cube_psd_350ada0.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_detailmask_tga_cc030d2a.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_fresnelwarprim_tga_483aee0d.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_psd_421cc63c.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_color_specmask_tga_20f7fc27.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_body_normal_psd_80d00db7.vtex_c",
+    "materials/models/heroes/alchemist/alchemist_rage_detail_psd_15f04935.vtex_c",
+    "materials/models/heroes/sven/sven_diffusewarp_psd_30cf60b.vtex_c",
+    "materials/models/heroes/sven/sven_fresnelwarprim_tga_574afdef.vtex_c",
+    "materials/models/items/alchemist/crazy_experiment_back/crazy_experiment_back.vmat_c",
+    "materials/models/items/alchemist/crazy_experiment_back/crazy_experiment_back_color_tga_67283edb.vtex_c",
+    "materials/models/items/alchemist/crazy_experiment_back/crazy_experiment_back_detailmask_tga_ea4f3284.vtex_c",
+    "materials/models/items/alchemist/crazy_experiment_back/crazy_experiment_back_normal_tga_a399059d.vtex_c",
+    "materials/models/items/alchemist/crazy_experiment_back/crazy_experiment_back_specmask_tga_d1af7386.vtex_c",
+    "materials/models/items/heroes/fall20/alchemist/alchemist_body_color.vmat_c",
+    "materials/models/items/heroes/fall20/alchemist/alchemist_fall20_body_color_psd_c6a063a2.vtex_c",
+    "models/heroes/alchemist/alchemist.vmdl_c",
+    "models/heroes/alchemist/alchemist/alchemist_model_vmorf.vtex_c",
+    "models/items/alchemist/crazy_experiment_back/crazy_experiment_back.vmdl_c"
+   ]
+  },
+  "models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms.vmdl": {
+   "hash": "3ea15dd4",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/techies_metal_cube_tga_12f60802.vtex_c",
+    "materials/models/heroes/techies/remote_cart_color_png_81c79dc6.vtex_c",
+    "materials/models/heroes/techies/remote_cart_metalnessmask_png_f6ebdb17.vtex_c",
+    "materials/models/heroes/techies/remote_cart_normal_png_6510d044.vtex_c",
+    "materials/models/heroes/techies/remote_cart_specmask_png_17ef4eb3.vtex_c",
+    "materials/models/heroes/techies/techies_remote_cart.vmat_c",
+    "materials/models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms.vmat_c",
+    "materials/models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms_color_png_1d5b1498.vtex_c",
+    "materials/models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms_detailmask_png_29a515.vtex_c",
+    "materials/models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms_normal_png_78142b82.vtex_c",
+    "materials/models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms_specmask_png_b0c9a1cf.vtex_c",
+    "models/heroes/techies/fx_techies_remote_cart.vmdl_c",
+    "models/heroes/techies/fx_techies_remote_cart/unnamed_1_vmorf.vtex_c",
+    "models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms.vmdl_c"
+   ]
   }
  },
  "textures": {
@@ -176829,8 +176877,5 @@
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_metalnessmask_psd_d73ddf5.png": true,
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_specmask_psd_f3154b5e.png": true
  },
- "failed": {
-  "models/items/alchemist/crazy_experiment_back/crazy_experiment_back.vmdl": 3009443000,
-  "models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms.vmdl": 2516270603
- }
+ "failed": {}
 }

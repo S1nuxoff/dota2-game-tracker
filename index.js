@@ -313,8 +313,19 @@ async function exportBatch(batch, source, wantedSkins) {
 
   fs.rmSync(exportDir, { recursive: true, force: true });
   fs.rmSync(distDir, { recursive: true, force: true });
-  writeVpk(packPath, files);
-  runDecompiler(batch);
+  // A local install is given to the converter whole, so it finds everything a model
+  // needs (also from core); from Steam it gets a pack of the files collected above
+  if (!source.gameDir) {
+    writeVpk(packPath, files);
+  }
+  const input = source.gameDir ? path.join(source.gameDir, "pak01_dir.vpk") : packPath;
+  runDecompiler(batch, input);
+  // Source2Viewer fails on some animation data; such models are exported without animations
+  const failed = batch.filter((model) => !fs.existsSync(path.join(exportDir, glbPath(model))));
+  if (failed.length > 0) {
+    console.log(`Trying ${failed.length} models again without animations`);
+    runDecompiler(failed, input, false);
+  }
 
   // Without the extensions, gltf-transform drops data such as KHR_materials_specular
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
@@ -379,18 +390,18 @@ function refsOf(buffer) {
     .map((ref) => `${ref.toLowerCase()}_c`);
 }
 
-function runDecompiler(models) {
+function runDecompiler(models, input, animations = true) {
   // With a filter matching exactly one file, -o is the output file, not a folder
   const output = models.length === 1 ? path.join(exportDir, glbPath(models[0])) : exportDir;
   const args = [
-    "-i", packPath,
+    "-i", input,
     "-f", models.map((model) => `${model}_c`).join(","),
     "-o", output,
     "-d",
     "--threads", THREADS,
     "--gltf_export_format", "glb",
     "--gltf_export_materials",
-    "--gltf_export_animations",
+    ...(animations ? ["--gltf_export_animations"] : []),
   ];
 
   const result = spawnSync(DECOMPILER, args, { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });

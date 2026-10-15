@@ -67,7 +67,7 @@ function localSource(gameDir) {
     }
   };
 
-  return { vpkDir, manifestId: installedManifest(gameDir), readFiles, release: () => {} };
+  return { vpkDir, gameDir, manifestId: installedManifest(gameDir), readFiles, release: () => {} };
 }
 
 // The manifest of the main depot from Steam's appmanifest_570.acf, next to steamapps/common

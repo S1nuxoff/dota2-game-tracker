@@ -176828,5 +176828,9 @@
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_color_psd_7e7a5aa3.png": true,
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_metalnessmask_psd_d73ddf5.png": true,
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_specmask_psd_f3154b5e.png": true
+ },
+ "failed": {
+  "models/items/alchemist/crazy_experiment_back/crazy_experiment_back.vmdl": 3009443000,
+  "models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms.vmdl": 2516270603
  }
 }

@@ -3,10 +3,19 @@ name: Export Models
 on:
   workflow_dispatch:
     inputs:
-      items:
-        description: "Item IDs, item names or .vmdl paths, comma separated"
-        required: true
-        default: "4007,4794,6914,7247,2,10096,596,models/heroes/pudge/pudge.vmdl"
+      limit:
+        description: "Export at most this many models (empty for all)"
+        required: false
+        default: "20"
+      force:
+        description: "Export again models that did not change"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 env:
   VRF_VERSION: "20.1"
@@ -14,7 +23,10 @@ env:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 330
+
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -31,12 +43,12 @@ jobs:
           rm vrf.zip
       - name: Export models
         env:
-          ITEMS: ${{ inputs.items }}
-        run: node index.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' "$ITEMS"
-      - name: Upload models
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          LIMIT: ${{ inputs.limit }}
+        run: node index.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' ${LIMIT:+--limit "$LIMIT"} ${{ inputs.force && '--force' || '' }}
+      - name: Commit & push state
         if: success() || failure()
-        uses: actions/upload-artifact@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          name: models
-          path: out/
-          retention-days: 14
+          commit_message: "Exported models"
+          file_pattern: state.json

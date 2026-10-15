@@ -1,24 +1,31 @@
-const SteamUser = require("steam-user");
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
 const { spawnSync } = require("child_process");
 const vpk = require("vpk");
+const { NodeIO } = require("@gltf-transform/core");
+const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
+const steam = require("./steam");
+const hf = require("./hf");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
 
-const appId = 570;
-const depotIds = [373301, 381451, 381452, 381453, 381454, 381455];
 const temp = "./temp";
-const out = "./out";
+const dirPath = `${temp}/pak01_dir.vpk`;
 const packPath = `${temp}/models.vpk`;
+const exportDir = `${temp}/export`;
+const distDir = `${temp}/dist`;
+// Per model: the game files it was exported from and a hash of their CRCs
+const STATE_FILE = "state.json";
 const ITEMS_URL =
   "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
+const HEROES_FILE = "scripts/npc/npc_heroes.txt";
 const DECOMPILER = "./vrf/Source2Viewer-CLI";
 
-const DOWNLOAD_WORKERS = 16;
-const CHUNK_RETRIES = 5;
-const DIR_ARCHIVE = 0x7fff;
+const BATCH_SIZE = 100;
+const START_TIME = Date.now();
+// GitHub stops a job after 6 hours, leave time to save the state
+const MAX_DURATION = 5 * 3600 * 1000;
 
 // Dependencies needed for a model with its materials, textures and animations.
 // Particles, sounds and the rest are not part of a glTF export.
@@ -37,123 +44,91 @@ const FOLLOW = new Set([
   "vnmgraph",
 ]);
 
-const user = new SteamUser();
-const chunkCache = new Map();
-
 async function main() {
-  const [username, password, itemsArg = ""] = process.argv.slice(2);
-  if (!username || !password || !itemsArg) {
-    console.error('Usage: node index.js <USERNAME> <PASSWORD> "<item id, name or .vmdl path>,..."');
+  const positional = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
+  const [username, password] = positional;
+  const limit = Number(argValue("--limit")) || Infinity;
+  const force = process.argv.includes("--force");
+  const accessToken = process.env.HF_TOKEN;
+
+  if (!username || !password || !accessToken) {
+    console.error("Usage: HF_TOKEN=... node index.js <USERNAME> <PASSWORD> [--limit N] [--force]");
     process.exit(1);
   }
 
-  console.log("Logging into Steam...");
-  user.logOn({ accountName: username, password, rememberPassword: true, logonID: 2121 });
-  await new Promise((resolve) => user.once("loggedOn", resolve));
+  const repo = await hf.prepareRepo(accessToken, process.env.HF_REPO);
+  console.log(`Dataset: https://huggingface.co/datasets/${repo.name}`);
 
-  const targets = await resolveTargets(itemsArg.split(",").map((s) => s.trim()).filter(Boolean));
-  const manifests = await getManifests();
+  await steam.logOn(username, password);
+  const manifests = await steam.getManifests();
 
   fs.rmSync(temp, { recursive: true, force: true });
-  fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  fs.mkdirSync(out, { recursive: true });
-
-  const dirPath = `${temp}/pak01_dir.vpk`;
-  console.log("Downloading pak01_dir.vpk");
-  await user.downloadFile(appId, 373301, findArchive(manifests, "dir").file, dirPath);
+  await steam.downloadVpkDir(manifests, dirPath);
   const vpkDir = new vpk(dirPath);
   vpkDir.load();
 
-  await exportTargets(targets, vpkDir, dirPath, manifests);
+  const items = await loadItems();
+  const heroes = await loadHeroModels(vpkDir, manifests);
+  const all = [...new Set([...Object.values(items).flatMap((item) => item.models), ...Object.values(heroes)])];
+  const available = all.filter((model) => vpkDir.tree[`${model}_c`]);
+
+  const state = loadState();
+  const todo = available.filter((model) => force || hasChanged(state.models[model], vpkDir)).slice(0, limit);
+
+  console.log(
+    `${all.length} models, ${all.length - available.length} not in the game files, ` +
+      `${todo.length} to export in this run.`
+  );
+
+  for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+    if (Date.now() - START_TIME >= MAX_DURATION) {
+      console.log("Max duration reached, the rest is left for the next run.");
+      break;
+    }
+
+    const batch = todo.slice(i, i + BATCH_SIZE);
+    console.log(`\nBatch ${i / BATCH_SIZE + 1}/${Math.ceil(todo.length / BATCH_SIZE)}: ${batch.length} models`);
+    const exported = await exportBatch(batch, vpkDir, manifests);
+
+    const files = Object.keys(exported).map((model) => ({ path: glbPath(model), file: path.join(distDir, glbPath(model)) }));
+    await hf.upload(repo, accessToken, files, `Export ${files.length} models`);
+
+    for (const [model, deps] of Object.entries(exported)) {
+      state.models[model] = { hash: depsHash(deps, vpkDir), deps };
+    }
+    saveState(state);
+  }
+
+  state.manifest = manifests[373301].manifestId;
+  saveState(state);
+
+  const indexFile = `${temp}/index.json`;
+  fs.writeFileSync(indexFile, JSON.stringify(buildIndex(items, heroes, state), null, 1));
+  await hf.upload(repo, accessToken, [{ path: "index.json", file: indexFile }], "Update index");
 }
 
-async function exportTargets(targets, vpkDir, dirPath, manifests) {
-  const files = new Map();
-
-  for (const target of targets) {
-    console.log(`\n${target.label}: ${target.models.join(", ")}`);
-    const { wanted, missing } = await collect(target.models, vpkDir, dirPath, manifests, files);
-    target.files = [...wanted].filter((file) => files.has(file));
-    target.missing = missing;
-    target.bytes = target.files.reduce((sum, file) => sum + files.get(file).length, 0);
-    console.log(`${target.files.length} files, ${mb(target.bytes)}, ${missing.length} missing`);
-  }
-
-  writeVpk(packPath, files);
-
-  const summary = [];
-  for (const target of targets) {
-    const targetOut = path.join(out, target.label);
-    for (const model of target.models) {
-      exportModel(model, targetOut);
-    }
-
-    const glbs = fs.existsSync(targetOut) ? [...walk(targetOut)].filter((f) => f.endsWith(".glb")) : [];
-    const glbBytes = glbs.reduce((sum, f) => sum + fs.statSync(f).size, 0);
-    const byType = {};
-    for (const file of target.files) {
-      const ext = file.slice(file.lastIndexOf(".") + 1);
-      byType[ext] = (byType[ext] || 0) + 1;
-    }
-
-    summary.push(
-      [
-        `${target.label}`,
-        `  models: ${target.models.join(", ")}`,
-        `  game files: ${target.files.length} (${mb(target.bytes)}) ${JSON.stringify(byType)}`,
-        `  missing: ${target.missing.length ? target.missing.join(", ") : "none"}`,
-        `  glb: ${glbs.length} files, ${mb(glbBytes)}`,
-        ...glbs.map((f) => `    ${path.relative(out, f)} ${mb(fs.statSync(f).size)}`),
-      ].join("\n")
-    );
-  }
-
-  const text = summary.join("\n\n");
-  fs.writeFileSync(path.join(out, "summary.txt"), text + "\n");
-  console.log(`\n${text}`);
+function argValue(name) {
+  const index = process.argv.indexOf(name);
+  return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-// Item ids, item names or model paths -> [{ label, models }]
-async function resolveTargets(inputs) {
-  let items = null;
-  const targets = [];
-
-  for (const input of inputs) {
-    if (input.endsWith(".vmdl")) {
-      targets.push({ label: path.basename(input, ".vmdl"), models: [input] });
-      continue;
-    }
-
-    if (!items) {
-      console.log("Loading items_game.json");
-      const res = await fetch(ITEMS_URL);
-      if (!res.ok) {
-        throw new Error(`Could not load items: HTTP ${res.status}`);
-      }
-      items = (await res.json()).items_game.items;
-    }
-
-    const id = items[input]
-      ? input
-      : Object.keys(items).find((key) => items[key].name?.toLowerCase() === input.toLowerCase());
-    if (!id) {
-      console.error(`Item not found: ${input}`);
-      continue;
-    }
-
-    const models = modelsOf(items[id]);
-    if (models.length === 0) {
-      console.error(`Item ${id} "${items[id].name}" has no model`);
-      continue;
-    }
-    targets.push({ label: `${id}_${slug(items[id].name)}`, models });
+// { id: { name, models } } for every item that has a model
+async function loadItems() {
+  console.log("Loading items_game.json");
+  const res = await fetch(ITEMS_URL);
+  if (!res.ok) {
+    throw new Error(`Could not load items: HTTP ${res.status}`);
   }
 
-  if (targets.length === 0) {
-    throw new Error("Nothing to export");
+  const items = {};
+  for (const [id, item] of Object.entries((await res.json()).items_game.items)) {
+    const models = modelsOf(item);
+    if (models.length > 0) {
+      items[id] = { name: item.name, models };
+    }
   }
-  return targets;
+  return items;
 }
 
 // model_player for most wearables; couriers, wards and some arcanas set theirs in visuals
@@ -172,215 +147,155 @@ function modelsOf(item) {
   return [...models];
 }
 
+// { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }
+async function loadHeroModels(vpkDir, manifests) {
+  const files = new Map();
+  await steam.readFiles(vpkDir, dirPath, [HEROES_FILE], manifests, files);
+
+  const heroes = {};
+  let hero = null;
+  for (const line of files.get(HEROES_FILE).toString("utf8").split("\n")) {
+    const heroKey = line.match(/^\t"(npc_dota_hero_\w+)"/);
+    if (heroKey) {
+      hero = heroKey[1];
+      continue;
+    }
+    const model = line.match(/^\t\t"Model"\s+"([^"]+\.vmdl)"/);
+    if (hero && model && !heroes[hero]) {
+      heroes[hero] = model[1];
+    }
+  }
+  return heroes;
+}
+
+function hasChanged(entry, vpkDir) {
+  return !entry || entry.deps.some((file) => !vpkDir.tree[file]) || depsHash(entry.deps, vpkDir) !== entry.hash;
+}
+
+function depsHash(deps, vpkDir) {
+  return zlib.crc32(deps.map((file) => `${file}:${vpkDir.tree[file].crc}`).join("\n")).toString(16);
+}
+
+// Returns { model: [game files it uses] } for the models that were exported
+async function exportBatch(batch, vpkDir, manifests) {
+  const files = new Map();
+  await collect(batch, vpkDir, manifests, files);
+
+  fs.rmSync(exportDir, { recursive: true, force: true });
+  fs.rmSync(distDir, { recursive: true, force: true });
+  writeVpk(packPath, files);
+  runDecompiler(batch);
+
+  // Without the extensions, gltf-transform drops data such as KHR_materials_specular
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+  const exported = {};
+  for (const model of batch) {
+    const glb = path.join(exportDir, glbPath(model));
+    if (!fs.existsSync(glb)) {
+      console.log(`Not exported: ${model}`);
+      continue;
+    }
+
+    // Source2Viewer writes textures as separate PNGs, put them inside the GLB
+    const target = path.join(distDir, glbPath(model));
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    await io.write(target, await io.read(glb));
+    exported[model] = dependencies(`${model}_c`, files);
+  }
+
+  steam.clearChunkCache();
+  console.log(`Exported ${Object.keys(exported).length}/${batch.length}, game files: ${files.size}`);
+  return exported;
+}
+
 // Follows the dependencies of the models until nothing new comes up
-async function collect(models, vpkDir, dirPath, manifests, files) {
-  const wanted = new Set();
-  const missing = [];
+async function collect(models, vpkDir, manifests, files) {
+  const seen = new Set();
   let pending = models.map((model) => `${model}_c`);
 
   while (pending.length > 0) {
-    const fresh = [...new Set(pending)].filter((file) => !wanted.has(file));
-    pending = [];
-
-    const found = [];
-    for (const file of fresh) {
-      wanted.add(file);
-      if (files.has(file)) {
-        continue;
-      }
-      if (vpkDir.tree[file]) {
-        found.push(file);
-      } else {
-        missing.push(file);
-      }
-    }
-
-    await readFiles(vpkDir, dirPath, found, manifests, files);
-
-    for (const file of fresh) {
-      if (!files.has(file)) {
-        continue;
-      }
-      for (const ref of externalRefs(files.get(file))) {
-        const ext = ref.slice(ref.lastIndexOf(".") + 1).toLowerCase();
-        if (FOLLOW.has(ext)) {
-          pending.push(`${ref.toLowerCase()}_c`);
-        }
-      }
-    }
+    const fresh = [...new Set(pending)].filter((file) => !seen.has(file) && vpkDir.tree[file]);
+    fresh.forEach((file) => seen.add(file));
+    await steam.readFiles(vpkDir, dirPath, fresh, manifests, files);
+    pending = fresh.flatMap((file) => refsOf(files.get(file)));
   }
-
-  return { wanted, missing };
 }
 
-// With a filter matching exactly one file, -o is the output file, not a folder
-function exportModel(model, targetOut) {
+function dependencies(root, files) {
+  const deps = new Set();
+  const stack = [root];
+  while (stack.length > 0) {
+    const file = stack.pop();
+    if (deps.has(file) || !files.has(file)) {
+      continue;
+    }
+    deps.add(file);
+    stack.push(...refsOf(files.get(file)));
+  }
+  return [...deps].sort();
+}
+
+function refsOf(buffer) {
+  return externalRefs(buffer)
+    .filter((ref) => FOLLOW.has(ref.slice(ref.lastIndexOf(".") + 1).toLowerCase()))
+    .map((ref) => `${ref.toLowerCase()}_c`);
+}
+
+function runDecompiler(models) {
+  // With a filter matching exactly one file, -o is the output file, not a folder
+  const output = models.length === 1 ? path.join(exportDir, glbPath(models[0])) : exportDir;
   const args = [
     "-i", packPath,
-    "-f", `${model}_c`,
-    "-o", path.join(targetOut, `${path.basename(model, ".vmdl")}.glb`),
+    "-f", models.map((model) => `${model}_c`).join(","),
+    "-o", output,
     "-d",
+    "--threads", "4",
     "--gltf_export_format", "glb",
     "--gltf_export_materials",
     "--gltf_export_animations",
   ];
-  const result = spawnSync(DECOMPILER, args, { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-  const log = `${result.stdout || ""}${result.stderr || ""}`;
-  const problems = log.split("\n").filter((line) => /fail|error|exception/i.test(line));
 
-  console.log(`Exported ${model}${problems.length ? `, ${problems.length} problems:` : ""}`);
-  for (const line of problems.slice(0, 20)) {
-    console.log(`  ${line.trim()}`);
-  }
+  const result = spawnSync(DECOMPILER, args, { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
   if (result.error) {
     throw result.error;
   }
-}
-
-async function getManifests() {
-  console.log(`Fetching product info for appId ${appId}`);
-  const productInfo = await user.getProductInfo([appId], [], true);
-  const depots = productInfo.apps[appId].appinfo.depots;
-  const manifests = {};
-
-  for (const depotId of depotIds) {
-    const gid = depots[depotId]?.manifests?.public?.gid;
-    if (!gid) {
-      continue;
-    }
-    console.log(`Fetching manifest for depot ${depotId}`);
-    const { manifest } = await user.getManifest(appId, depotId, gid, "public");
-    manifests[depotId] = { manifestId: gid, files: manifest.files };
-  }
-
-  if (!manifests[373301]) {
-    throw new Error("Manifest for depot 373301 could not be retrieved.");
-  }
-  return manifests;
-}
-
-// "dir" or an archive index
-function findArchive(manifests, index) {
-  const name = index === "dir" ? "pak01_dir.vpk" : `pak01_${String(index).padStart(3, "0")}.vpk`;
-  const matches = (filename) => {
-    const normalized = filename.replace(/\\/g, "/").toLowerCase();
-    return normalized === `dota/${name}` || normalized.endsWith(`/dota/${name}`);
-  };
-
-  for (const depotId of depotIds) {
-    const file = manifests[depotId]?.files.find((f) => matches(f.filename));
-    if (file) {
-      return { depotId, file };
-    }
-  }
-  throw new Error(`${name} not found in any depot.`);
-}
-
-// Only the chunks that hold the files are downloaded, not whole archives
-async function readFiles(vpkDir, dirPath, paths, manifests, files) {
-  const dirFd = fs.openSync(dirPath, "r");
-  const byArchive = new Map();
-
-  for (const file of paths) {
-    const { archiveIndex } = vpkDir.tree[file];
-    if (!byArchive.has(archiveIndex)) {
-      byArchive.set(archiveIndex, []);
-    }
-    byArchive.get(archiveIndex).push(file);
-  }
-
-  for (const [archiveIndex, archiveFiles] of byArchive) {
-    if (archiveIndex === DIR_ARCHIVE) {
-      for (const file of archiveFiles) {
-        files.set(file, vpkDir.getFile(file));
-      }
-      continue;
-    }
-
-    const { depotId, file: archive } = findArchive(manifests, archiveIndex);
-    const chunks = archive.chunks
-      .map((chunk) => ({ sha: chunk.sha, offset: Number(chunk.offset), size: chunk.cb_original }))
-      .sort((a, b) => a.offset - b.offset);
-
-    const needed = new Map();
-    for (const file of archiveFiles) {
-      for (const chunk of chunksFor(vpkDir.tree[file], chunks)) {
-        needed.set(chunk.sha, chunk);
-      }
-    }
-    await downloadChunks(depotId, [...needed.values()]);
-
-    for (const file of archiveFiles) {
-      const entry = vpkDir.tree[file];
-      const buffer = Buffer.alloc(entry.preloadBytes + entry.entryLength);
-      if (entry.preloadBytes > 0) {
-        fs.readSync(dirFd, buffer, 0, entry.preloadBytes, entry.preloadOffset);
-      }
-
-      const start = entry.entryOffset;
-      const end = start + entry.entryLength;
-      for (const chunk of chunksFor(entry, chunks)) {
-        const from = Math.max(start, chunk.offset);
-        const to = Math.min(end, chunk.offset + chunk.size);
-        chunkCache.get(chunk.sha).copy(buffer, entry.preloadBytes + from - start, from - chunk.offset, to - chunk.offset);
-      }
-
-      if (zlib.crc32(buffer) !== entry.crc) {
-        throw new Error(`CRC does not match for ${file}`);
-      }
-      files.set(file, buffer);
-    }
-  }
-
-  fs.closeSync(dirFd);
-}
-
-function chunksFor(entry, chunks) {
-  const start = entry.entryOffset;
-  const end = start + entry.entryLength;
-  return chunks.filter((chunk) => chunk.offset < end && chunk.offset + chunk.size > start);
-}
-
-async function downloadChunks(depotId, chunks) {
-  const queue = chunks.filter((chunk) => !chunkCache.has(chunk.sha));
-
-  const worker = async () => {
-    while (queue.length > 0) {
-      const chunk = queue.shift();
-      for (let attempt = 1; ; attempt++) {
-        try {
-          chunkCache.set(chunk.sha, (await user.downloadChunk(appId, depotId, chunk.sha)).chunk);
-          break;
-        } catch (error) {
-          if (attempt >= CHUNK_RETRIES) {
-            throw error;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
-        }
-      }
-    }
-  };
-
-  await Promise.all(Array.from({ length: DOWNLOAD_WORKERS }, worker));
-}
-
-function* walk(directory) {
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const fullPath = path.join(directory, entry.name);
-    if (entry.isDirectory()) {
-      yield* walk(fullPath);
-    } else {
-      yield fullPath;
-    }
+  const problems = `${result.stdout}${result.stderr}`
+    .split("\n")
+    .filter((line) => /fail|error|exception/i.test(line) && !line.includes('shader "'));
+  for (const line of problems.slice(0, 20)) {
+    console.log(`  ${line.trim()}`);
   }
 }
 
-function slug(name) {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+function glbPath(model) {
+  return model.replace(/\.vmdl$/, ".glb");
 }
 
-function mb(bytes) {
-  return `${(bytes / 1e6).toFixed(1)} MB`;
+// What the viewer needs: which models show an item and a hero
+function buildIndex(items, heroes, state) {
+  const has = (model) => Boolean(state.models[model]);
+  const index = { manifest: state.manifest, heroes: {}, items: {} };
+
+  for (const [hero, model] of Object.entries(heroes)) {
+    if (has(model)) {
+      index.heroes[hero] = glbPath(model);
+    }
+  }
+  for (const [id, item] of Object.entries(items)) {
+    if (item.models.every(has)) {
+      index.items[id] = { name: item.name, models: item.models.map(glbPath) };
+    }
+  }
+  return index;
+}
+
+function loadState() {
+  const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
+  return { manifest: state.manifest ?? null, models: state.models ?? {} };
+}
+
+function saveState(state) {
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
 }
 
 if (require.main === module) {
@@ -393,4 +308,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { exportTargets, resolveTargets, modelsOf, collect };
+module.exports = { modelsOf, collect, exportBatch, dependencies, buildIndex, hasChanged };

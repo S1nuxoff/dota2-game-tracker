@@ -3,12 +3,13 @@ const { whoAmI, repoExists, createRepo, uploadFiles } = require("@huggingface/hu
 
 // Keeps each commit to a reasonable size
 const MAX_COMMIT_BYTES = 500 * 1e6;
+const MAX_COMMIT_FILES = 1000;
 
-// "<user>/dota2-models" by default
-async function prepareRepo(accessToken, name) {
-  if (!name) {
+// "<user>/dota2-models" by default; a name without "<user>/" goes under the token's user
+async function prepareRepo(accessToken, name = "dota2-models") {
+  if (!name.includes("/")) {
     const me = await whoAmI({ accessToken });
-    name = `${me.name}/dota2-models`;
+    name = `${me.name}/${name}`;
   }
 
   const repo = { type: "dataset", name };
@@ -39,11 +40,13 @@ async function upload(repo, accessToken, files, title) {
         });
         break;
       } catch (error) {
-        if (attempt >= 5) {
+        // The Hub is sometimes out of reach for minutes; wait it out rather than stop
+        if (attempt >= 10) {
           throw error;
         }
-        console.log(`Upload failed (${error.cause?.message ?? error.message}), retrying in ${attempt * 10} s`);
-        await new Promise((resolve) => setTimeout(resolve, attempt * 10000));
+        const wait = Math.min(attempt * 15, 120);
+        console.log(`Upload failed (${(error.cause?.code ?? error.message).slice(0, 80)}), retrying in ${wait} s`);
+        await new Promise((resolve) => setTimeout(resolve, wait * 1000));
       }
     }
     console.log(`Uploaded ${part.length} files (${(partBytes / 1e6).toFixed(1)} MB)`);
@@ -53,7 +56,7 @@ async function upload(repo, accessToken, files, title) {
 
   for (const file of files) {
     const size = fs.statSync(file.file).size;
-    if (partBytes + size > MAX_COMMIT_BYTES) {
+    if (partBytes + size > MAX_COMMIT_BYTES || part.length >= MAX_COMMIT_FILES) {
       await commit();
     }
     part.push(file);

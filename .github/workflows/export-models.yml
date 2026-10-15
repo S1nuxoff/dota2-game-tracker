@@ -1,4 +1,4 @@
-name: Export Models
+name: Export Models, Data and Sounds
 
 on:
   schedule:
@@ -49,6 +49,18 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           LIMIT: ${{ inputs.limit }}
         run: node index.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' ${LIMIT:+--limit "$LIMIT"} ${{ inputs.force && '--force' || '' }}
+      # Heroes, abilities, items, treasures, texts and icons; skipped when the game did not update
+      - name: Export game data
+        if: success() || failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node data.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # New or changed sounds only
+      - name: Export sounds
+        if: success() || failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Another run may have pushed meanwhile; this run's state is the newest
       - name: Move onto the latest main
         if: success() || failure()
@@ -60,4 +72,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Exported models"
-          file_pattern: state.json
+          file_pattern: state.json data-state.json sounds-state.json

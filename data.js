@@ -2,20 +2,24 @@
 // shop and neutral items, treasure chests with what drops from them, the texts of
 // all of this in every language, and hero portraits and icons.
 //
-//   HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload]
+//   HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//   HF_TOKEN=... node data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads to the dataset: data/*.json, data/i18n/<language>.json, images/...png
+// Uploads to the dataset: data/*.json, data/i18n/<language>.json, images/...png.
+// Nothing is done when the game did not update since the last run (data-state.json),
+// and only new or changed images are converted again.
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("./hf");
-const { localSource } = require("./source");
+const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
 
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const IMAGE_FOLDERS = ["panorama/images/heroes/", "panorama/images/spellicons/", "panorama/images/items/"];
+const STATE_FILE = "data-state.json";
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -24,15 +28,22 @@ function argValue(name) {
 
 async function main() {
   const game = argValue("--game");
+  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
-  if (!game || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload]');
+  const force = process.argv.includes("--force");
+  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
     process.exit(1);
   }
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = localSource(game);
+  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
+  if (!force && source.manifestId && state.manifest === source.manifestId) {
+    console.log(`Game data of manifest ${source.manifestId} is already exported.`);
+    return;
+  }
   const files = new Map();
   const wanted = source.vpkDir.files.filter(
     (file) => file.startsWith("scripts/npc/") || /^resource\/localization\/(abilities|dota|hero_lore)_\w+\.txt$/.test(file)
@@ -73,13 +84,14 @@ async function main() {
     }),
   ];
 
-  const images = exportImages(path.join(game, "pak01_dir.vpk"));
-  console.log(`${images.length} portraits and icons`);
+  const images = await exportImages(source, state.images ?? {});
+  console.log(`${images.files.length} new or changed portraits and icons`);
 
   if (upload) {
     const repo = await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_REPO);
     await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update game data");
-    await hf.upload(repo, process.env.HF_TOKEN, images, "Update portraits and icons");
+    await hf.upload(repo, process.env.HF_TOKEN, images.files, "Update portraits and icons");
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, images: images.crcs }));
   } else {
     console.log(`Written to ${out}`);
   }
@@ -182,32 +194,40 @@ function readTexts(read, files) {
   return result;
 }
 
-// Portraits, hero icons, ability and item icons as PNGs, converted from the install
-function exportImages(vpkPath) {
+// Portraits, hero icons, ability and item icons as PNGs; only those whose CRC changed
+async function exportImages(source, known) {
+  const { vpkDir } = source;
+  const all = vpkDir.files.filter((file) => file.endsWith(".vtex_c") && IMAGE_FOLDERS.some((folder) => file.startsWith(folder)));
+  const crcs = Object.fromEntries(all.map((file) => [file, vpkDir.tree[file].crc]));
+  const changed = all.filter((file) => known[file] !== crcs[file]);
+  if (changed.length === 0) {
+    return { files: [], crcs };
+  }
+
+  const files = new Map();
+  await source.readFiles(changed, files);
+  const input = path.join(temp, "vtex");
+  for (const [file, buffer] of files) {
+    fs.mkdirSync(path.dirname(path.join(input, file)), { recursive: true });
+    fs.writeFileSync(path.join(input, file), buffer);
+  }
   const out = path.join(temp, "images");
-  const result = spawnSync(
-    DECOMPILER,
-    ["-i", vpkPath, "-f", IMAGE_FOLDERS.join(","), "-e", "vtex_c", "-o", out, "-d", "--threads", "8"],
-    { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }
-  );
+  const result = spawnSync(DECOMPILER, ["-i", input, "--recursive", "-o", out, "-d", "--threads", "8"], {
+    encoding: "utf8",
+    maxBuffer: 256 * 1024 * 1024,
+  });
   if (result.error) {
     throw result.error;
   }
+
   const images = [];
-  const walk = (dir) => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(full);
-      } else if (entry.name.endsWith(".png")) {
-        images.push({ path: `images/${path.relative(out, full).split(path.sep).join("/").replace(/^panorama\/images\//, "")}`, file: full });
-      }
+  for (const file of changed) {
+    const png = path.join(out, file.replace(/\.vtex_c$/, ".png"));
+    if (fs.existsSync(png)) {
+      images.push({ path: `images/${file.replace(/^panorama\/images\//, "").replace(/\.vtex_c$/, ".png")}`, file: png });
     }
-  };
-  if (fs.existsSync(out)) {
-    walk(out);
   }
-  return images;
+  return { files: images, crcs };
 }
 
 main().then(

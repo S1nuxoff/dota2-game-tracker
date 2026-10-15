@@ -49,6 +49,12 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           LIMIT: ${{ inputs.limit }}
         run: node index.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' ${LIMIT:+--limit "$LIMIT"} ${{ inputs.force && '--force' || '' }}
+      # Another run may have pushed meanwhile; this run's state is the newest
+      - name: Move onto the latest main
+        if: success() || failure()
+        run: |
+          git fetch --depth 1 origin main
+          git reset --soft origin/main
       - name: Commit & push state
         if: success() || failure()
         uses: stefanzweifel/git-auto-commit-action@v5

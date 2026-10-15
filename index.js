@@ -20,6 +20,7 @@ const STATE_FILE = "state.json";
 const ITEMS_URL =
   "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const HEROES_FILE = "scripts/npc/npc_heroes.txt";
+const HERO_FILES = /^scripts\/npc\/heroes\/npc_dota_hero_\w+\.txt$/;
 const DECOMPILER = "./vrf/Source2Viewer-CLI";
 
 const BATCH_SIZE = 100;
@@ -70,14 +71,15 @@ async function main() {
 
   const items = await loadItems();
   const heroes = await loadHeroModels(vpkDir, manifests);
-  const all = [...new Set([...Object.values(items).flatMap((item) => item.models), ...Object.values(heroes)])];
+  const all = [...new Set([...Object.values(heroes), ...Object.values(items).flatMap((item) => item.models)])];
   const available = all.filter((model) => vpkDir.tree[`${model}_c`]);
 
   const state = loadState();
   const todo = available.filter((model) => force || hasChanged(state.models[model], vpkDir)).slice(0, limit);
 
   console.log(
-    `${all.length} models, ${all.length - available.length} not in the game files, ` +
+    `${Object.keys(heroes).length} heroes, ${Object.keys(items).length} items, ` +
+      `${all.length} models, ${all.length - available.length} not in the game files, ` +
       `${todo.length} to export in this run.`
   );
 
@@ -148,23 +150,28 @@ function modelsOf(item) {
 }
 
 // { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }
+// npc_heroes.txt may only #base the per-hero files in scripts/npc/heroes/
 async function loadHeroModels(vpkDir, manifests) {
+  const paths = vpkDir.files.filter((file) => file === HEROES_FILE || HERO_FILES.test(file));
   const files = new Map();
-  await steam.readFiles(vpkDir, dirPath, [HEROES_FILE], manifests, files);
+  await steam.readFiles(vpkDir, dirPath, paths, manifests, files);
 
   const heroes = {};
-  let hero = null;
-  for (const line of files.get(HEROES_FILE).toString("utf8").split("\n")) {
-    const heroKey = line.match(/^\t"(npc_dota_hero_\w+)"/);
-    if (heroKey) {
-      hero = heroKey[1];
-      continue;
-    }
-    const model = line.match(/^\t\t"Model"\s+"([^"]+\.vmdl)"/);
-    if (hero && model && !heroes[hero]) {
-      heroes[hero] = model[1];
+  for (const content of files.values()) {
+    let hero = null;
+    for (const line of content.toString("utf8").split("\n")) {
+      const heroKey = line.match(/^\s*"(npc_dota_hero_\w+)"\s*$/);
+      if (heroKey) {
+        hero = heroKey[1] === "npc_dota_hero_base" ? null : heroKey[1];
+        continue;
+      }
+      const model = line.match(/^\s*"Model"\s+"([^"]+\.vmdl)"/i);
+      if (hero && model && !heroes[hero]) {
+        heroes[hero] = model[1].toLowerCase();
+      }
     }
   }
+  console.log(`Hero files: ${paths.length}, heroes with a model: ${Object.keys(heroes).length}`);
   return heroes;
 }
 

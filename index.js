@@ -158,12 +158,14 @@ async function resolveTargets(inputs) {
 
 // model_player for most wearables; couriers, wards and some arcanas set theirs in visuals
 function modelsOf(item) {
+  // modifier is not always a string, some asset modifiers hold an object
+  const isModel = (value) => typeof value === "string" && value.endsWith(".vmdl");
   const models = new Set();
-  if (item.model_player) {
+  if (isModel(item.model_player)) {
     models.add(item.model_player);
   }
   for (const [key, value] of Object.entries(item.visuals || {})) {
-    if (key.startsWith("asset_modifier") && value.modifier?.endsWith(".vmdl")) {
+    if (key.startsWith("asset_modifier") && isModel(value?.modifier)) {
       models.add(value.modifier);
     }
   }

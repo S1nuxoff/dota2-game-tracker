@@ -103,7 +103,11 @@ async function main() {
   const wantedSkins = skinsWanted(items);
 
   const state = loadState();
-  const todo = available.filter((model) => force || hasChanged(state.models[model], vpkDir)).slice(0, limit);
+  // Models the converter failed on are tried again once their file changes
+  const failedBefore = (model) => state.failed[model] === vpkDir.tree[`${model}_c`].crc;
+  const todo = available
+    .filter((model) => force || (hasChanged(state.models[model], vpkDir) && !failedBefore(model)))
+    .slice(0, limit);
 
   console.log(
     `${Object.keys(heroes).length} heroes, ${Object.keys(items).length} items, ` +
@@ -132,6 +136,10 @@ async function main() {
 
     for (const [model, deps] of Object.entries(exported)) {
       state.models[model] = { hash: depsHash(deps, vpkDir), deps };
+      delete state.failed[model];
+    }
+    for (const model of batch.filter((model) => !exported[model])) {
+      state.failed[model] = vpkDir.tree[`${model}_c`].crc;
     }
     for (const { path: datasetPath } of skins.json) {
       state.models[datasetPath.replace(/\.skins\.json$/, ".vmdl")].skins = true;
@@ -428,7 +436,7 @@ function buildIndex(items, heroes, state) {
 
 function loadState() {
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
-  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {} };
+  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {}, failed: state.failed ?? {} };
 }
 
 function saveState(state) {

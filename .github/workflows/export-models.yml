@@ -55,9 +55,10 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node data.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # New or changed sounds only
+      # New or changed sounds only; off until the first full export from a local install
+      # is done and its sounds-state.json is committed
       - name: Export sounds
-        if: success() || failure()
+        if: false
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'

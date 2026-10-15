@@ -71,7 +71,15 @@ async function main() {
 
   const items = await loadItems();
   const heroes = await loadHeroModels(vpkDir, manifests);
-  const all = [...new Set([...Object.values(heroes), ...Object.values(items).flatMap((item) => item.models)])];
+  // Heroes and what they wear by default first, so heroes show up complete early on
+  const modelsWhere = (filter) => Object.values(items).filter(filter).flatMap((item) => item.models);
+  const all = [
+    ...new Set([
+      ...Object.values(heroes),
+      ...modelsWhere((item) => item.prefab === "default_item"),
+      ...modelsWhere((item) => item.prefab !== "default_item"),
+    ]),
+  ];
   const available = all.filter((model) => vpkDir.tree[`${model}_c`]);
 
   const state = loadState();
@@ -127,7 +135,7 @@ async function loadItems() {
   for (const [id, item] of Object.entries((await res.json()).items_game.items)) {
     const models = modelsOf(item);
     if (models.length > 0) {
-      items[id] = { name: item.name, models };
+      items[id] = { name: item.name, prefab: item.prefab, models };
     }
   }
   return items;

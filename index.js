@@ -167,9 +167,21 @@ async function main() {
 }
 
 async function uploadIndex(repo, accessToken, items, heroes, state) {
+  const index = buildIndex(items, heroes, state);
   const indexFile = `${temp}/index.json`;
-  fs.writeFileSync(indexFile, JSON.stringify(buildIndex(items, heroes, state)));
-  await hf.upload(repo, accessToken, [{ path: "index.json", file: indexFile }], "Update index");
+  // The viewer checks this small list for new models, not the whole index
+  const exportedFile = `${temp}/exported.json`;
+  fs.writeFileSync(indexFile, JSON.stringify(index));
+  fs.writeFileSync(exportedFile, JSON.stringify(index.exported));
+  await hf.upload(
+    repo,
+    accessToken,
+    [
+      { path: "index.json", file: indexFile },
+      { path: "exported.json", file: exportedFile },
+    ],
+    "Update index"
+  );
 }
 
 function argValue(name) {

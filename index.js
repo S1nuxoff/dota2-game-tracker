@@ -86,6 +86,8 @@ async function main() {
   const items = await loadItems();
   const { heroes, personas } = await loadHeroModels(source);
   const pedestals = await loadPedestals(source);
+  // The models particle effects draw, as listed by particles.js
+  const particleModels = !onlyHero && fs.existsSync("particle-models.json") ? JSON.parse(fs.readFileSync("particle-models.json", "utf8")) : [];
 
   // Heroes and what they wear by default first, so heroes show up complete early on
   const forHero = (item) => !onlyHero || item.heroes.includes(`npc_dota_hero_${onlyHero}`);
@@ -103,6 +105,7 @@ async function main() {
         .filter(([key]) => !onlyHero || key === `npc_dota_hero_${onlyHero}`)
         .flatMap(([, models]) => models),
       ...pedestals,
+      ...particleModels,
       ...modelsWhere((item) => item.prefab === "default_item"),
       ...modelsWhere((item) => item.prefab !== "default_item"),
     ]),

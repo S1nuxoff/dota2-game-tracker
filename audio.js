@@ -4,15 +4,21 @@
 //   data/audio-library.json   announcer packs and music packs with their files
 //   soundevents.json          (sounds dataset) every sound event with its files, volume and pitch
 //
-//   HF_TOKEN=... node audio.js --game "<...>/dota 2 beta/game/dota" [--no-upload]
+//   abilitysounds.json        (data) the sounds and voice lines of each hero's abilities
+//
+//   HF_TOKEN=... node audio.js <steam user> <password>            (in GitHub Actions)
+//   HF_TOKEN=... node audio.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//
+// Runs only when the game changed since the last run (audio-state.json).
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("./hf");
-const { localSource } = require("./source");
+const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
 
 const temp = "./temp/audio";
+const STATE_FILE = "audio-state.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 
 function argValue(name) {
@@ -97,16 +103,31 @@ function animationSounds(text) {
 
 async function main() {
   const game = argValue("--game");
+  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
-  if (!game || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node audio.js --game "<...>/dota 2 beta/game/dota" [--no-upload]');
+  if ((!game && !(username && password)) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node audio.js <steam user> <password> | --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = localSource(game);
+  const source = game ? localSource(game) : await steamSource(username, password, temp);
   const { vpkDir } = source;
-  const vpkPath = path.join(game, "pak01_dir.vpk");
+  const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
+  if (state.manifest === source.manifestId && !process.argv.includes("--force")) {
+    console.log(`Game unchanged (manifest ${source.manifestId}), nothing to do.`);
+    source.release();
+    return;
+  }
+
+  // The game files these tables are read from, written out loose for Source2Viewer
+  const looseDir = path.join(temp, "loose");
+  const writeLoose = (files) => {
+    for (const [file, buffer] of files) {
+      fs.mkdirSync(path.dirname(path.join(looseDir, file)), { recursive: true });
+      fs.writeFileSync(path.join(looseDir, file), buffer);
+    }
+  };
 
   // Heroes: their model and voice file
   const npc = new Map();
@@ -128,7 +149,13 @@ async function main() {
 
   // Sound events
   const eventsDir = path.join(temp, "events");
-  run(["-i", vpkPath, "-f", "soundevents/", "-o", eventsDir, "-d", "--threads", "8"]);
+  const eventFiles = new Map();
+  await source.readFiles(
+    vpkDir.files.filter((file) => file.startsWith("soundevents/") && file.endsWith(".vsndevts_c")),
+    eventFiles
+  );
+  writeLoose(eventFiles);
+  run(["-i", path.join(looseDir, "soundevents"), "--recursive", "-o", path.join(eventsDir, "soundevents"), "-d", "--threads", "8"]);
   const events = {};
   const eventsByFile = {};
   for (const file of walk(eventsDir)) {
@@ -172,9 +199,22 @@ async function main() {
   console.log(`${Object.keys(library.announcers).length} announcer packs, ${Object.keys(library.music).length} music packs`);
 
   // Animation sounds of each hero model
+  const models = new Map();
+  await source.readFiles(
+    Object.values(heroes)
+      .map((hero) => `${hero.model}_c`)
+      .filter((file) => vpkDir.tree[file]),
+    models
+  );
+  writeLoose(models);
+  source.release();
   const animsounds = {};
   for (const [key, hero] of Object.entries(heroes)) {
-    const text = run(["-i", vpkPath, "-f", `${hero.model}_c`, "-a"]);
+    const modelFile = path.join(looseDir, `${hero.model}_c`);
+    if (!fs.existsSync(modelFile)) {
+      continue;
+    }
+    const text = run(["-i", modelFile, "-a"]);
     const sounds = animationSounds(text);
     if (Object.keys(sounds).length) {
       animsounds[hero.model.replace(/\.vmdl$/, ".glb")] = sounds;
@@ -256,6 +296,9 @@ async function main() {
     await hf.upload(await hf.prepareRepo(token, "dota2-sounds"), token, [soundEvents], "Update sound events");
   } else {
     console.log(`Written to ${out}`);
+  }
+  if (upload) {
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId }));
   }
 }
 

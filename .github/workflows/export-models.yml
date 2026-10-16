@@ -61,14 +61,30 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Another run may have pushed meanwhile; this run's state is the newest
-      - name: Move onto the latest main
+      # Voice lines, the sounds of animations and abilities, music and announcer packs;
+      # only after a patch, against audio-state.json
+      - name: Export voice lines, animation and ability sounds
         if: success() || failure()
-        run: |
-          git fetch --depth 1 origin main
-          git reset --soft origin/main
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node audio.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # The state files go back to main; another run may have pushed meanwhile, so this one
+      # lands on top of it
       - name: Commit & push state
         if: success() || failure()
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Exported models"
-          file_pattern: state.json data-state.json sounds-state.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          files=$(ls state.json data-state.json sounds-state.json audio-state.json scenes-state.json 2>/dev/null)
+          git add -- $files
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "Exported models"
+          for attempt in 1 2 3; do
+            git push origin HEAD:main && exit 0
+            git fetch origin main
+            git rebase -X ours origin/main || { git rebase --abort; git reset --soft origin/main; git commit -m "Exported models"; }
+          done
+          exit 1

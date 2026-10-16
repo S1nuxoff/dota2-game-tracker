@@ -98,6 +98,10 @@ function sceneInfo(file) {
   if (camera) {
     info.camera = { position: toGltf(numbers(camera.origin)), direction: forward(numbers(camera.angles)), fov: camera.fov ?? 30 };
   }
+  const fog = entities.find((entity) => entity.classname === "env_fog_controller");
+  if (fog && Array.isArray(fog.fogcolor)) {
+    info.fog = { color: rgb(fog.fogcolor), start: Number(fog.fogstart) || 0, end: Number(fog.fogend) || 4000, max: fog.fogmaxdensity ?? 1 };
+  }
   const points = entities
     .filter((entity) => entity.classname === "env_deferred_light" || entity.classname === "light_omni")
     .map((entity) => ({ position: toGltf(numbers(entity.origin)), color: rgb(entity.lightcolor ?? entity.color, entity.intensity ?? entity.brightness ?? 1) }))

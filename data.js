@@ -19,12 +19,27 @@ const { parse } = require("./keyvalues");
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
-const IMAGE_FOLDERS = ["panorama/images/heroes/", "panorama/images/spellicons/", "panorama/images/items/", "panorama/images/loadout_backgrounds/"];
+const IMAGE_FOLDERS = [
+  "panorama/images/heroes/",
+  "panorama/images/spellicons/",
+  "panorama/images/items/",
+  "panorama/images/loadout_backgrounds/",
+  // The interface's own pictures the site draws after the game: the top bar, the filter and role
+  // icons, attributes, complexity, the stat icons
+  "panorama/images/topbar/",
+  "panorama/images/control_icons/filter_",
+  "panorama/images/control_icons/arrow_solid_",
+  "panorama/images/control_icons/gear_png",
+  "panorama/images/control_icons/quit_psd",
+  "panorama/images/primary_attribute_icons/",
+  "panorama/images/hero_complexity_",
+  "panorama/images/hud/reborn/icon_",
+];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";

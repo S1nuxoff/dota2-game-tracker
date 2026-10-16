@@ -9,6 +9,7 @@
 // Uploads to the models dataset:
 //   particles/<path>.json                    a system (particles/<path>.vpcf in the game), as KV3 gives it
 //   particles/textures/<path>.png, .json     a texture (<path>.vtex) and its sheet: sequences of frames
+//   particles/bundles/<path>.json            an effect items show with every system it spawns, in one file
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
 // and lists the models the particles draw in particle-models.json, for index.js to export.
@@ -23,6 +24,8 @@ const { localSource, steamSource } = require("./source");
 const temp = "./temp/particles";
 const STATE_FILE = "particles-state.json";
 const MODELS_FILE = "particle-models.json";
+// Raised when the bundles change shape, to make them all again
+const BUNDLE_VERSION = 1;
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const BATCH = 2000;
@@ -300,6 +303,55 @@ async function main() {
     frontier = [...next];
   }
   console.log(`${reached.size} systems reached, ${converted} converted`);
+
+  // Each effect an item shows with every system it spawns in one file, so the site loads an
+  // effect in one request: particles/bundles/<root>.json = { "<path>.vpcf": system, ... }.
+  // Made again whenever a system changed, from all of them
+  const roots = await rootSystems();
+  const rootsKey = roots.slice().sort().join("|");
+  if (converted > 0 || state.bundles !== BUNDLE_VERSION || state.rootsKey !== rootsKey) {
+    const all = new Map();
+    const missing = [...reached].filter((file) => {
+      const json = path.join(dist, file.replace(/\.vpcf$/, ".json"));
+      if (fs.existsSync(json)) {
+        all.set(file, JSON.parse(fs.readFileSync(json, "utf8")));
+        return false;
+      }
+      return true;
+    });
+    for (let i = 0; i < missing.length; i += BATCH) {
+      const batch = missing.slice(i, i + BATCH);
+      const files = new Map();
+      await source.readFiles(batch.map((file) => `${file}_c`), files);
+      const out = convert(files, "systems");
+      source.release();
+      for (const file of batch) {
+        const text = path.join(out, file);
+        if (fs.existsSync(text) && fs.statSync(text).size > 0) {
+          all.set(file, kv3.parse(fs.readFileSync(text, "utf8")));
+        }
+      }
+    }
+    for (const root of roots) {
+      if (!all.has(root)) continue;
+      const bundle = {};
+      const queue = [root];
+      while (queue.length) {
+        const file = queue.pop();
+        if (bundle[file] || !all.has(file)) continue;
+        bundle[file] = all.get(file);
+        queue.push(...(state.systems[file]?.children ?? []));
+      }
+      const name = `particles/bundles/${root.replace(/^particles\//, "").replace(/\.vpcf$/, ".json")}`;
+      const json = path.join(dist, name);
+      fs.mkdirSync(path.dirname(json), { recursive: true });
+      fs.writeFileSync(json, JSON.stringify(bundle));
+      uploads.push({ path: name, file: json });
+    }
+    state.bundles = BUNDLE_VERSION;
+    state.rootsKey = rootsKey;
+    console.log(`${roots.length} effects bundled with the systems they spawn`);
+  }
 
   // The textures they draw
   const textures = [...new Set([...reached].flatMap((file) => state.systems[file]?.textures ?? []))].filter((texture) => crcOf(texture) !== undefined);

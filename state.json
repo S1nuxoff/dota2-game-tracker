@@ -173427,6 +173427,112 @@
     "materials/models/heroes/weaver/bug_color_psd_fd7880d0.vtex_c",
     "models/heroes/weaver/weaver_bug.vmdl_c"
    ]
+  },
+  "models/heroes/pedestal/loadout_pedestal_2023.vmdl": {
+   "hash": "a30afc56",
+   "deps": [
+    "materials/models/heroes/pedestal/loadout_pedestal_bricks.vmat_c",
+    "materials/models/heroes/pedestal/pedestal_2_color.vmat_c",
+    "materials/models/heroes/pedestal/pedestal_2_color_vmat_g_tspecular_3bfd9449.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_bricks_color_psd_609207e9.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_bricks_normal_psd_b9b1ac3b.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_bricks_refl_psd_66d92c34.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_color_psd_8830a461.vtex_c",
+    "models/heroes/pedestal/loadout_pedestal_2023.vmdl_c"
+   ]
+  },
+  "models/heroes/pedestal/loadout_pedestal_2023_large.vmdl": {
+   "hash": "cb4f1845",
+   "deps": [
+    "materials/models/heroes/pedestal/loadout_pedestal_2023.vmat_c",
+    "materials/models/heroes/pedestal/loadout_pedestal_bricks.vmat_c",
+    "materials/models/heroes/pedestal/pedestal_1_color.vmat_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_2023_color_psd_338c2f14.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_2023_refl_psd_e575694b.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_bricks_color_psd_609207e9.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_bricks_normal_psd_b9b1ac3b.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_loadout_bricks_refl_psd_66d92c34.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_color_psd_8830a461.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_refl_tga_c864b9a4.vtex_c",
+    "models/heroes/pedestal/loadout_pedestal_2023_large.vmdl_c",
+    "models/heroes/primal_beast/debut/materials/dirt_cracked_patchy_00_toplayer_mask_psd_4c4eaf21.vtex_c",
+    "models/heroes/primal_beast/debut/materials/dirt_cracked_patchy_00_toplayer_normal_psd_77e9efee.vtex_c"
+   ]
+  },
+  "models/heroes/pedestal/pedestal_1.vmdl": {
+   "hash": "46126c7c",
+   "deps": [
+    "materials/models/heroes/pedestal/pedestal_1_color.vmat_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_color_psd_8830a461.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_refl_tga_c864b9a4.vtex_c",
+    "models/heroes/pedestal/pedestal_1.vmdl_c"
+   ]
+  },
+  "models/heroes/pedestal/pedestal_1_large.vmdl": {
+   "hash": "9ffd5c9f",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/development/blankmasks1_selfillummask_tga_72de7764.vtex_c",
+    "materials/models/development/blankmasks2_rimmask_tga_c761b2f4.vtex_c",
+    "materials/models/development/flatnormal_normal_psd_b51689c6.vtex_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_color.vmat_c",
+    "materials/models/heroes/pedestal/pedestal_spotlight_color_psd_17644c9d.vtex_c",
+    "models/heroes/pedestal/pedestal_1_large.vmdl_c"
+   ]
+  },
+  "models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal.vmdl": {
+   "hash": "dbb19d93",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/mars/mars_fresnelwarprim_psd_50e63e8f.vtex_c",
+    "materials/models/heroes/mars/mars_fresnelwarprim_psd_cf73654c.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/alt/skywrath_arcana_pedestal_alt.vmat_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/alt/skywrath_arcana_pedestal_alt_color_tga_9df62883.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/alt/skywrath_arcana_pedestal_alt_cube_psd_3491c7f1.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/alt/skywrath_arcana_pedestal_alt_detailmask_tga_761b4971.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/alt/skywrath_arcana_pedestal_alt_normal_tga_d471cce9.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/alt/skywrath_arcana_pedestal_alt_specmask_tga_7847c1c1.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal.vmat_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal_color_tga_48af637e.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal_cube_psd_3cde8e6c.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal_detailmask_tga_61eac7d5.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal_diffusewarp_psd_a0cc129a.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal_normal_tga_79583378.vtex_c",
+    "materials/models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal_specmask_tga_2d0711fa.vtex_c",
+    "materials/models/items/vengefulspirit/imperia/imperia_detail_psd_950e63e9.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_diffusewarp_psd_69aea3f5.vtex_c",
+    "models/items/skywrath_mage/skywrath_arcana/skywrath_arcana_pedestal.vmdl_c"
+   ]
+  },
+  "models/heroes/pedestal/dark_carnival_pedestal_morphling.vmdl": {
+   "hash": "dc3a3f51",
+   "deps": [
+    "materials/cubemaps/red_day_cube_psd_6a8fe464.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_mask_tga_4528a0a9.vtex_c",
+    "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_candle.vmat_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_candle_color_psd_93f90182.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_candle_vmat_g_tmasks2_c1772ea5.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium.vmat_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium_color_psd_37ec26d6.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium_normal_psd_bbc459d1.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium_refl_psd_e6c9704e.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_candles_normal_psd_17e38568.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_candles_selfillum_psd_e6f04531.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_poster.vmat_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_poster_color_psd_95278d1a.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_poster_metalnessmask_psd_61a85bc6.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_poster_normal_psd_618fdb75.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_poster_selfillummask_psd_75cab39b.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_poster_specmask_psd_b707a441.vtex_c",
+    "materials/models/props_carnival/carnival_candleholder/carnival_candleholder.vmat_c",
+    "materials/models/props_carnival/carnival_candleholder/carnival_candleholder_color_png_c98a30cc.vtex_c",
+    "materials/models/props_carnival/carnival_candleholder/carnival_candleholder_normal_png_df03b417.vtex_c",
+    "materials/models/props_carnival/carnival_candleholder/carnival_candleholder_refl_png_dc0b6bc8.vtex_c",
+    "models/heroes/pedestal/dark_carnival_pedestal_morphling.vmdl_c"
+   ]
   }
  },
  "textures": {

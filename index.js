@@ -22,6 +22,8 @@ const ITEMS_URL =
   "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const HEROES_FILE = "scripts/npc/npc_heroes.txt";
 const HERO_FILES = /^scripts\/npc\/heroes\/npc_dota_hero_\w+\.txt$/;
+// What each hero stands on in its page's scene
+const LOADOUT_PORTRAITS = "scripts/npc/portraits_full_body_loadout.txt";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const THREADS = String(Math.max(2, os.cpus().length - 1));
 
@@ -83,6 +85,7 @@ async function main() {
 
   const items = await loadItems();
   const { heroes, personas } = await loadHeroModels(source);
+  const pedestals = await loadPedestals(source);
 
   // Heroes and what they wear by default first, so heroes show up complete early on
   const forHero = (item) => !onlyHero || item.heroes.includes(`npc_dota_hero_${onlyHero}`);
@@ -99,6 +102,7 @@ async function main() {
       ...Object.entries(personas)
         .filter(([key]) => !onlyHero || key === `npc_dota_hero_${onlyHero}`)
         .flatMap(([, models]) => models),
+      ...pedestals,
       ...modelsWhere((item) => item.prefab === "default_item"),
       ...modelsWhere((item) => item.prefab !== "default_item"),
     ]),
@@ -289,6 +293,17 @@ function skinsWanted(items) {
 
 // { heroes: { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }, personas: { hero: [model, ...] } }
 // Personas are a hero's other bodies (the female Anti-Mage), the Model lines after the first.
+// The pedestals the heroes stand on in their pages' scenes, from the loadout portraits
+async function loadPedestals(source) {
+  if (!source.vpkDir.tree[LOADOUT_PORTRAITS]) {
+    return [];
+  }
+  const files = new Map();
+  await source.readFiles([LOADOUT_PORTRAITS], files);
+  const text = files.get(LOADOUT_PORTRAITS).toString("utf8");
+  return [...new Set([...text.matchAll(/"PortraitBackgroundModel"\s+"([^"]+\.vmdl)"/gi)].map((match) => match[1].toLowerCase()))];
+}
+
 // npc_heroes.txt may only #base the per-hero files in scripts/npc/heroes/
 async function loadHeroModels(source) {
   const paths = source.vpkDir.files.filter((file) => file === HEROES_FILE || HERO_FILES.test(file));

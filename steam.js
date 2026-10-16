@@ -149,8 +149,38 @@ async function downloadChunks(depotId, chunks) {
   await Promise.all(Array.from({ length: DOWNLOAD_WORKERS }, worker));
 }
 
+// Files outside the VPKs under a folder of the game, e.g. "panorama/videos/heroes/", as the
+// depots list them: [{ path, sha, depotId, file }], sha being the SHA-1 of the content
+function looseFiles(manifests, folder) {
+  const found = [];
+  for (const depotId of depotIds) {
+    for (const file of manifests[depotId]?.files ?? []) {
+      const normalized = file.filename.replace(/\\/g, "/");
+      const at = normalized.toLowerCase().indexOf(`dota/${folder}`);
+      if (at >= 0 && file.size > 0) {
+        const sha = Buffer.isBuffer(file.sha_content) ? file.sha_content.toString("hex") : String(file.sha_content).toLowerCase();
+        found.push({ path: normalized.slice(at + "dota/".length), sha, depotId, file });
+      }
+    }
+  }
+  return found;
+}
+
+async function downloadLoose(entry) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return (await user.downloadFile(appId, entry.depotId, entry.file)).file;
+    } catch (error) {
+      if (attempt >= CHUNK_RETRIES) {
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+    }
+  }
+}
+
 function clearChunkCache() {
   chunkCache.clear();
 }
 
-module.exports = { user, logOn, getManifests, downloadVpkDir, readFiles, clearChunkCache };
+module.exports = { user, logOn, getManifests, downloadVpkDir, readFiles, looseFiles, downloadLoose, clearChunkCache };

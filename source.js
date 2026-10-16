@@ -1,13 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
+const crypto = require("crypto");
 const vpk = require("vpk");
 const steam = require("./steam");
 
 const DIR_ARCHIVE = 0x7fff;
 
 // Where the game files come from: Steam (downloading only the chunks needed) or a
-// local Dota 2 install. Both give { vpkDir, manifestId, readFiles(paths, files), release() }.
+// local Dota 2 install. Both give { vpkDir, manifestId, readFiles(paths, files), release() },
+// and for files outside the VPKs looseFiles(folder) -> [{ path, sha }] and readLoose(entry) -> Buffer.
 
 async function steamSource(username, password, temp) {
   await steam.logOn(username, password);
@@ -21,6 +23,8 @@ async function steamSource(username, password, temp) {
     vpkDir,
     manifestId: manifests[373301].manifestId,
     readFiles: (paths, files) => steam.readFiles(vpkDir, dirPath, paths, manifests, files),
+    looseFiles: (folder) => steam.looseFiles(manifests, folder),
+    readLoose: (entry) => steam.downloadLoose(entry),
     release: () => steam.clearChunkCache(),
   };
 }
@@ -67,7 +71,23 @@ function localSource(gameDir) {
     }
   };
 
-  return { vpkDir, gameDir, manifestId: installedManifest(gameDir), readFiles, release: () => {} };
+  // Hashed as Steam's manifests hash them, so a local export and one from Steam agree
+  const looseFiles = (folder) => {
+    const root = path.join(gameDir, folder);
+    if (!fs.existsSync(root)) {
+      return [];
+    }
+    return fs.readdirSync(root, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile())
+      .map((entry) => {
+        const file = path.join(entry.parentPath, entry.name);
+        const relative = path.relative(gameDir, file).replace(/\\/g, "/");
+        return { path: relative, sha: crypto.createHash("sha1").update(fs.readFileSync(file)).digest("hex"), file };
+      });
+  };
+  const readLoose = async (entry) => fs.readFileSync(entry.file);
+
+  return { vpkDir, gameDir, manifestId: installedManifest(gameDir), readFiles, looseFiles, readLoose, release: () => {} };
 }
 
 // The manifest of the main depot from Steam's appmanifest_570.acf, next to steamapps/common

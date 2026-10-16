@@ -5,7 +5,7 @@
 //   HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
 //   HF_TOKEN=... node data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads to the dataset: data/*.json, data/i18n/<language>.json, images/...png.
+// Uploads to the dataset: data/*.json, data/i18n/<language>.json, images/...png, videos/heroes/...webm.
 // Nothing is done when the game did not update since the last run (data-state.json),
 // and only new or changed images are converted again.
 const fs = require("fs");
@@ -20,6 +20,8 @@ const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Vi
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const IMAGE_FOLDERS = ["panorama/images/heroes/", "panorama/images/spellicons/", "panorama/images/items/"];
 const STATE_FILE = "data-state.json";
+// The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
+const VIDEO_FOLDER = "panorama/videos/heroes/";
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -40,7 +42,8 @@ async function main() {
   fs.mkdirSync(temp, { recursive: true });
   const source = game ? localSource(game) : await steamSource(username, password, temp);
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
-  if (!force && source.manifestId && state.manifest === source.manifestId) {
+  // A state from before the videos were exported has them still to do
+  if (!force && source.manifestId && state.manifest === source.manifestId && state.videos) {
     console.log(`Game data of manifest ${source.manifestId} is already exported.`);
     return;
   }
@@ -86,12 +89,15 @@ async function main() {
 
   const images = await exportImages(source, state.images ?? {});
   console.log(`${images.files.length} new or changed portraits and icons`);
+  const videos = await exportVideos(source, state.videos ?? {});
+  console.log(`${videos.files.length} new or changed hero animations`);
 
   if (upload) {
     const repo = await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_REPO);
     await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update game data");
     await hf.upload(repo, process.env.HF_TOKEN, images.files, "Update portraits and icons");
-    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, images: images.crcs }));
+    await hf.upload(repo, process.env.HF_TOKEN, videos.files, "Update hero animations");
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, images: images.crcs, videos: videos.shas }));
   } else {
     console.log(`Written to ${out}`);
   }
@@ -178,7 +184,7 @@ async function readTreasures() {
   return treasures;
 }
 
-// Texts per language: abilities and items, hero names, facets, lore and the hero grid's interface
+// Texts per language: abilities and items, hero names, facets and lore
 function readTexts(read, files) {
   const result = {};
   for (const file of files.keys()) {
@@ -188,16 +194,25 @@ function readTexts(read, files) {
     }
     const [, kind, language] = match;
     const tokens = read(file).root.lang?.Tokens ?? {};
-    // Of the game's interface texts, those the viewer shows: the hero grid, its filters and categories
-    const keep =
-      kind === "dota"
-        ? Object.entries(tokens).filter(([key]) =>
-            /^npc_dota_hero_|facet|herorole|^DOTA_HeroGrid_|^DOTA_HeroComplexity|^DOTA_HeroTags$|^DOTA_HeroSelectorCategory_/i.test(key)
-          )
-        : Object.entries(tokens);
+    const keep = kind === "dota" ? Object.entries(tokens).filter(([key]) => /^npc_dota_hero_|facet|herorole/i.test(key)) : Object.entries(tokens);
     Object.assign((result[language] ??= {}), Object.fromEntries(keep));
   }
   return result;
+}
+
+// The heroes' animated portraits as they are, .webm; only those whose content changed
+async function exportVideos(source, known) {
+  const all = source.looseFiles(VIDEO_FOLDER).filter((entry) => entry.path.endsWith(".webm"));
+  const shas = Object.fromEntries(all.map((entry) => [entry.path, entry.sha]));
+  const files = [];
+  const out = path.join(temp, "videos");
+  for (const entry of all.filter((entry) => known[entry.path] !== entry.sha)) {
+    const file = path.join(out, path.basename(entry.path));
+    fs.mkdirSync(out, { recursive: true });
+    fs.writeFileSync(file, await source.readLoose(entry));
+    files.push({ path: `videos/heroes/${path.basename(entry.path)}`, file });
+  }
+  return { files, shas };
 }
 
 // Portraits, hero icons, ability and item icons as PNGs; only those whose CRC changed

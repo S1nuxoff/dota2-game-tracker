@@ -34,12 +34,14 @@ const IMAGE_FOLDERS = [
   "panorama/images/primary_attribute_icons/",
   "panorama/images/hero_complexity_",
   "panorama/images/hud/reborn/icon_",
+  // The mask the hero page's scene is seen through, fading its sides and floor into the dark
+  "panorama/images/masks/hero_model_preview_mask_loadout_psd",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 4;
+const DATA_VERSION = 5;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";

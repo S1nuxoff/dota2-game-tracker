@@ -41,7 +41,7 @@ const IMAGE_FOLDERS = [
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 5;
+const DATA_VERSION = 6;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -111,6 +111,7 @@ async function main() {
     }),
   ];
 
+  uploads.push(...(await portraitAtlas(source)));
   const images = await exportImages(source, state.images ?? {});
   console.log(`${images.files.length} new or changed portraits and icons`);
   const videos = await exportVideos(source, state.videos ?? {});
@@ -330,6 +331,59 @@ async function exportVideos(source, known) {
 }
 
 // Portraits, hero icons, ability and item icons as PNGs; only those whose CRC changed
+// Every hero's tall portrait of the hero grid in one image, so the grid loads in one request:
+// images/heroes/selection_atlas.webp and .json { "<hero>": [x, y, width, height], width, height }
+async function portraitAtlas(source) {
+  const pattern = /^panorama\/images\/heroes\/selection\/npc_dota_hero_(\w+)_png\.vtex_c$/;
+  const wanted = source.vpkDir.files.filter((file) => pattern.test(file));
+  if (wanted.length === 0) {
+    return [];
+  }
+  const files = new Map();
+  await source.readFiles(wanted, files);
+  const input = path.join(temp, "portraits");
+  const out = path.join(temp, "portraits-out");
+  for (const [file, buffer] of files) {
+    fs.mkdirSync(path.dirname(path.join(input, file)), { recursive: true });
+    fs.writeFileSync(path.join(input, file), buffer);
+  }
+  const result = spawnSync(DECOMPILER, ["-i", input, "--recursive", "-o", out, "-d", "--threads", "8"], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
+  if (result.error) {
+    throw result.error;
+  }
+  const portraits = wanted
+    .map((file) => [file.match(pattern)[1], path.join(out, file.replace(/\.vtex_c$/, ".png"))])
+    .filter(([, png]) => fs.existsSync(png))
+    .sort(([a], [b]) => a.localeCompare(b));
+  if (portraits.length === 0) {
+    return [];
+  }
+  const { width: cellWidth, height: cellHeight } = await sharp(portraits[0][1]).metadata();
+  const columns = Math.ceil(Math.sqrt(portraits.length * (cellHeight / cellWidth)));
+  const rows = Math.ceil(portraits.length / columns);
+  const sheet = { width: columns * cellWidth, height: rows * cellHeight };
+  const composites = [];
+  for (const [index, [hero, png]] of portraits.entries()) {
+    const left = (index % columns) * cellWidth;
+    const top = Math.floor(index / columns) * cellHeight;
+    sheet[hero] = [left, top, cellWidth, cellHeight];
+    composites.push({ input: await sharp(png).resize(cellWidth, cellHeight, { fit: "fill" }).toBuffer(), left, top });
+  }
+  const image = path.join(temp, "out/images/heroes/selection_atlas.webp");
+  fs.mkdirSync(path.dirname(image), { recursive: true });
+  await sharp({ create: { width: sheet.width, height: sheet.height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(composites)
+    .webp({ quality: 90 })
+    .toFile(image);
+  const json = image.replace(/\.webp$/, ".json");
+  fs.writeFileSync(json, JSON.stringify(sheet));
+  console.log(`Hero grid portraits: ${portraits.length} in one atlas`);
+  return [
+    { path: "images/heroes/selection_atlas.webp", file: image },
+    { path: "images/heroes/selection_atlas.json", file: json },
+  ];
+}
+
 async function exportImages(source, known) {
   const { vpkDir } = source;
   const all = vpkDir.files.filter((file) => file.endsWith(".vtex_c") && IMAGE_FOLDERS.some((folder) => file.startsWith(folder)));

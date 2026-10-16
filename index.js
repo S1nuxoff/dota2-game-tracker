@@ -11,7 +11,8 @@ const { exportSkins } = require("./skins");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
 
-const temp = "./temp";
+// Its own folder: other exports (sounds, scenes) run in ./temp next to it
+const temp = "./temp/models";
 const packPath = `${temp}/models.vpk`;
 const exportDir = `${temp}/export`;
 const distDir = `${temp}/dist`;
@@ -81,7 +82,7 @@ async function main() {
   const maxDuration = game ? Infinity : CI_MAX_DURATION;
 
   const items = await loadItems();
-  const heroes = await loadHeroModels(source);
+  const { heroes, personas } = await loadHeroModels(source);
 
   // Heroes and what they wear by default first, so heroes show up complete early on
   const forHero = (item) => !onlyHero || item.heroes.includes(`npc_dota_hero_${onlyHero}`);
@@ -95,6 +96,9 @@ async function main() {
       ...Object.entries(heroes)
         .filter(([key]) => !onlyHero || key === `npc_dota_hero_${onlyHero}`)
         .map(([, model]) => model),
+      ...Object.entries(personas)
+        .filter(([key]) => !onlyHero || key === `npc_dota_hero_${onlyHero}`)
+        .flatMap(([, models]) => models),
       ...modelsWhere((item) => item.prefab === "default_item"),
       ...modelsWhere((item) => item.prefab !== "default_item"),
     ]),
@@ -150,7 +154,7 @@ async function main() {
     saveState(state);
     source.release();
     // The viewer reads the index, so models show up there batch by batch
-    await uploadIndex(repo, accessToken, items, heroes, state);
+    await uploadIndex(repo, accessToken, items, heroes, state, personas);
 
     const done = Math.min(i + BATCH_SIZE, todo.length);
     const minutes = (Date.now() - START_TIME) / 60000;
@@ -163,11 +167,11 @@ async function main() {
 
   state.manifest = source.manifestId ?? state.manifest;
   saveState(state);
-  await uploadIndex(repo, accessToken, items, heroes, state);
+  await uploadIndex(repo, accessToken, items, heroes, state, personas);
 }
 
-async function uploadIndex(repo, accessToken, items, heroes, state) {
-  const index = buildIndex(items, heroes, state);
+async function uploadIndex(repo, accessToken, items, heroes, state, personas) {
+  const index = buildIndex(items, heroes, state, personas);
   const indexFile = `${temp}/index.json`;
   // The viewer checks this small list for new models, not the whole index
   const exportedFile = `${temp}/exported.json`;
@@ -283,7 +287,8 @@ function skinsWanted(items) {
   return wanted;
 }
 
-// { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }
+// { heroes: { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }, personas: { hero: [model, ...] } }
+// Personas are a hero's other bodies (the female Anti-Mage), the Model lines after the first.
 // npc_heroes.txt may only #base the per-hero files in scripts/npc/heroes/
 async function loadHeroModels(source) {
   const paths = source.vpkDir.files.filter((file) => file === HEROES_FILE || HERO_FILES.test(file));
@@ -291,22 +296,32 @@ async function loadHeroModels(source) {
   await source.readFiles(paths, files);
 
   const heroes = {};
+  const personas = {};
   for (const content of files.values()) {
     let hero = null;
+    let inPersona = false;
     for (const line of content.toString("utf8").split("\n")) {
       const heroKey = line.match(/^\s*"(npc_dota_hero_\w+)"\s*$/);
       if (heroKey) {
         hero = heroKey[1] === "npc_dota_hero_base" ? null : heroKey[1];
         continue;
       }
+      // A hero's Persona block gives the persona's model
+      if (/^\s*"Persona"\s*$/.test(line)) {
+        inPersona = true;
+        continue;
+      }
       const model = line.match(/^\s*"Model"\s+"([^"]+\.vmdl)"/i);
       if (hero && model && !heroes[hero]) {
         heroes[hero] = model[1].toLowerCase();
+      } else if (hero && model && inPersona) {
+        (personas[hero] ??= []).push(model[1].toLowerCase());
+        inPersona = false;
       }
     }
   }
-  console.log(`Hero files: ${paths.length}, heroes with a model: ${Object.keys(heroes).length}`);
-  return heroes;
+  console.log(`Hero files: ${paths.length}, heroes with a model: ${Object.keys(heroes).length}, with personas: ${Object.keys(personas).length}`);
+  return { heroes, personas };
 }
 
 function hasChanged(entry, vpkDir) {
@@ -434,17 +449,21 @@ function glbPath(model) {
 
 // What the viewer needs: which models show each hero and item, which of them are
 // exported so far, and which have material variants
-function buildIndex(items, heroes, state) {
+function buildIndex(items, heroes, state, personas = {}) {
   const index = {
     manifest: state.manifest,
     updated: new Date().toISOString(),
     heroes: {},
+    personas: {},
     items: {},
     exported: Object.keys(state.models).map(glbPath).sort(),
     skins: Object.keys(state.models).filter((model) => state.models[model].skins).map(glbPath).sort(),
   };
   for (const [hero, model] of Object.entries(heroes)) {
     index.heroes[hero] = glbPath(model);
+  }
+  for (const [hero, models] of Object.entries(personas)) {
+    index.personas[hero] = models.map(glbPath);
   }
   for (const [id, item] of Object.entries(items)) {
     index.items[id] = {

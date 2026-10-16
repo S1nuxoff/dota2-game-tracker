@@ -1,5 +1,5 @@
 {
- "manifest": "4168269591763753624",
+ "manifest": "3698789421986436638",
  "models": {
   "models/heroes/antimage/antimage_weapon.vmdl": {
    "hash": "f1fb0cb6",
@@ -172785,6 +172785,647 @@
     "models/heroes/techies/fx_techies_remote_cart.vmdl_c",
     "models/heroes/techies/fx_techies_remote_cart/unnamed_1_vmorf.vtex_c",
     "models/items/techies/techies_mad_tex_arms/techies_mad_tex_arms.vmdl_c"
+   ]
+  },
+  "models/heroes/antimage_female/antimage_female.vmdl": {
+   "hash": "2d542e28",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_body.vmat_c",
+    "materials/models/heroes/antimage_female/am_female_face.vmat_c",
+    "materials/models/heroes/antimage_female/am_female_face_vmat_g_tdetail_7b0611a9.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_face_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_lower.vmat_c",
+    "materials/models/heroes/antimage_female/am_female_lower_vmat_g_tcubemapseparatemask_670d93d.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_lower_vmat_g_tdetail2_b4a7ae27.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_sdhow_eye.vmat_c",
+    "materials/models/heroes/antimage_female/am_female_sdhow_eye_vmat_g_tdetail2_e1b1dbb9.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_sdhow_eye_vmat_g_tfresnelwarp_c347c5c5.vtex_c",
+    "materials/models/heroes/antimage_female/am_female_sdhow_eye_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_body_color_psd_5cb0e9ee.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_body_diffusemask_psd_384e1be1.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_body_normal_psd_9e63dddf.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_body_specmask_psd_5551ad00.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_face_color_psd_c0fca84a.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_face_normal_psd_35302a52.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_face_specmask_psd_d0a8d6cd.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_lower_color_psd_3c29854a.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_lower_metalnessmask_psd_d68210d0.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_lower_normal_psd_fb866293.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_lower_specmask_psd_e865f5e0.vtex_c",
+    "materials/models/heroes/antimage_female/am_persona_shadoweye_trans_psd_444e1282.vtex_c",
+    "materials/models/heroes/antimage_female/anti_mage_female_cube_psd_9e9ebdbb.vtex_c",
+    "materials/models/heroes/antimage_female/anti_mage_female_diffusewarp_psd_dfb2812c.vtex_c",
+    "materials/models/heroes/mars/mars_fresnelwarprim_psd_aad1d229.vtex_c",
+    "models/heroes/antimage_female/antimage_female.vmdl_c",
+    "models/heroes/antimage_female/antimage_female/antimage_female_base_vmorf.vtex_c"
+   ]
+  },
+  "models/items/axe/axe_carnival/axe_carnival_base.vmdl": {
+   "hash": "c4f66b7e",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/razor_arcana_metal_alt_cube_psd_80449759.vtex_c",
+    "materials/models/heroes/axe/axe_body_metalnessmask_tga_44daafd5.vtex_c",
+    "materials/models/heroes/axe/axe_body_normal_psd_2e7a70df.vtex_c",
+    "materials/models/heroes/axe/axe_body_specmask_tga_d60a46e6.vtex_c",
+    "materials/models/heroes/earthshaker/totem_glow_detail_psd_18178a35.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_body.vmat_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_body_color_psd_f8552525.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_body_cubemap_mask_psd_ce433fe8.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_body_normal_psd_40e6e7e3.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_body_selfillum_psd_e5874d3d.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_body_specmask_psd_c5a3253c.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_head.vmat_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_head_color_psd_472d9b5b.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_head_metalnessmask_psd_ca41e600.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_head_normal_psd_29dfb600.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_head_specmask_psd_18a0e13e.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_shoulders.vmat_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_shoulders_color_psd_fb0c4c87.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_shoulders_metalnessmask_psd_6ad39eac.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_shoulders_normal_psd_c4041a25.vtex_c",
+    "materials/models/items/axe/axe_carnival/axe_carnival_shoulders_specmask_psd_8b831c2d.vtex_c",
+    "materials/models/items/heroes/fall20/axe/axe_fall20_body.vmat_c",
+    "materials/models/items/heroes/fall20/axe/axe_spooky_body_color_psd_c2f41a9f.vtex_c",
+    "models/items/axe/axe_carnival/axe_carnival_base.vmdl_c",
+    "models/items/axe/axe_carnival/axe_carnival_base/axe_carnival_head_lod0_vmorf.vtex_c",
+    "models/items/axe/axe_carnival/axe_carnival_base/axe_carnival_head_lod1_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/beastmaster/beastmaster_bird.vmdl": {
+   "hash": "c4cb59",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/beastmaster/bird_color.vmat_c",
+    "materials/models/heroes/beastmaster/bird_color_psd_e1f0d65b.vtex_c",
+    "materials/models/heroes/beastmaster/bird_detailmask_tga_c3697238.vtex_c",
+    "materials/models/heroes/beastmaster/bird_normal_psd_ea11ebcb.vtex_c",
+    "materials/models/heroes/beastmaster/bird_specmask_tga_db5feaec.vtex_c",
+    "models/heroes/beastmaster/beastmaster_bird.vmdl_c"
+   ]
+  },
+  "models/heroes/beastmaster/beastmaster_beast.vmdl": {
+   "hash": "2604cb18",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/beastmaster/beastmaster_beast_color.vmat_c",
+    "materials/models/heroes/beastmaster/beastmaster_beast_color_psd_d11b0e41.vtex_c",
+    "materials/models/heroes/beastmaster/beastmaster_beast_normal_psd_c6b39263.vtex_c",
+    "materials/models/heroes/beastmaster/beastmaster_beast_selfillummask_tga_3f825bf5.vtex_c",
+    "materials/models/heroes/beastmaster/beastmaster_beast_specmask_tga_6aea21d0.vtex_c",
+    "models/heroes/beastmaster/beastmaster_beast.vmdl_c"
+   ]
+  },
+  "models/items/bristleback/bristlebot/bristlebot.vmdl": {
+   "hash": "e32f7fbc",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_broad_cube_tga_efb6836f.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_arms.vmat_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_arms_color_psd_b5e231d8.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_arms_cubemaskmask_psd_39dae418.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_arms_metalnessmask_psd_bbec193c.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_arms_normal_png_387d274d.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_arms_specmask_psd_1e8dbba6.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head.vmat_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head_color_psd_f9ae5070.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head_cubemask_psd_ab014681.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head_detail_psd_2608e552.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head_detailmask_psd_e8ce925f.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head_normal_psd_bd00d724.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_head_specmask_psd_3fb24013.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_neck.vmat_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_neck_color_psd_1f7ceb94.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_neck_cubemask_psd_f6e851f.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_neck_metalnessmask_psd_4d1aa182.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_neck_normal_psd_b96ce661.vtex_c",
+    "materials/models/items/bristleback/bristlebot/dark_carnival_bristlebot_neck_specmask_psd_cc1a1b9c.vtex_c",
+    "models/items/bristleback/bristlebot/bristlebot.vmdl_c",
+    "models/items/bristleback/bristlebot/bristlebot/base_lod0_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/broodmother/spiderling.vmdl": {
+   "hash": "e2f04bb1",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/broodmother/spiderling.vmat_c",
+    "materials/models/heroes/broodmother/spiderling_color_psd_7bdb8684.vtex_c",
+    "materials/models/heroes/broodmother/spiderling_normal_psd_4169d92e.vtex_c",
+    "materials/models/heroes/broodmother/spiderling_selfillummask_tga_fa802aaf.vtex_c",
+    "materials/models/heroes/broodmother/spiderling_specmask_tga_6ec8e446.vtex_c",
+    "models/heroes/broodmother/spiderling.vmdl_c"
+   ]
+  },
+  "models/heroes/crystal_maiden_persona/crystal_maiden_persona.vmdl": {
+   "hash": "b9d31749",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/dota_default_cube_tga_c95513b9.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona.vmat_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_base_color_tga_2833eed3.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_base_detailmask_tga_4661ee71.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_base_normal_tga_731fa9a.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_base_specmask_tga_72bf8807.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_motion_detail_wswl_psd_e742664c.vtex_c",
+    "materials/models/heroes/drow/diffusewarp_fresnelwarprim_tga_f219f306.vtex_c",
+    "models/heroes/crystal_maiden_persona/crystal_maiden_persona.vmdl_c",
+    "models/heroes/crystal_maiden_persona/crystal_maiden_persona/crystal_maiden_persona_lod1_vmorf.vtex_c",
+    "models/heroes/crystal_maiden_persona/crystal_maiden_persona/crystal_maiden_persona_vmorf.vtex_c",
+    "models/heroes/crystal_maiden_persona/crystal_maiden_persona_ult_model.vmdl_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff.vmat_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_color_png_f3681785.vtex_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_normal_png_c534e6a9.vtex_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_vmat_g_tmasks1_b4f03311.vtex_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_vmat_g_tmasks2_daa4f96f.vtex_c"
+   ]
+  },
+  "models/heroes/dragon_knight_persona/dk_persona_base.vmdl": {
+   "hash": "9b4a6bcf",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/creeps/roshan/roshan_fresnelwarprim_tga_b7da9b59.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/body/body_color_tga_53ded0c9.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/body/body_normal_tga_be18e61.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/body/body_rimmask_psd_9cf4a9ad.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/dragon_knight_persona_body.vmat_c",
+    "materials/models/heroes/dragon_knight_persona/dragon_knight_persona_body_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/dragon_knight_persona_head.vmat_c",
+    "materials/models/heroes/dragon_knight_persona/dragon_knight_persona_head_vmat_g_tcubemapseparatemask_2a5a2fce.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/head/head_color_psd_3c2d134b.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/head/head_normal_psd_4d88cbf7.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/head/head_selfillummask_psd_8fa9f4b7.vtex_c",
+    "materials/models/heroes/dragon_knight_persona/head/head_specmask_psd_72d66eb3.vtex_c",
+    "materials/models/heroes/snapfire/snapfire_lizard_cube_psd_42e2cb91.vtex_c",
+    "models/heroes/dragon_knight_persona/dk_persona_base.vmdl_c",
+    "models/heroes/dragon_knight_persona/dk_persona_base/davion_vmorf.vtex_c",
+    "models/heroes/hoodwink/debut/materials/cubemaps/glossy_broad_cube_tga_8af22d80.vtex_c"
+   ]
+  },
+  "models/heroes/enigma/eidelon.vmdl": {
+   "hash": "b5f631da",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/enigma/eidelon_color_psd_90314cc3.vtex_c",
+    "materials/models/heroes/enigma/eidelon_detailmask_tga_28d7a56e.vtex_c",
+    "materials/models/heroes/enigma/eidelon_normals_normal_psd_6945fe3b.vtex_c",
+    "materials/models/heroes/enigma/eidelon_rimmask_tga_f24d0d1c.vtex_c",
+    "materials/models/heroes/enigma/enigma_eidelon.vmat_c",
+    "materials/models/heroes/enigma/enigma_motion_detail_psd_13623c67.vtex_c",
+    "models/heroes/enigma/eidelon.vmdl_c"
+   ]
+  },
+  "models/heroes/furion/treant.vmdl": {
+   "hash": "fc7af62c",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/development/flatnormal_normal_psd_b51689c6.vtex_c",
+    "materials/models/heroes/furion/treant_color.vmat_c",
+    "materials/models/heroes/furion/treant_color_psd_8929ae41.vtex_c",
+    "materials/models/heroes/furion/treant_detailmask_tga_6232ccc7.vtex_c",
+    "materials/models/heroes/furion/treant_leaves.vmat_c",
+    "materials/models/heroes/furion/treant_leaves_color_specmask_tga_3667bc9f.vtex_c",
+    "materials/models/heroes/furion/treant_leaves_color_tga_1e650e1d.vtex_c",
+    "materials/models/heroes/furion/treant_normal_tga_417ae12b.vtex_c",
+    "materials/models/heroes/furion/treant_specmask_tga_30e6074d.vtex_c",
+    "models/heroes/furion/treant.vmdl_c"
+   ]
+  },
+  "models/heroes/gyro/gyro_sidegunner.vmdl": {
+   "hash": "b279ec19",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/gyro/gyro_sidegunner.vmat_c",
+    "materials/models/heroes/gyro/gyro_sidegunner_color_psd_f4ab8d49.vtex_c",
+    "materials/models/heroes/gyro/gyro_sidegunner_metalnessmask_psd_51f8b295.vtex_c",
+    "materials/models/heroes/gyro/gyro_sidegunner_normal_psd_299bd949.vtex_c",
+    "materials/models/heroes/gyro/gyro_sidegunner_specmask_psd_86782730.vtex_c",
+    "models/heroes/gyro/gyro_sidegunner.vmdl_c"
+   ]
+  },
+  "models/heroes/invoker_kid/invoker_kid.vmdl": {
+   "hash": "b08f64c4",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_body.vmat_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_body_color_psd_77bd4cde.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_body_diffusemask_psd_5a526a8.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_body_normal_psd_3d471306.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_body_specmask_psd_8ffca882.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_cube_psd_eab6e90d.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_diffusewarp_psd_69c09bb5.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_fresnelwarprim_psd_49def794.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_head.vmat_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_head_color_psd_1267645.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_head_normal_psd_ae5a9a3e.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_head_selfillummask_psd_33b482d2.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_head_specmask_psd_d7ff47ba.vtex_c",
+    "materials/models/items/invoker_kid/the_little_thief_of_kazim_shoulder_blue/the_little_thief_of_kazim_shoulder_blue.vmat_c",
+    "materials/models/items/invoker_kid/the_little_thief_of_kazim_shoulder_blue/the_little_thief_of_kazim_shoulder_blue_color_tga_e194756.vtex_c",
+    "materials/models/items/invoker_kid/the_little_thief_of_kazim_shoulder_blue/the_little_thief_of_kazim_shoulder_blue_detailmask_tga_5802d662.vtex_c",
+    "materials/models/items/invoker_kid/the_little_thief_of_kazim_shoulder_blue/the_little_thief_of_kazim_shoulder_blue_normal_tga_485b6351.vtex_c",
+    "materials/models/items/invoker_kid/the_little_thief_of_kazim_shoulder_blue/the_little_thief_of_kazim_shoulder_blue_specmask_tga_81ba44ed.vtex_c",
+    "models/heroes/invoker_kid/invoker_kid.vmdl_c",
+    "models/heroes/invoker_kid/invoker_kid/invoker_kid_vmorf.vtex_c",
+    "models/items/invoker_kid/the_little_thief_of_kazim_shoulder_blue/the_little_thief_of_kazim_rug.vmdl_c"
+   ]
+  },
+  "models/heroes/invoker/forge_spirit.vmdl": {
+   "hash": "34ebf76b",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/development/flatnormal_normal_psd_b51689c6.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_color.vmat_c",
+    "materials/models/heroes/invoker/forge_spirit_color_psd_ecbb7038.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_motion_detail_psd_e851fc49.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_rimmask_tga_56cb4b11.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_rocks_color.vmat_c",
+    "materials/models/heroes/invoker/forge_spirit_rocks_color_psd_194c07ec.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_rocks_normal_tga_11be8671.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_rocks_selfillummask_tga_b0900972.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_rocks_specmask_tga_fa8694d7.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_selfillummask_tga_85ae246a.vtex_c",
+    "models/heroes/invoker/forge_spirit.vmdl_c"
+   ]
+  },
+  "models/items/legion_commander/dark_carnival_legion_commander/dark_carnival_legion_commander_base.vmdl": {
+   "hash": "d73552ae",
+   "deps": [
+    "materials/cubemaps/bronze_day_contrast_cube_psd_be2fead9.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/courier/aghanim_courier/aghanim_courier_gold_cube_psd_36f0ff1b.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_arms.vmat_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_arms_color_psd_52427682.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_arms_metalnessmask_psd_2e0f159.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_arms_metalnessmask_psd_390969bc.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_arms_normal_psd_d46ac0a0.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_arms_specmask_psd_b26d475f.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_back.vmat_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_back_color_psd_44eb3b06.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_back_metalnessmask_psd_50d23e.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_back_normal_psd_bfba9433.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_back_specmask_psd_8d4b4edc.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_base.vmat_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_base_color_psd_ea3d6041.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_base_metalnessmask_psd_a1914eb9.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_base_normal_psd_be6e2170.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_base_rimmask_psd_774a6950.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_base_specmask_psd_4a004e64.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_helmet.vmat_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_helmet_color_psd_5624eea3.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_helmet_metalnessmask_psd_693b1311.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_helmet_normal_psd_3fb8640d.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_helmet_rimmask_psd_fa70cfc9.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_helmet_specmask_psd_8c803673.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_leg_color_psd_aeead366.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_leg_metalnessmask_psd_8fec94aa.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_leg_metalnessmask_psd_9d207972.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_leg_normal_psd_efabba2e.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_leg_specmask_psd_29a63aaf.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_legs.vmat_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_shoulders.vmat_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_shoulders_color_psd_ae39f2bf.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_shoulders_metalnessmask_psd_a8f41d45.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_shoulders_metalnessmask_psd_b2798d1b.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_shoulders_normal_psd_9f6a2c4a.vtex_c",
+    "materials/models/items/legion_commander/dark_carnival_legion_commander/lc_automaton_shoulders_specmask_psd_40107c65.vtex_c",
+    "models/items/legion_commander/dark_carnival_legion_commander/dark_carnival_legion_commander_back_death.vmdl_c",
+    "models/items/legion_commander/dark_carnival_legion_commander/dark_carnival_legion_commander_base.vmdl_c",
+    "models/items/legion_commander/dark_carnival_legion_commander/dark_carnival_legion_commander_base/dc_base_lod0_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/lich/ice_spire.vmdl": {
+   "hash": "854cfa1",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/lich/ice_spire_color.vmat_c",
+    "materials/models/heroes/lich/ice_spire_color_psd_c9d766b4.vtex_c",
+    "materials/models/heroes/lich/ice_spire_detailmask_tga_2a1416a8.vtex_c",
+    "materials/models/heroes/lich/ice_spire_normal_tga_c027f555.vtex_c",
+    "materials/models/heroes/lich/ice_spire_specmask_tga_98cc0931.vtex_c",
+    "materials/models/heroes/obsidian_destroyer/obsidian_destroyer_motion2_detail_psd_28318880.vtex_c",
+    "models/heroes/lich/ice_spire.vmdl_c",
+    "models/heroes/lich/ice_spire/ice_spire_vmorf.vtex_c"
+   ]
+  },
+  "models/props_gameplay/frog.vmdl": {
+   "hash": "add8e8cb",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/props_gameplay/frog.vmat_c",
+    "materials/models/props_gameplay/frog_color_psd_81b84ef7.vtex_c",
+    "materials/models/props_gameplay/frog_normal_psd_3f24d296.vtex_c",
+    "models/props_gameplay/frog.vmdl_c"
+   ]
+  },
+  "models/heroes/mirana_persona/mirana_persona_base.vmdl": {
+   "hash": "88a0cb9c",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_arrow.vmat_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_arrow_color_psd_89647b83.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_arrow_metalnessmask_psd_d52af63b.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_arrow_normal_psd_a6b1fc02.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_arrow_specmask_psd_6eb7f3f1.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_base.vmat_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_base_color_psd_b7c7ee95.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_base_normal_psd_7a88e81.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_base_specmask_psd_240741aa.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_base_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_base_vmat_g_tmasks1_b9053fff.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_diffusewarp_psd_82e74208.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_head.vmat_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_head_color_psd_1e22e7c9.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_head_normal_psd_d6e40019.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_head_specmask_psd_6a11441b.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_head_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/heroes/mirana_persona/mirana_persona_head_vmat_g_tmasks1_b9053fff.vtex_c",
+    "materials/models/items/queenofpain/queenofpain_arcana/queenofpain_arcana_base_style1_cube_psd_b9e77b0b.vtex_c",
+    "models/heroes/mirana_persona/mirana_persona_base.vmdl_c",
+    "models/heroes/mirana_persona/mirana_persona_base/mirana_lod1_model_vmorf.vtex_c",
+    "models/heroes/mirana_persona/mirana_persona_base/mirana_model_vmorf.vtex_c"
+   ]
+  },
+  "models/items/morphling/morphling_automaton/morphling_automaton.vmdl": {
+   "hash": "fbd8a7de",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/cubemaps/glossy_terrorblade_cube_tga_76826f2f.vtex_c",
+    "materials/models/heroes/axe/axe_fresnelwarprim_tga_39db9975.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morph_carnival_fresnelwarprim_psd_97d75f13.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_cube_psd_f91aeaa3.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_detail_psd_28a415c4.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal.vmat_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_color_psd_3ec70108.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_detailmask_psd_a1e4775b.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_normal_psd_1fc785d9.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_specmask_psd_74e0a9bf.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_carnival_diffusewarp_psd_19bf16af.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood.vmat_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_color_psd_458a6a17.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_detailmask_psd_fd39367c.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_normal_psd_8f421f17.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_specmask_psd_86e7b63a.vtex_c",
+    "models/items/morphling/morphling_automaton/morphling_automaton.vmdl_c",
+    "models/items/morphling/morphling_automaton/morphling_automaton/base_lod0_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/nightstalker/nightstalker_night.vmdl": {
+   "hash": "79be098a",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/nightstalker/nightstalker_base.vmat_c",
+    "materials/models/heroes/nightstalker/nightstalker_base_color_psd_af9f3cb2.vtex_c",
+    "materials/models/heroes/nightstalker/nightstalker_base_detail_psd_f70747a4.vtex_c",
+    "materials/models/heroes/nightstalker/nightstalker_base_detailmask_tga_dd60c6a9.vtex_c",
+    "materials/models/heroes/nightstalker/nightstalker_base_normal_psd_1d75c093.vtex_c",
+    "materials/models/heroes/nightstalker/nightstalker_base_specmask_tga_d6ac737f.vtex_c",
+    "materials/models/heroes/sven/sven_diffusewarp_psd_30cf60b.vtex_c",
+    "models/heroes/nightstalker/nightstalker_night.vmdl_c",
+    "models/heroes/nightstalker/nightstalker_night/nightstalker_night_base_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/nerubian_assassin/mound.vmdl": {
+   "hash": "3d688e8c",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/nyx/mound_color.vmat_c",
+    "materials/models/heroes/nyx/mound_color_psd_88a11e0c.vtex_c",
+    "materials/models/heroes/nyx/mound_normal_psd_6d202639.vtex_c",
+    "models/heroes/nerubian_assassin/mound.vmdl_c"
+   ]
+  },
+  "models/items/oracle/oracle_carnival/oracle_carnival_base_body.vmdl": {
+   "hash": "f8b023d9",
+   "deps": [
+    "maps/reef_assets/characters/hatchetfish/darkreef_hatchetfish_cube_psd_fda3eed.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/mars/mars_colosseum_flames_detail_psd_e87b346c.vtex_c",
+    "materials/models/items/earthshaker/earthshaker_arcana/earthshaker_arcana_antler_detail2_psd_616a34a.vtex_c",
+    "materials/models/items/mirana/meoth_luminous_priestess_meoth/meoth_luminous_priestess_meoth_detail_psd_883359d4.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_armor.vmat_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_armor_color_psd_e0094b90.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_armor_detailmask_psd_6f993624.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_armor_normal_tga_da51d224.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_armor_specmask_psd_b7bdf365.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_base_body.vmat_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_base_body_color_psd_600c127d.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_base_body_detailmask_tga_46606495.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_base_body_normal_tga_e35cb429.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_base_body_specmask_psd_8bf96a3a.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_base_body_vmat_g_tcubemapseparatemask_2a5a2fce.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_head.vmat_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_head_color_psd_c24d827c.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_head_normal_tga_67a0990a.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_head_selfillummask_tga_bd610c4e.vtex_c",
+    "materials/models/items/oracle/oracle_carnival/oracle_carnival_head_specmask_psd_afb81559.vtex_c",
+    "models/items/oracle/oracle_carnival/oracle_carnival_base_body.vmdl_c",
+    "models/items/oracle/oracle_carnival/oracle_carnival_base_body/base_lod0_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/pangolier/pangolier_gyroshell2.vmdl": {
+   "hash": "b3f393e0",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell.vmat_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell_color_psd_8ddfc9a3.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell_normal_psd_28c2c1e.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell_selfillummask_psd_71751878.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell_specmask_psd_bbf3b1a1.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell_specmask_psd_bd9bcd41.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_gyroshell_vmat_g_tdetail_74318663.vtex_c",
+    "models/heroes/pangolier/pangolier_gyroshell2.vmdl_c",
+    "models/heroes/pangolier/pangolier_gyroshell2/pangolier_gyroshell_swap_model_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl": {
+   "hash": "49a97550",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_detail_empty_tga_11c22faa.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/drow/diffusewarp_diffusewarp_psd_b1607356.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_body.vmat_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_body_color_png_17e1107e.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_body_detailmask_png_b590c217.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_body_normal_png_52177ea4.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_body_specmask_png_c84de7.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_head.vmat_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_head_color_png_8fa1ed48.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_head_detailmask_png_15c1fd33.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_head_normal_png_3f514043.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_base_head_specmask_png_d5c5d543.vtex_c",
+    "materials/models/heroes/phantom_assassin_persona/pa_persona_diffusewarp_wswl_psd_49641c94.vtex_c",
+    "models/heroes/phantom_assassin_persona/phantom_assassin_persona.vmdl_c",
+    "models/heroes/phantom_assassin_persona/phantom_assassin_persona/phantom_assassin_persona_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/pudge_cute/pudge_cute.vmdl": {
+   "hash": "3d8e4de7",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute.vmat_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_calavera_head.vmat_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_calavera_head_color_psd_1d156375.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_color_tga_cf493828.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_detailmask_tga_e43a3b32.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_head.vmat_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_head_color_tga_7d7aae3b.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_head_metalnessmask_tga_2a56400b.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_head_normal_tga_7f599262.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_head_specmask_tga_f4f4d16d.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_normal_tga_18704dd7.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_specmask_tga_8c070b87.vtex_c",
+    "models/heroes/pudge_cute/pudge_cute.vmdl_c",
+    "models/heroes/pudge_cute/pudge_cute/pudge_cute_base_lod0_vmorf.vtex_c"
+   ]
+  },
+  "models/heroes/pugna/pugna_ward.vmdl": {
+   "hash": "7e7b532b",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/development/flatnormal_normal_psd_b51689c6.vtex_c",
+    "materials/models/heroes/pugna/pugna_ward.vmat_c",
+    "materials/models/heroes/pugna/pugna_ward_color_psd_888981e5.vtex_c",
+    "materials/models/heroes/pugna/pugna_ward_specmask_tga_139def45.vtex_c",
+    "models/heroes/pugna/pugna_ward.vmdl_c"
+   ]
+  },
+  "models/heroes/rattletrap/rattletrap_cog.vmdl": {
+   "hash": "a6320092",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/rattletrap/rattletrap_cog_metalnessmask_psd_38b670c8.vtex_c",
+    "materials/models/heroes/rattletrap/rattletrap_cog_normal_psd_cf49f7e7.vtex_c",
+    "materials/models/heroes/rattletrap/rattletrap_cog_specmask_psd_3bbd49de.vtex_c",
+    "materials/models/heroes/rattletrap/rattletrap_cog_specwarp_psd_951febf4.vtex_c",
+    "materials/models/heroes/rattletrap/rattletrap_cog_temp.vmat_c",
+    "materials/models/heroes/rattletrap/rattletrap_cog_temp_color_psd_7f0fb80.vtex_c",
+    "materials/models/heroes/rubick/rubick_fresnelwarpspec_tga_b045d344.vtex_c",
+    "models/heroes/rattletrap/rattletrap_cog.vmdl_c"
+   ]
+  },
+  "models/heroes/ringmaster/ringmaster_box.vmdl": {
+   "hash": "b982f399",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/courier/greevil/colorwarp_greevil_orange_colorwarp3d_z000_tga_e2ef4738.vtex_c",
+    "materials/models/courier/ram/cube_ram_dark_gold_cube_psd_af10d4bb.vtex_c",
+    "materials/models/cubemaps/glossy_blue_cube_tga_bee8895f.vtex_c",
+    "materials/models/heroes/oracle/oracle_diffusewarp_psd_70e051d5.vtex_c",
+    "materials/models/heroes/queenofpain/queenofpain_fresnelwarprim_tga_69cde192.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger.vmat_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_color_psd_47123ede.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_metalnessmask_psd_c0125b4b.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_normal_psd_89d5ff03.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_rubick_color_psd_35ac5fdf.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_rubick_detailmask_psd_782cffe8.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_rubick_specmask_psd_151f7b0c.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_rubick_specmask_psd_e4d74bd.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_specmask_psd_827e71a7.vtex_c",
+    "materials/models/heroes/ringmaster/knifewheel/ringmaster_dagger_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box.vmat_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_color_psd_71febc82.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_metalnessmask_psd_1c9f8733.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_normal_psd_2df8d1cf.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_rubick.vmat_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_rubick_color_psd_2f868026.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_rubick_detailmask_psd_77ce6b79.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_rubick_specmask_psd_3ef15772.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_rubick_specmask_psd_707324f6.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_box_specmask_psd_550b0f00.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_cube_psd_ec9f7018.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_dagger_rubick.vmat_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_lightwarp_fresnelwarpcolor_tga_49516185.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_lightwarp_fresnelwarpspec_tga_6120298c.vtex_c",
+    "materials/models/items/rubick/rubick_arcana/rubick_arcana_detail_psd_2d3b6cee.vtex_c",
+    "models/heroes/ringmaster/ringmaster_box.vmdl_c"
+   ]
+  },
+  "models/props_gameplay/chicken.vmdl": {
+   "hash": "ffa03c0b",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/development/flatnormal_normal_psd_b51689c6.vtex_c",
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/props_gameplay/chicken01.vmat_c",
+    "materials/models/props_gameplay/chicken01_color_psd_ea0ece1d.vtex_c",
+    "models/props_gameplay/chicken.vmdl_c"
+   ]
+  },
+  "models/heroes/shadowshaman/shadowshaman_totem.vmdl": {
+   "hash": "159c9672",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/development/flatnormal_normal_psd_b51689c6.vtex_c",
+    "materials/models/heroes/shadowshaman/totem_color.vmat_c",
+    "materials/models/heroes/shadowshaman/totem_color_psd_3671add3.vtex_c",
+    "materials/models/heroes/shadowshaman/totem_motion_detail_psd_29283bba.vtex_c",
+    "models/heroes/shadowshaman/shadowshaman_totem.vmdl_c"
+   ]
+  },
+  "models/heroes/venomancer/venomancer_ward.vmdl": {
+   "hash": "31868020",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/venomancer/venomancerward.vmat_c",
+    "materials/models/heroes/venomancer/venomancerward_colors_color_psd_d27ca583.vtex_c",
+    "materials/models/heroes/venomancer/venomancerward_detailmask_tga_d52d45fd.vtex_c",
+    "materials/models/heroes/venomancer/venomancerward_normals_normal_psd_79eb0c0d.vtex_c",
+    "materials/models/heroes/venomancer/venomancerward_specmask_tga_d55a80a.vtex_c",
+    "models/heroes/venomancer/venomancer_ward.vmdl_c"
+   ]
+  },
+  "models/heroes/warlock/warlock_demon.vmdl": {
+   "hash": "b92f6f2d",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/invoker/forge_spirit_motion_detail_psd_e851fc49.vtex_c",
+    "materials/models/heroes/warlock_demon/masks1_detailmask_tga_e5e3a363.vtex_c",
+    "materials/models/heroes/warlock_demon/masks2_specmask_tga_7c1a13a6.vtex_c",
+    "materials/models/heroes/warlock_demon/warlock_demon_color.vmat_c",
+    "materials/models/heroes/warlock_demon/warlock_demon_color_psd_5ca388e4.vtex_c",
+    "materials/models/heroes/warlock_demon/warlock_demon_normal_psd_cddcdd75.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "models/heroes/warlock/warlock_demon.vmdl_c"
+   ]
+  },
+  "models/heroes/weaver/weaver_bug.vmdl": {
+   "hash": "eee3d8a1",
+   "deps": [
+    "materials/models/heroes/weaver/beetle_color.vmat_c",
+    "materials/models/heroes/weaver/bug_color_psd_fd7880d0.vtex_c",
+    "models/heroes/weaver/weaver_bug.vmdl_c"
    ]
   }
  },

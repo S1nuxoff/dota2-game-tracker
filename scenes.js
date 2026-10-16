@@ -2,7 +2,8 @@
 // backgrounds, event and battle pass scenes, and the game's maps, each a .glb with its
 // textures inside. Only scenes whose files changed are exported again (scenes-state.json).
 //
-//   HF_TOKEN=... node scenes.js --game "<...>/dota 2 beta/game/dota" [--only mvp] [--limit N] [--no-upload]
+//   HF_TOKEN=... node scenes.js --game "<...>/dota 2 beta/game/dota" [--only mvp] [--limit N] [--no-upload] [--info]
+//   --info reads the lights and cameras of the scenes already exported again
 //
 // Uploads to the <user>/dota2-scenes dataset: scenes/<path>.glb and scenes.json
 const fs = require("fs");
@@ -56,6 +57,57 @@ function fingerprint(file) {
   return zlib.crc32(`${stat.size}:${stat.mtimeMs}`).toString(16);
 }
 
+// Source is Z-up, the glTF files Y-up: (x, y, z) -> (x, z, -y)
+function toGltf([x, y, z]) {
+  return [x, z, -y];
+}
+
+// The way Source angles [pitch, yaw, roll] face, in glTF axes
+function forward([pitch, yaw]) {
+  const p = (pitch * Math.PI) / 180;
+  const y = (yaw * Math.PI) / 180;
+  return toGltf([Math.cos(p) * Math.cos(y), Math.cos(p) * Math.sin(y), -Math.sin(p)]).map((value) => Number(value.toFixed(4)));
+}
+
+// What the viewer needs to light a scene and look at it the way the game does:
+// the global light, its ambient colors, the hero camera and the point lights
+function sceneInfo(file) {
+  const entities = [];
+  for (const lump of run(["-i", file, "-l"]).match(/^\S+\.vents_c/gm) ?? []) {
+    const text = run(["-i", file, "-f", lump, "-b", "DATA"]);
+    for (const [, body] of text.matchAll(/values = \s*\{([^{}]*)\}/g)) {
+      const entity = {};
+      for (const [, key, value] of body.matchAll(/^\s*(\w+) = (.+)$/gm)) {
+        entity[key.toLowerCase()] = value.startsWith('"') ? value.slice(1, -1) : value.startsWith("[") ? JSON.parse(value.replace(/(\d)\s+(?=[-\d])/g, "$1,").replace(/\[\s*,/, "[")) : Number(value);
+      }
+      entities.push(entity);
+    }
+  }
+  const numbers = (text) => (typeof text === "string" ? text.split(" ").map(Number) : [0, 0, 0]);
+  const rgb = (value, scale = 1) => (Array.isArray(value) ? value.slice(0, 3).map((part) => Number(((part / 255) * scale).toFixed(3))) : undefined);
+  const info = {};
+  const sun = entities.find((entity) => entity.classname === "env_global_light");
+  if (sun) {
+    info.light = {
+      color: rgb(sun.color, sun.lightscale ?? 1),
+      direction: forward(numbers(sun.angles)),
+      ambient: [rgb(sun.ambientcolor1, sun.ambientscale1 ?? 1), rgb(sun.ambientcolor2, sun.ambientscale2 ?? 1), rgb(sun.ambientcolor3, sun.ambientscale3 ?? 1)],
+    };
+  }
+  const camera = entities.find((entity) => entity.classname === "point_camera" && /hero_camera/.test(entity.targetname ?? ""));
+  if (camera) {
+    info.camera = { position: toGltf(numbers(camera.origin)), direction: forward(numbers(camera.angles)), fov: camera.fov ?? 30 };
+  }
+  const points = entities
+    .filter((entity) => entity.classname === "env_deferred_light" || entity.classname === "light_omni")
+    .map((entity) => ({ position: toGltf(numbers(entity.origin)), color: rgb(entity.lightcolor ?? entity.color, entity.intensity ?? entity.brightness ?? 1) }))
+    .filter((point) => point.color);
+  if (points.length) {
+    info.points = points;
+  }
+  return info;
+}
+
 async function main() {
   const game = argValue("--game");
   const only = argValue("--only");
@@ -74,6 +126,15 @@ async function main() {
     .filter((scene) => !only || scene.id.startsWith(only));
   const todo = packages.filter((scene) => state.scenes[scene.id]?.fingerprint !== fingerprint(scene.file)).slice(0, limit);
   console.log(`${packages.length} scenes and maps, ${todo.length} to export.`);
+
+  if (process.argv.includes("--info")) {
+    for (const scene of packages) {
+      if (state.scenes[scene.id] && !state.scenes[scene.id].empty) {
+        state.scenes[scene.id].info = sceneInfo(scene.file);
+      }
+    }
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
+  }
 
   const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_SCENES_REPO || "dota2-scenes") : null;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
@@ -106,7 +167,7 @@ async function main() {
     if (upload) {
       await hf.upload(repo, process.env.HF_TOKEN, [{ path: `scenes/${scene.id}.glb`, file: target }], `Scene ${scene.id}`);
     }
-    state.scenes[scene.id] = { fingerprint: fingerprint(scene.file), size };
+    state.scenes[scene.id] = { fingerprint: fingerprint(scene.file), size, info: sceneInfo(scene.file) };
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
     fs.rmSync(target, { force: true });
 
@@ -121,7 +182,7 @@ async function main() {
   const list = Object.entries(state.scenes)
     // Scenes of only particles and lights come out empty
     .filter(([, scene]) => !scene.empty && scene.size > 50000)
-    .map(([id, scene]) => ({ id, name: sceneName(id), size: scene.size, file: `scenes/${id}.glb` }))
+    .map(([id, scene]) => ({ id, name: sceneName(id), size: scene.size, file: `scenes/${id}.glb`, ...scene.info }))
     .sort((a, b) => a.id.localeCompare(b.id));
   const listFile = path.join(temp, "scenes.json");
   fs.mkdirSync(temp, { recursive: true });

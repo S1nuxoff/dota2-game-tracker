@@ -178,7 +178,7 @@ async function readTreasures() {
   return treasures;
 }
 
-// Texts per language: abilities and items, hero names, facets and lore
+// Texts per language: abilities and items, hero names, facets, lore and the hero grid's interface
 function readTexts(read, files) {
   const result = {};
   for (const file of files.keys()) {
@@ -188,7 +188,13 @@ function readTexts(read, files) {
     }
     const [, kind, language] = match;
     const tokens = read(file).root.lang?.Tokens ?? {};
-    const keep = kind === "dota" ? Object.entries(tokens).filter(([key]) => /^npc_dota_hero_|facet|herorole/i.test(key)) : Object.entries(tokens);
+    // Of the game's interface texts, those the viewer shows: the hero grid, its filters and categories
+    const keep =
+      kind === "dota"
+        ? Object.entries(tokens).filter(([key]) =>
+            /^npc_dota_hero_|facet|herorole|^DOTA_HeroGrid_|^DOTA_HeroComplexity|^DOTA_HeroTags$|^DOTA_HeroSelectorCategory_/i.test(key)
+          )
+        : Object.entries(tokens);
     Object.assign((result[language] ??= {}), Object.fromEntries(keep));
   }
   return result;

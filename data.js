@@ -11,6 +11,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const sharp = require("sharp");
 const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
@@ -18,7 +19,12 @@ const { parse } = require("./keyvalues");
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
-const IMAGE_FOLDERS = ["panorama/images/heroes/", "panorama/images/spellicons/", "panorama/images/items/"];
+const IMAGE_FOLDERS = ["panorama/images/heroes/", "panorama/images/spellicons/", "panorama/images/items/", "panorama/images/loadout_backgrounds/"];
+// The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
+const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
+const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
+// Raised when the export gains something, so a game version already exported is exported again
+const DATA_VERSION = 2;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -42,8 +48,7 @@ async function main() {
   fs.mkdirSync(temp, { recursive: true });
   const source = game ? localSource(game) : await steamSource(username, password, temp);
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
-  // A state from before the videos were exported has them still to do
-  if (!force && source.manifestId && state.manifest === source.manifestId && state.videos) {
+  if (!force && source.manifestId && state.manifest === source.manifestId && state.version === DATA_VERSION) {
     console.log(`Game data of manifest ${source.manifestId} is already exported.`);
     return;
   }
@@ -80,6 +85,7 @@ async function main() {
     write("data/neutral_items.json", neutralItems),
     write("data/treasures.json", treasures),
     ...Object.entries(i18n).map(([language, tokens]) => write(`data/i18n/${language}.json`, tokens)),
+    write("data/loadout_backgrounds.json", await readBackgrounds(source)),
     write("data/manifest.json", {
       manifest: source.manifestId,
       updated: new Date().toISOString(),
@@ -97,7 +103,7 @@ async function main() {
     await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update game data");
     await hf.upload(repo, process.env.HF_TOKEN, images.files, "Update portraits and icons");
     await hf.upload(repo, process.env.HF_TOKEN, videos.files, "Update hero animations");
-    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, images: images.crcs, videos: videos.shas }));
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ version: DATA_VERSION, manifest: source.manifestId, images: images.crcs, videos: videos.shas }));
   } else {
     console.log(`Written to ${out}`);
   }
@@ -200,6 +206,59 @@ function readTexts(read, files) {
   return result;
 }
 
+// Which backdrop each hero's page has, its tint and the gradient under it, from the game's
+// stylesheet: { mask, heroes: { lion: { image, wash, from, to } } }
+async function readBackgrounds(source) {
+  const files = new Map();
+  await source.readFiles([BACKGROUND_STYLES], files);
+  const input = path.join(temp, "styles");
+  fs.mkdirSync(input, { recursive: true });
+  const compiled = path.join(input, "backgrounds.vcss_c");
+  fs.writeFileSync(compiled, files.get(BACKGROUND_STYLES));
+  const result = spawnSync(DECOMPILER, ["-i", compiled, "-o", input, "-d"], { encoding: "utf8" });
+  if (result.error) {
+    throw result.error;
+  }
+  const css = fs.readFileSync(path.join(input, "backgrounds.css"), "utf8");
+
+  const defines = Object.fromEntries([...css.matchAll(/@define\s+(\w+):\s*(#[0-9a-f]+);/gi)].map((match) => [match[1], match[2]]));
+  const color = (value) => {
+    const [name, alpha] = value.trim().split("&");
+    const hex = defines[name] ?? name;
+    return alpha ? hex + alpha : hex;
+  };
+  const image = (url) => `images/${url.replace(/^s2r:\/\/panorama\/images\//, "").replace(/\.vtex$/, "")}${/mask/.test(url) ? ".png" : ".jpg"}`;
+  const heroes = {};
+  let mask = null;
+  for (const [, selectors, body] of css.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+    const url = body.match(/background-image:\s*url\("([^"]+)"\)/)?.[1];
+    const wash = body.match(/wash-color:\s*([^;]+);/)?.[1];
+    const gradient = body.match(/from\(\s*(#[0-9a-f]+)\s*\),\s*to\(\s*(#[0-9a-f]+)\s*\)/i);
+    const opacityMask = body.match(/opacity-mask:\s*url\("([^"]+)"\)/)?.[1];
+    if (opacityMask && !mask) {
+      mask = image(opacityMask);
+    }
+    for (const selector of selectors.split(",")) {
+      const hero = selector.trim().match(/^\.(\w+)\s+#HeroLoadoutBackgroundImageContainer(\s+#HeroLoadoutBackgroundImage)?$/);
+      if (!hero) {
+        continue;
+      }
+      const entry = (heroes[hero[1]] ??= {});
+      if (hero[2] && url) {
+        entry.image = image(url);
+      }
+      if (hero[2] && wash) {
+        entry.wash = color(wash);
+      }
+      if (!hero[2] && gradient) {
+        entry.from = gradient[1];
+        entry.to = gradient[2];
+      }
+    }
+  }
+  return { mask, heroes };
+}
+
 // The heroes' animated portraits as they are, .webm; only those whose content changed
 async function exportVideos(source, known) {
   const all = source.looseFiles(VIDEO_FOLDER).filter((entry) => entry.path.endsWith(".webm"));
@@ -243,9 +302,18 @@ async function exportImages(source, known) {
 
   const images = [];
   for (const file of changed) {
-    const png = path.join(out, file.replace(/\.vtex_c$/, ".png"));
-    if (fs.existsSync(png)) {
-      images.push({ path: `images/${file.replace(/^panorama\/images\//, "").replace(/\.vtex_c$/, ".png")}`, file: png });
+    // Source2Viewer writes a texture made from a JPG as .jpeg, the others as .png
+    const png = [".png", ".jpeg"].map((extension) => path.join(out, file.replace(/\.vtex_c$/, extension))).find((candidate) => fs.existsSync(candidate));
+    if (!png) {
+      continue;
+    }
+    const name = `images/${file.replace(/^panorama\/images\//, "").replace(/\.vtex_c$/, "")}`;
+    if (file.startsWith(BACKGROUND_FOLDER) && !/mask/.test(file)) {
+      const jpg = png.replace(/\.(png|jpeg)$/, ".jpg");
+      await sharp(png).resize({ width: 1920, withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toFile(jpg);
+      images.push({ path: `${name}.jpg`, file: jpg });
+    } else {
+      images.push({ path: `${name}.png`, file: png });
     }
   }
   return { files: images, crcs };

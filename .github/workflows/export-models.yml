@@ -60,7 +60,6 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # Another run may have pushed meanwhile; this run's state is the newest
       # Voice lines, the sounds of animations and abilities, music and announcer packs;
       # only after a patch, against audio-state.json
       - name: Export voice lines, animation and ability sounds

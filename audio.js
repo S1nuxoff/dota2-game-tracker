@@ -118,7 +118,10 @@ async function main() {
   for (const buffer of npc.values()) {
     for (const [key, hero] of Object.entries(parse(buffer).root.DOTAHeroes ?? {})) {
       if (key.startsWith("npc_dota_hero_") && key !== "npc_dota_hero_base" && hero.Model) {
-        heroes[key] = { model: hero.Model.toLowerCase(), voice: hero.VoiceFile?.toLowerCase(), soundSet: hero.SoundSet };
+        const abilities = Array.from({ length: 9 }, (_, index) => hero[`Ability${index + 1}`]).filter(
+          (name) => name && name !== "generic_hidden" && !name.startsWith("special_bonus")
+        );
+        heroes[key] = { model: hero.Model.toLowerCase(), voice: hero.VoiceFile?.toLowerCase(), soundSet: hero.SoundSet, abilities };
       }
     }
   }
@@ -180,6 +183,42 @@ async function main() {
   }
   console.log(`\nAnimation sounds for ${Object.keys(animsounds).length} heroes`);
 
+  // The sounds of each hero's abilities, for casting them in the viewer: the events of the
+  // hero's own sound file whose names carry the ability's words ("antimage_mana_void" ->
+  // "Hero_Antimage.ManaVoid"), the cast first; and its voice lines for them
+  const abilitySounds = {};
+  for (const [key, hero] of Object.entries(heroes)) {
+    const id = key.replace("npc_dota_hero_", "");
+    const heroFile = Object.keys(eventsByFile).find((file) => file.endsWith(`/game_sounds_${id}.vsndevts`));
+    const pool = heroFile ? eventsByFile[heroFile] : [];
+    const voicePool = eventsByFile[hero.voice] ?? [];
+    const result = {};
+    for (const ability of hero.abilities) {
+      const heroWords = new Set(id.split("_"));
+      const words = ability.split("_").filter((word) => word.length > 2 && !heroWords.has(word));
+      if (!words.length) {
+        continue;
+      }
+      const joined = words.join("");
+      const matches = (name) => {
+        const flat = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        return flat.includes(joined) || words.every((word) => flat.includes(word));
+      };
+      const sounds = pool
+        .filter(matches)
+        .sort((a, b) => Number(/cast/i.test(b)) - Number(/cast/i.test(a)) || a.length - b.length)
+        .slice(0, 3);
+      const lines = voicePool.filter(matches).flatMap((name) => events[name].files);
+      if (sounds.length || lines.length) {
+        result[ability] = { sounds, lines };
+      }
+    }
+    if (Object.keys(result).length) {
+      abilitySounds[key] = result;
+    }
+  }
+  console.log(`Ability sounds for ${Object.keys(abilitySounds).length} heroes`);
+
   // The events the viewer plays during animations: those the animations name and each
   // hero's attack (the game plays it on the hit, not from the animation), with their
   // layers. Much smaller than all the events.
@@ -197,11 +236,17 @@ async function main() {
     }
   };
   needed.forEach(add);
+  for (const hero of Object.values(abilitySounds)) {
+    for (const ability of Object.values(hero)) {
+      ability.sounds.forEach(add);
+    }
+  }
 
   const data = [
     write("data/animsounds.json", animsounds),
     write("data/animsound-events.json", viewerEvents),
     write("data/audio-library.json", library),
+    write("data/abilitysounds.json", abilitySounds),
     ...voices,
   ];
   const soundEvents = write("soundevents.json", events);

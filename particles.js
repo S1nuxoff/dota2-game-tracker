@@ -11,7 +11,8 @@
 //   particles/textures/<path>.png, .json     a texture (<path>.vtex) and its sheet: sequences of frames
 //   particles/bundles/<path>.json            an effect items show with every system it spawns, in one file
 //   particles/<path>.vsnap.json              a snapshot: points placed on a model ({ position: [[x, y, z]],
-//                                            radius: [r], ... } by stream, in the model's space)
+//                                            radius: [r], ... } by stream, in the model's space), the
+//                                            effects' own and those items put in their place
 //   models/<path>.sequences.json            a model particles draw: its sequences, whether each loops and
 //                                            its activities ({ name: { looping, activities } })
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
@@ -77,11 +78,17 @@ function convert(files, name) {
   return out;
 }
 
-// The particle systems items show: created alongside them, or put in place of others
-async function rootSystems() {
-  const data = fs.existsSync("items_game.json")
+let itemsGame = null;
+async function loadItemsGame() {
+  itemsGame ??= fs.existsSync("items_game.json")
     ? JSON.parse(fs.readFileSync("items_game.json", "utf8"))
     : await (await fetch(ITEMS_GAME_URL)).json();
+  return itemsGame;
+}
+
+// The particle systems items show: created alongside them, or put in place of others
+async function rootSystems() {
+  const data = await loadItemsGame();
   const roots = new Set();
   for (const item of Object.values(data.items_game.items)) {
     for (const visual of Object.values(item.visuals ?? {})) {
@@ -95,6 +102,21 @@ async function rootSystems() {
     }
   }
   return [...roots];
+}
+
+// The snapshots items put in place of others (particle_snapshot: a weapon's own points for the
+// default weapon's glow); no .vpcf refers to them
+async function itemSnapshots() {
+  const data = await loadItemsGame();
+  const snapshots = new Set();
+  for (const item of Object.values(data.items_game.items)) {
+    for (const visual of Object.values(item.visuals ?? {})) {
+      if (visual?.type === "particle_snapshot" && typeof visual.modifier === "string") {
+        snapshots.add(visual.modifier.toLowerCase());
+      }
+    }
+  }
+  return [...snapshots];
 }
 
 // One data block of models as Source2Viewer prints it: Map(model => [the block's KV3, one for each
@@ -424,7 +446,7 @@ async function main() {
 
   // The snapshots they place particles by: each stream's values by its name
   state.snapshots ??= {};
-  const snapshotFiles = [...new Set([...reached].flatMap((file) => state.systems[file]?.snapshots ?? []))].filter((file) => crcOf(file) !== undefined);
+  const snapshotFiles = [...new Set([...[...reached].flatMap((file) => state.systems[file]?.snapshots ?? []), ...(await itemSnapshots())])].filter((file) => crcOf(file) !== undefined);
   const snapshotTodo = snapshotFiles.filter((file) => state.snapshots[file] !== crcOf(file));
   console.log(`${snapshotFiles.length} snapshots, ${snapshotTodo.length} new or changed`);
   for (let i = 0; i < snapshotTodo.length; i += BATCH) {

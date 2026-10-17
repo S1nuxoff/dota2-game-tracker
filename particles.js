@@ -393,17 +393,22 @@ async function main() {
   fs.writeFileSync(MODELS_FILE, JSON.stringify(models, null, 1));
   console.log(`${models.length} models drawn by particles listed in ${MODELS_FILE}`);
 
-  // The attachments of every exported model, which the particles are bound to
+  // The attachments of every exported model, which the particles are bound to, and the list of
+  // models that have them (state.attached), so the site asks only for files that are there.
+  // Before that list was kept, every model is read again once to fill it.
+  const firstList = !state.attached;
   state.attachments ??= {};
+  state.attached ??= {};
   const exported = fs.existsSync("state.json") ? Object.keys(JSON.parse(fs.readFileSync("state.json", "utf8")).models ?? {}) : [];
-  const modelTodo = exported.filter((model) => crcOf(model) !== undefined && state.attachments[model] !== crcOf(model));
+  const modelTodo = exported.filter((model) => crcOf(model) !== undefined && (firstList || state.attachments[model] !== crcOf(model)));
   console.log(`${exported.length} models, ${modelTodo.length} with new or changed attachments`);
   for (let i = 0; i < modelTodo.length; i += MODEL_BATCH) {
     const batch = modelTodo.slice(i, i + MODEL_BATCH);
     const files = new Map();
     await source.readFiles(batch.map((model) => `${model}_c`), files);
     source.release();
-    for (const [model, attachments] of readAttachments(files)) {
+    const found = readAttachments(files);
+    for (const [model, attachments] of found) {
       const json = path.join(dist, model.replace(/\.vmdl$/, ".attachments.json"));
       fs.mkdirSync(path.dirname(json), { recursive: true });
       fs.writeFileSync(json, JSON.stringify(attachments));
@@ -411,8 +416,16 @@ async function main() {
     }
     for (const model of batch) {
       state.attachments[model] = crcOf(model);
+      if (found.has(model)) {
+        state.attached[model] = true;
+      } else {
+        delete state.attached[model];
+      }
     }
   }
+  const attachedList = path.join(dist, "particles/attached-models.json");
+  fs.writeFileSync(attachedList, JSON.stringify(Object.keys(state.attached).sort().map((model) => model.replace(/\.vmdl$/, ".attachments.json"))));
+  uploads.push({ path: "particles/attached-models.json", file: attachedList });
 
   if (upload) {
     await hf.upload(repo, accessToken, uploads, "Update particles");

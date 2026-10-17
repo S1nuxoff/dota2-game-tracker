@@ -50,7 +50,7 @@ function parseSoundEvents(text, events) {
   const pattern = /^\t([\w.\-/]+) =\s*\{([\s\S]*?)^\t\}/gm;
   const names = [];
   for (const [, name, body] of text.matchAll(pattern)) {
-    const files = [...body.matchAll(/"(sounds\/[^"]+\.vsnd)"/g)].map((match) => match[1].replace(/\.vsnd$/, ".mp3"));
+    const files = [...body.matchAll(/"(sounds\/[^"]+)\.vsnd"/g)].map((match) => match[1]);
     const number = (key) => {
       const value = body.match(new RegExp(`^\\t\\t${key} = ([-\\d.]+)`, "m"))?.[1];
       return value === undefined ? undefined : Number(value);
@@ -166,6 +166,14 @@ async function main() {
   }
   console.log(`${Object.keys(events).length} sound events`);
 
+  // Each sound by the path it has in the sounds dataset, MP3 or WAV, so the site asks for the
+  // file that is there; sounds the dataset does not have are left out
+  const soundPaths = await hf.soundPaths(process.env.HF_TOKEN);
+  const inDataset = (files) => files.map((file) => soundPaths.get(file)).filter(Boolean);
+  for (const event of Object.values(events)) {
+    event.files = inDataset(event.files);
+  }
+
   const out = path.join(temp, "out");
   const write = (name, value) => {
     const file = path.join(out, name);
@@ -179,7 +187,8 @@ async function main() {
   for (const [key, hero] of Object.entries(heroes)) {
     const names = eventsByFile[hero.voice] ?? eventsByFile[`soundevents/voscripts/game_sounds_vo_${key.replace("npc_dota_hero_", "")}.vsndevts`];
     if (names?.length) {
-      voices.push(write(`data/voices/${key}.json`, names.map((name) => ({ event: name, files: events[name].files }))));
+      const lines = names.map((name) => ({ event: name, files: events[name].files })).filter((line) => line.files.length);
+      voices.push(write(`data/voices/${key}.json`, lines));
     }
   }
   console.log(`Voice lines for ${voices.length} heroes`);
@@ -189,11 +198,11 @@ async function main() {
   for (const file of vpkDir.files) {
     const announcer = file.match(/^sounds\/vo\/(announcer[^/]*)\/.+\.vsnd_c$/);
     const music = file.match(/^sounds\/music\/([^/]+)\/.+\.vsnd_c$/);
-    const mp3 = file.replace(/\.vsnd_c$/, ".mp3");
-    if (announcer) {
-      (library.announcers[announcer[1]] ??= []).push(mp3);
-    } else if (music) {
-      (library.music[music[1]] ??= []).push(mp3);
+    const sound = soundPaths.get(file.replace(/\.vsnd_c$/, ""));
+    if (sound && announcer) {
+      (library.announcers[announcer[1]] ??= []).push(sound);
+    } else if (sound && music) {
+      (library.music[music[1]] ??= []).push(sound);
     }
   }
   console.log(`${Object.keys(library.announcers).length} announcer packs, ${Object.keys(library.music).length} music packs`);

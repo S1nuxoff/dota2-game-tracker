@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { whoAmI, repoExists, createRepo, uploadFiles } = require("@huggingface/hub");
+const { whoAmI, repoExists, createRepo, uploadFiles, listFiles } = require("@huggingface/hub");
 
 // Keeps each commit to a reasonable size
 const MAX_COMMIT_BYTES = 500 * 1e6;
@@ -65,4 +65,17 @@ async function upload(repo, accessToken, files, title) {
   await commit();
 }
 
-module.exports = { prepareRepo, upload };
+// The game's sounds come out as MP3 or WAV: the path each one has in the sounds dataset, by
+// its path without the extension. Sound lists name these, so the site asks for what is there.
+async function soundPaths(accessToken, name = "dota2-sounds") {
+  const repo = await prepareRepo(accessToken, name);
+  const paths = new Map();
+  for await (const file of listFiles({ repo, accessToken, path: "sounds", recursive: true })) {
+    if (file.type === "file" && /\.(mp3|wav)$/.test(file.path)) {
+      paths.set(file.path.replace(/\.(mp3|wav)$/, ""), file.path);
+    }
+  }
+  return paths;
+}
+
+module.exports = { prepareRepo, upload, soundPaths };

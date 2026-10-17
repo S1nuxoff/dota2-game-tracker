@@ -6,7 +6,7 @@
 //   HF_TOKEN=... node sounds.js --game "<...>/dota 2 beta/game/dota"
 //   HF_TOKEN=... node sounds.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads to the <user>/dota2-sounds dataset: sounds/...mp3 and soundevents.json
+// Uploads to the <user>/dota2-sounds dataset: sounds/...mp3 or .wav and soundevents.json
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
@@ -54,11 +54,11 @@ function convert(files, name) {
   return out;
 }
 
-// { "Hero_Pudge.Attack": { files: [...mp3 paths], volume, pitch, layers: [...] } }
-function parseSoundEvents(text, events) {
+// { "Hero_Pudge.Attack": { files: [...paths in the dataset], volume, pitch, layers: [...] } }
+function parseSoundEvents(text, events, soundPaths) {
   const pattern = /^\t([\w.\-/]+) =\s*\{([\s\S]*?)^\t\}/gm;
   for (const [, name, body] of text.matchAll(pattern)) {
-    const files = [...body.matchAll(/"(sounds\/[^"]+\.vsnd)"/g)].map((match) => match[1].replace(/\.vsnd$/, ".mp3"));
+    const files = [...body.matchAll(/"(sounds\/[^"]+)\.vsnd"/g)].map((match) => soundPaths.get(match[1])).filter(Boolean);
     const number = (key) => {
       const value = body.match(new RegExp(`^\\t\\t${key} = ([-\\d.]+)`, "m"))?.[1];
       return value === undefined ? undefined : Number(value);
@@ -129,9 +129,10 @@ async function main() {
     await source.readFiles(eventFiles, files);
     const out = convert(files, "events");
     const events = {};
+    const soundPaths = await hf.soundPaths(accessToken, repo.name);
     for (const file of walk(out)) {
       if (file.endsWith(".vsndevts")) {
-        parseSoundEvents(fs.readFileSync(file, "utf8"), events);
+        parseSoundEvents(fs.readFileSync(file, "utf8"), events, soundPaths);
       }
     }
     const eventsFile = path.join(temp, "soundevents.json");

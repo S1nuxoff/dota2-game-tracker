@@ -114,10 +114,20 @@ async function main() {
   const source = game ? localSource(game) : await steamSource(username, password, temp);
   const { vpkDir } = source;
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
+  // Each sound by the path it has in the sounds dataset, MP3 or WAV, so the site asks for the
+  // file that is there. Sounds the dataset did not have yet (sounds.js failed or ran after) are
+  // left out and kept in the state: once any of them is there, the lists are made again.
+  let soundPaths = null;
   if (state.manifest === source.manifestId && !process.argv.includes("--force")) {
-    console.log(`Game unchanged (manifest ${source.manifestId}), nothing to do.`);
-    source.release();
-    return;
+    if (state.missing?.length) {
+      soundPaths = await hf.soundPaths(process.env.HF_TOKEN);
+    }
+    if (!state.missing?.some((file) => soundPaths.has(file))) {
+      console.log(`Game unchanged (manifest ${source.manifestId}), nothing to do.`);
+      source.release();
+      return;
+    }
+    console.log("Sounds the lists left out are in the dataset now, making them again");
   }
 
   // The game files these tables are read from, written out loose for Source2Viewer
@@ -166,10 +176,13 @@ async function main() {
   }
   console.log(`${Object.keys(events).length} sound events`);
 
-  // Each sound by the path it has in the sounds dataset, MP3 or WAV, so the site asks for the
-  // file that is there; sounds the dataset does not have are left out
-  const soundPaths = await hf.soundPaths(process.env.HF_TOKEN);
-  const inDataset = (files) => files.map((file) => soundPaths.get(file)).filter(Boolean);
+  soundPaths ??= await hf.soundPaths(process.env.HF_TOKEN);
+  const missing = new Set();
+  const inDataset = (files) => {
+    // Only sounds the game has can still come
+    files.filter((file) => !soundPaths.has(file) && vpkDir.tree[`${file}.vsnd_c`]).forEach((file) => missing.add(file));
+    return files.map((file) => soundPaths.get(file)).filter(Boolean);
+  };
   for (const event of Object.values(events)) {
     event.files = inDataset(event.files);
   }
@@ -198,7 +211,7 @@ async function main() {
   for (const file of vpkDir.files) {
     const announcer = file.match(/^sounds\/vo\/(announcer[^/]*)\/.+\.vsnd_c$/);
     const music = file.match(/^sounds\/music\/([^/]+)\/.+\.vsnd_c$/);
-    const sound = soundPaths.get(file.replace(/\.vsnd_c$/, ""));
+    const [sound] = announcer || music ? inDataset([file.replace(/\.vsnd_c$/, "")]) : [];
     if (sound && announcer) {
       (library.announcers[announcer[1]] ??= []).push(sound);
     } else if (sound && music) {
@@ -307,7 +320,7 @@ async function main() {
     console.log(`Written to ${out}`);
   }
   if (upload) {
-    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId }));
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, missing: [...missing].sort() }));
   }
 }
 

@@ -70,12 +70,21 @@ async function upload(repo, accessToken, files, title) {
 async function soundPaths(accessToken, name = "dota2-sounds") {
   const repo = await prepareRepo(accessToken, name);
   const paths = new Map();
-  for await (const file of listFiles({ repo, accessToken, path: "sounds", recursive: true })) {
-    if (file.type === "file" && /\.(mp3|wav)$/.test(file.path)) {
-      paths.set(file.path.replace(/\.(mp3|wav)$/, ""), file.path);
+  for (const file of await filesIn(repo, accessToken, "sounds", /\.(mp3|wav)$/)) {
+    paths.set(file.replace(/\.(mp3|wav)$/, ""), file);
+  }
+  return paths;
+}
+
+// The paths of the files in a folder of the dataset that match the pattern
+async function filesIn(repo, accessToken, folder, pattern) {
+  const paths = [];
+  for await (const file of listFiles({ repo, accessToken, path: folder, recursive: true })) {
+    if (file.type === "file" && pattern.test(file.path)) {
+      paths.push(file.path);
     }
   }
   return paths;
 }
 
-module.exports = { prepareRepo, upload, soundPaths };
+module.exports = { prepareRepo, upload, soundPaths, filesIn };

@@ -395,12 +395,17 @@ async function main() {
 
   // The attachments of every exported model, which the particles are bound to, and the list of
   // models that have them (state.attached), so the site asks only for files that are there.
-  // Before that list was kept, every model is read again once to fill it.
-  const firstList = !state.attached;
+  // Before that list was kept, it starts from the attachment files the dataset has.
   state.attachments ??= {};
-  state.attached ??= {};
+  if (!state.attached) {
+    state.attached = {};
+    for (const file of await hf.filesIn(repo, accessToken, "models", /\.attachments\.json$/)) {
+      state.attached[file.replace(/\.attachments\.json$/, ".vmdl")] = true;
+    }
+    console.log(`${Object.keys(state.attached).length} models with attachments in the dataset`);
+  }
   const exported = fs.existsSync("state.json") ? Object.keys(JSON.parse(fs.readFileSync("state.json", "utf8")).models ?? {}) : [];
-  const modelTodo = exported.filter((model) => crcOf(model) !== undefined && (firstList || state.attachments[model] !== crcOf(model)));
+  const modelTodo = exported.filter((model) => crcOf(model) !== undefined && state.attachments[model] !== crcOf(model));
   console.log(`${exported.length} models, ${modelTodo.length} with new or changed attachments`);
   for (let i = 0; i < modelTodo.length; i += MODEL_BATCH) {
     const batch = modelTodo.slice(i, i + MODEL_BATCH);

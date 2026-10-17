@@ -12,6 +12,8 @@
 //   particles/bundles/<path>.json            an effect items show with every system it spawns, in one file
 //   particles/<path>.vsnap.json              a snapshot: points placed on a model ({ position: [[x, y, z]],
 //                                            radius: [r], ... } by stream, in the model's space)
+//   models/<path>.sequences.json            a model particles draw: its sequences, whether each loops and
+//                                            its activities ({ name: { looping, activities } })
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
 // and lists the models the particles draw in particle-models.json, for index.js to export.
@@ -95,32 +97,44 @@ async function rootSystems() {
   return [...roots];
 }
 
-// The attachments of models, from the mesh data block Source2Viewer prints for each:
-// Map(model => { attach_hitloc: { bones: [[name, weight, [x, y, z], [x, y, z, w]]], ignoreRotation } })
-// with offsets and rotations in the bones' own space, in the game's units
-function readAttachments(files) {
+// One data block of models as Source2Viewer prints it: Map(model => [the block's KV3, one for each
+// time it is there (a mesh each for MDAT)])
+function readBlocks(files, name) {
   const input = path.join(temp, "models-in");
   fs.rmSync(input, { recursive: true, force: true });
   for (const [file, buffer] of files) {
     fs.mkdirSync(path.dirname(path.join(input, file)), { recursive: true });
     fs.writeFileSync(path.join(input, file), buffer);
   }
-  const result = spawnSync(DECOMPILER, ["-i", input, "--recursive", "-b", "MDAT"], { encoding: "utf8", maxBuffer: 2048 * 1024 * 1024 });
+  const result = spawnSync(DECOMPILER, ["-i", input, "--recursive", "-b", name], { encoding: "utf8", maxBuffer: 2048 * 1024 * 1024 });
   if (result.error) {
     throw result.error;
   }
   const found = new Map();
-  // "[3/100] <path>" starts each file, "--- Data for block "MDAT" ---" each of its meshes
+  // "[3/100] <path>" starts each file, "--- Data for block "MDAT" ---" each of its blocks
   for (const part of result.stdout.split(/^\[\d+\/\d+\] /m).slice(1)) {
     const file = path.relative(input, part.slice(0, part.indexOf("\n")).trim()).split(path.sep).join("/").replace(/_c$/, "");
-    const attachments = {};
-    for (const block of part.split('--- Data for block "MDAT" ---').slice(1)) {
-      let data;
+    const blocks = [];
+    for (const block of part.split(`--- Data for block "${name}" ---`).slice(1)) {
       try {
-        data = kv3.parse(block);
+        blocks.push(kv3.parse(block));
       } catch {
         continue;
       }
+    }
+    found.set(file, blocks);
+  }
+  return found;
+}
+
+// The attachments of models, from their mesh data blocks:
+// Map(model => { attach_hitloc: { bones: [[name, weight, [x, y, z], [x, y, z, w]]], ignoreRotation } })
+// with offsets and rotations in the bones' own space, in the game's units
+function readAttachments(files) {
+  const found = new Map();
+  for (const [file, blocks] of readBlocks(files, "MDAT")) {
+    const attachments = {};
+    for (const data of blocks) {
       for (const { key, value } of data?.m_attachments ?? []) {
         const count = value.m_nInfluences ?? 1;
         attachments[key] = {
@@ -136,6 +150,26 @@ function readAttachments(files) {
     }
     if (Object.keys(attachments).length) {
       found.set(file, attachments);
+    }
+  }
+  return found;
+}
+
+// The sequences of models, from their sequence data block (the glb has their animations, not
+// how they play): Map(model => { game_idle: { looping: true, activities: ["ACT_DOTA_IDLE"] } })
+function readSequences(files) {
+  const found = new Map();
+  for (const [file, blocks] of readBlocks(files, "ASEQ")) {
+    const sequences = {};
+    for (const data of blocks) {
+      for (const sequence of data?.m_localS1SeqDescArray ?? []) {
+        if (!sequence?.m_sName) continue;
+        const activities = (sequence.m_activityArray ?? []).map((activity) => activity?.m_name).filter(Boolean);
+        sequences[sequence.m_sName] = { looping: Boolean(sequence.m_flags?.m_bLooping), ...(activities.length && { activities }) };
+      }
+    }
+    if (Object.keys(sequences).length) {
+      found.set(file, sequences);
     }
   }
   return found;
@@ -469,6 +503,26 @@ async function main() {
       }
     }
   }
+  // How the models particles draw play their sequences (looping, activities)
+  state.sequences ??= {};
+  const sequenceTodo = models.filter((model) => crcOf(model) !== undefined && state.sequences[model] !== crcOf(model));
+  console.log(`${models.length} particle models, ${sequenceTodo.length} with new or changed sequences`);
+  for (let i = 0; i < sequenceTodo.length; i += MODEL_BATCH) {
+    const batch = sequenceTodo.slice(i, i + MODEL_BATCH);
+    const files = new Map();
+    await source.readFiles(batch.map((model) => `${model}_c`), files);
+    source.release();
+    for (const [model, sequences] of readSequences(files)) {
+      const json = path.join(dist, model.replace(/\.vmdl$/, ".sequences.json"));
+      fs.mkdirSync(path.dirname(json), { recursive: true });
+      fs.writeFileSync(json, JSON.stringify(sequences));
+      uploads.push({ path: model.replace(/\.vmdl$/, ".sequences.json"), file: json });
+    }
+    for (const model of batch) {
+      state.sequences[model] = crcOf(model);
+    }
+  }
+
   const attachedList = path.join(dist, "particles/attached-models.json");
   fs.writeFileSync(attachedList, JSON.stringify(Object.keys(state.attached).sort().map((model) => model.replace(/\.vmdl$/, ".attachments.json"))));
   uploads.push({ path: "particles/attached-models.json", file: attachedList });

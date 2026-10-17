@@ -39,17 +39,28 @@ async function getManifests() {
   return manifests;
 }
 
-function downloadVpkDir(manifests, outPath) {
-  console.log("Downloading pak01_dir.vpk");
-  return user.downloadFile(appId, 373301, findArchive(manifests, "dir").file, outPath);
+// game: the folder of game/ the VPK is in ("dota", or "core" for the engine's shared files)
+function downloadVpkDir(manifests, outPath, game = "dota") {
+  console.log(`Downloading ${game}/pak01_dir.vpk`);
+  const { depotId, file } = findArchive(manifests, "dir", game);
+  return user.downloadFile(appId, depotId, file, outPath);
+}
+
+function hasVpkDir(manifests, game) {
+  try {
+    findArchive(manifests, "dir", game);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // "dir" or an archive index
-function findArchive(manifests, index) {
+function findArchive(manifests, index, game = "dota") {
   const name = index === "dir" ? "pak01_dir.vpk" : `pak01_${String(index).padStart(3, "0")}.vpk`;
   const matches = (filename) => {
     const normalized = filename.replace(/\\/g, "/").toLowerCase();
-    return normalized === `dota/${name}` || normalized.endsWith(`/dota/${name}`);
+    return normalized === `${game}/${name}` || normalized.endsWith(`/${game}/${name}`);
   };
 
   for (const depotId of depotIds) {
@@ -58,11 +69,11 @@ function findArchive(manifests, index) {
       return { depotId, file };
     }
   }
-  throw new Error(`${name} not found in any depot.`);
+  throw new Error(`${game}/${name} not found in any depot.`);
 }
 
 // Reads files of the VPK into `files`, downloading only the chunks that hold them
-async function readFiles(vpkDir, dirPath, paths, manifests, files) {
+async function readFiles(vpkDir, dirPath, paths, manifests, files, game = "dota") {
   const dirFd = fs.openSync(dirPath, "r");
   const byArchive = new Map();
 
@@ -82,7 +93,7 @@ async function readFiles(vpkDir, dirPath, paths, manifests, files) {
       continue;
     }
 
-    const { depotId, file: archive } = findArchive(manifests, archiveIndex);
+    const { depotId, file: archive } = findArchive(manifests, archiveIndex, game);
     const chunks = archive.chunks
       .map((chunk) => ({ sha: chunk.sha, offset: Number(chunk.offset), size: chunk.cb_original }))
       .sort((a, b) => a.offset - b.offset);
@@ -183,4 +194,4 @@ function clearChunkCache() {
   chunkCache.clear();
 }
 
-module.exports = { user, logOn, getManifests, downloadVpkDir, readFiles, looseFiles, downloadLoose, clearChunkCache };
+module.exports = { user, logOn, getManifests, downloadVpkDir, hasVpkDir, readFiles, looseFiles, downloadLoose, clearChunkCache };

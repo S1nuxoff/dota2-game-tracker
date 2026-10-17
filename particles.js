@@ -169,20 +169,26 @@ function describe(system) {
 }
 
 // A texture's frames from the .mks Source2Viewer writes next to them:
-// [{ frames: [{ file, duration }], flags }]
+// [{ frames: [{ file, duration }], flags }], each sequence at its number. A sheet packed as
+// "rgb+a" names them sequence-rgb and sequence-a; their frames are written with both, so they
+// are read like the others
 function readSheet(mksFile) {
   const sequences = [];
+  let current = null;
   for (const line of fs.readFileSync(mksFile, "utf8").split("\n")) {
     const words = line.trim().split(/\s+/);
-    if (words[0] === "sequence") {
-      sequences.push({ frames: [], flags: [] });
-    } else if (words[0] === "frame" && sequences.length) {
-      sequences.at(-1).frames.push({ file: words[1], duration: Number(words[2] ?? 1) });
-    } else if (words[0] && !words[0].startsWith("//") && sequences.length) {
-      sequences.at(-1).flags.push(words[0]);
+    if (/^sequence(-rgb|-a)?$/.test(words[0])) {
+      current = { frames: [], flags: [] };
+      const index = Number(words[1]);
+      sequences[Number.isInteger(index) && index >= 0 ? index : sequences.length] = current;
+    } else if (words[0] === "frame" && current) {
+      current.frames.push({ file: words[1], duration: Number(words[2] ?? 1) });
+    } else if (words[0] && !words[0].startsWith("//") && words[0] !== "packmode" && current) {
+      current.flags.push(words[0]);
     }
   }
-  return sequences;
+  // A number skipped leaves an empty sequence, not a hole
+  return Array.from(sequences, (sequence) => sequence ?? { frames: [], flags: [] });
 }
 
 // A texture as one image: its own, or its frames laid in a grid; and its sheet in pixels:

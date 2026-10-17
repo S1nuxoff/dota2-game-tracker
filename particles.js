@@ -10,6 +10,8 @@
 //   particles/<path>.json                    a system (particles/<path>.vpcf in the game), as KV3 gives it
 //   particles/textures/<path>.png, .json     a texture (<path>.vtex) and its sheet: sequences of frames
 //   particles/bundles/<path>.json            an effect items show with every system it spawns, in one file
+//   particles/<path>.vsnap.json              a snapshot: points placed on a model ({ position: [[x, y, z]],
+//                                            radius: [r], ... } by stream, in the model's space)
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
 // and lists the models the particles draw in particle-models.json, for index.js to export.
@@ -144,6 +146,7 @@ function describe(system) {
   const children = new Set();
   const textures = new Set();
   const models = new Set();
+  const snapshots = new Set();
   const classes = {};
   const visit = (value) => {
     if (typeof value === "string") {
@@ -151,6 +154,7 @@ function describe(system) {
       if (lower.endsWith(".vpcf")) children.add(lower);
       else if (lower.endsWith(".vtex")) textures.add(lower);
       else if (lower.endsWith(".vmdl")) models.add(lower);
+      else if (lower.endsWith(".vsnap")) snapshots.add(lower);
     } else if (Array.isArray(value)) {
       value.forEach(visit);
     } else if (value && typeof value === "object") {
@@ -161,7 +165,7 @@ function describe(system) {
     }
   };
   visit(system);
-  return { children: [...children], textures: [...textures], models: [...models], classes };
+  return { children: [...children], textures: [...textures], models: [...models], snapshots: [...snapshots], classes };
 }
 
 // A texture's frames from the .mks Source2Viewer writes next to them:
@@ -272,7 +276,8 @@ async function main() {
     const next = new Set();
     const fresh = [...new Set(frontier)].filter((file) => !reached.has(file) && crcOf(file) !== undefined);
     fresh.forEach((file) => reached.add(file));
-    const todo = fresh.filter((file) => state.systems[file]?.crc !== crcOf(file));
+    // Read again where the state was kept before snapshots were listed
+    const todo = fresh.filter((file) => state.systems[file]?.crc !== crcOf(file) || !state.systems[file].snapshots);
     for (let i = 0; i < todo.length; i += BATCH) {
       const batch = todo.slice(i, i + BATCH);
       const files = new Map();
@@ -374,6 +379,36 @@ async function main() {
         }
         state.textures[texture] = crcOf(texture);
       }
+    }
+  }
+
+  // The snapshots they place particles by: each stream's values by its name
+  state.snapshots ??= {};
+  const snapshotFiles = [...new Set([...reached].flatMap((file) => state.systems[file]?.snapshots ?? []))].filter((file) => crcOf(file) !== undefined);
+  const snapshotTodo = snapshotFiles.filter((file) => state.snapshots[file] !== crcOf(file));
+  console.log(`${snapshotFiles.length} snapshots, ${snapshotTodo.length} new or changed`);
+  for (let i = 0; i < snapshotTodo.length; i += BATCH) {
+    const batch = snapshotTodo.slice(i, i + BATCH);
+    const files = new Map();
+    await source.readFiles(batch.map((file) => `${file}_c`), files);
+    const out = convert(files, "snapshots");
+    source.release();
+    for (const file of batch) {
+      const text = path.join(out, file);
+      if (!fs.existsSync(text) || fs.statSync(text).size === 0) {
+        continue;
+      }
+      const streams = {};
+      for (const stream of kv3.parse(fs.readFileSync(text, "utf8"))?.stream_data?.streams ?? []) {
+        if (stream?.name && Array.isArray(stream.values) && stream.values.length) {
+          streams[stream.name] = stream.values;
+        }
+      }
+      const json = path.join(dist, `${file}.json`);
+      fs.mkdirSync(path.dirname(json), { recursive: true });
+      fs.writeFileSync(json, JSON.stringify(streams));
+      uploads.push({ path: `${file}.json`, file: json });
+      state.snapshots[file] = crcOf(file);
     }
   }
 

@@ -34,6 +34,8 @@ const BUNDLE_VERSION = 1;
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const BATCH = 2000;
+// What a sprite or trail (a soft white dot) and a rope draw where a layer names no texture
+const DEFAULT_TEXTURES = ["materials/particle/base_sprite.vtex", "materials/particle/base_rope.vtex"];
 // Models print their whole mesh data, so fewer at a time
 const MODEL_BATCH = 300;
 // Atlases larger than this are scaled down; the particles are small on screen
@@ -421,7 +423,8 @@ async function main() {
   }
 
   // The textures they draw
-  const textures = [...new Set([...reached].flatMap((file) => state.systems[file]?.textures ?? []))].filter((texture) => crcOf(texture) !== undefined);
+  // With the ones the game draws where a renderer's layer names no texture
+  const textures = [...new Set([...[...reached].flatMap((file) => state.systems[file]?.textures ?? []), ...DEFAULT_TEXTURES])].filter((texture) => crcOf(texture) !== undefined);
   const textureTodo = textures.filter((texture) => state.textures[texture] !== crcOf(texture));
   console.log(`${textures.length} textures, ${textureTodo.length} new or changed`);
   for (let i = 0; i < textureTodo.length; i += BATCH) {

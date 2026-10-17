@@ -46,27 +46,40 @@ function materialGroups(decompiler, modelFile) {
   return groups;
 }
 
-// A decompiled .vmat (KeyValues text) into the glTF extras shape
-function parseVmat(text) {
+// A decompiled .vmat (KeyValues text) into the glTF extras shape, with its path as Name (as
+// Source2Viewer gives it, for materials/dynamic.json). Only the material's own values and its
+// compiled textures are read: the expressions in DynamicParams are not values (taken as
+// vectors they came out as [null, null])
+function parseVmat(text, name) {
   const values = {};
   const compiled = {};
-  let inCompiled = false;
+  let block = null;
+  let depth = 0;
   for (const line of text.split("\n")) {
-    if (/"Compiled Textures"/.test(line)) {
-      inCompiled = true;
+    const trimmed = line.trim();
+    if (trimmed === "{") {
+      depth++;
       continue;
     }
-    if (inCompiled && line.trim() === "}") {
-      inCompiled = false;
+    if (trimmed === "}") {
+      depth--;
+      if (depth <= 1) block = null;
+      continue;
+    }
+    const section = trimmed.match(/^"([^"]+)"$/);
+    if (section) {
+      if (depth === 1) block = section[1];
       continue;
     }
     const pair = line.match(/^\s*"([^"]+)"\s+"([^"]*)"/);
-    if (pair) {
-      (inCompiled ? compiled : values)[pair[1]] = pair[2];
+    if (pair && depth === 1 && !block) {
+      values[pair[1]] = pair[2];
+    } else if (pair && block === "Compiled Textures") {
+      compiled[pair[1]] = pair[2];
     }
   }
 
-  const vmat = { ShaderName: values.shader, IntParams: {}, FloatParams: {}, VectorParams: {}, TextureParams: {} };
+  const vmat = { Name: name, ShaderName: values.shader, IntParams: {}, FloatParams: {}, VectorParams: {}, TextureParams: {} };
   for (const [key, value] of Object.entries(values)) {
     if (key.startsWith("F_")) {
       vmat.IntParams[key] = Number(value);
@@ -138,7 +151,7 @@ async function exportSkins({ wanted, files, collect, decompiler, temp, distDir }
   for (const file of vmats) {
     const text = path.join(work, "vmat_out", file.replace(/_c$/, ""));
     if (fs.existsSync(text)) {
-      parsed.set(file.replace(/_c$/, ""), parseVmat(fs.readFileSync(text, "utf8")));
+      parsed.set(file.replace(/_c$/, ""), parseVmat(fs.readFileSync(text, "utf8"), file.replace(/_c$/, "")));
     }
   }
 

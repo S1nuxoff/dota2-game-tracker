@@ -8,6 +8,7 @@ const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("./hf");
 const { steamSource, localSource } = require("./source");
 const { exportSkins } = require("./skins");
+const { exportDynamicMaterials } = require("./materials");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
 
@@ -170,6 +171,13 @@ async function main() {
       `Progress: ${done}/${todo.length} models (${Math.round((done / todo.length) * 100)}%), ` +
         `${Math.round(minutes)} min so far, about ${left >= 60 ? `${(left / 60).toFixed(1)} h` : `${Math.round(left)} min`} left`
     );
+  }
+
+  // The parameters of the models' materials that change as the game runs
+  const dynamic = await exportDynamicMaterials({ state, source, decompiler: DECOMPILER, temp });
+  if (dynamic) {
+    await hf.upload(repo, accessToken, [dynamic.upload], "Dynamic material parameters");
+    state.dynamicMaterials = dynamic.hash;
   }
 
   state.manifest = source.manifestId ?? state.manifest;
@@ -496,7 +504,7 @@ function buildIndex(items, heroes, state, personas = {}) {
 
 function loadState() {
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
-  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {}, failed: state.failed ?? {} };
+  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {}, failed: state.failed ?? {}, dynamicMaterials: state.dynamicMaterials ?? null };
 }
 
 function saveState(state) {

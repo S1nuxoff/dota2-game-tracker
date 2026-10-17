@@ -19,6 +19,8 @@ const { parse } = require("./keyvalues");
 
 const temp = "./temp/audio";
 const STATE_FILE = "audio-state.json";
+// Raised when what this writes changes, so the next run writes it all again without a patch
+const FORMAT = 2;
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 
 function argValue(name) {
@@ -118,7 +120,7 @@ async function main() {
   // file that is there. Sounds the dataset did not have yet (sounds.js failed or ran after) are
   // left out and kept in the state: once any of them is there, the lists are made again.
   let soundPaths = null;
-  if (state.manifest === source.manifestId && !process.argv.includes("--force")) {
+  if (state.manifest === source.manifestId && state.format === FORMAT && !process.argv.includes("--force")) {
     if (state.missing?.length) {
       soundPaths = await hf.soundPaths(process.env.HF_TOKEN);
     }
@@ -320,7 +322,7 @@ async function main() {
     console.log(`Written to ${out}`);
   }
   if (upload) {
-    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, missing: [...missing].sort() }));
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, format: FORMAT, missing: [...missing].sort() }));
   }
 }
 

@@ -399,7 +399,7 @@ async function main() {
   state.attachments ??= {};
   if (!state.attached) {
     state.attached = {};
-    for (const file of await hf.filesIn(repo, accessToken, "models", /\.attachments\.json$/)) {
+    for (const file of repo ? await hf.filesIn(repo, accessToken, "models", /\.attachments\.json$/) : []) {
       state.attached[file.replace(/\.attachments\.json$/, ".vmdl")] = true;
     }
     console.log(`${Object.keys(state.attached).length} models with attachments in the dataset`);

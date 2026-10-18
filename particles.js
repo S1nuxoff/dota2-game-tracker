@@ -31,8 +31,8 @@ const STATE_FILE = "particles-state.json";
 const MODELS_FILE = "particle-models.json";
 // Raised when the bundles change shape, to make them all again
 const BUNDLE_VERSION = 1;
-// Raised when textures are built another way, so all of them are built again (2: sheet frames at their own sizes)
-const TEXTURE_VERSION = 2;
+// Raised when textures are built another way, so all of them are built again (2: sheet frames at their own sizes; 3: each in its whole cell)
+const TEXTURE_VERSION = 3;
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const BATCH = 2000;
@@ -251,9 +251,35 @@ function readSheet(mksFile) {
   return Array.from(sequences, (sequence) => sequence ?? { frames: [], flags: [] });
 }
 
+// Each sheet's frames as the game draws them, from Source2Viewer's print of the textures' DATA:
+// Map(texture => { width, height, frames: Map("s.f" => { cropped, cell }) }), uv rectangles
+// [x0, y0, x1, y1]. The game draws a frame's whole cell (cell), the picture (cropped) at its
+// place in it with clear space round; the exported frame images are the cropped part alone.
+function readSheetCells(input) {
+  const result = spawnSync(DECOMPILER, ["-i", input, "--recursive", "-b", "DATA"], { encoding: "utf8", maxBuffer: 2048 * 1024 * 1024 });
+  if (result.error) {
+    throw result.error;
+  }
+  const sheets = new Map();
+  const rect = (text) => text.match(/-?[\d.]+/g).map(Number);
+  // "[3/100] <file>" starts each file, its path under the input folder
+  for (const chunk of result.stdout.split(/(?:^|\n)\[\d+\/\d+\] /).slice(1)) {
+    const file = chunk.slice(0, chunk.indexOf("\n")).trim();
+    const name = path.relative(input, path.resolve(input, file)).replace(/_c$/, "").toLowerCase().split(path.sep).join("/");
+    const width = Number(chunk.match(/\bWidth\s*=\s*(\d+)/)?.[1]);
+    const height = Number(chunk.match(/\bHeight\s*=\s*(\d+)/)?.[1]);
+    const frames = new Map();
+    for (const match of chunk.matchAll(/\[(\d+)\.(\d+)\.0\] uvCropped\s*=\s*(\{[^}]*\})\s*\n\s*\[\1\.\2\.0\] uvUncropped\s*=\s*(\{[^}]*\})/g)) {
+      frames.set(`${match[1]}.${match[2]}`, { cropped: rect(match[3]), cell: rect(match[4]) });
+    }
+    if (width && height && frames.size) sheets.set(name, { width, height, frames });
+  }
+  return sheets;
+}
+
 // A texture as one image: its own, or its frames laid in a grid; and its sheet in pixels:
 // { width, height, sequences: [{ frames: [[x, y, w, h, duration]], loop }] }
-async function buildTexture(out, texture, dist) {
+async function buildTexture(out, texture, dist, cells) {
   const base = path.join(out, texture.replace(/\.vtex$/, ""));
   const image = path.join(dist, "particles/textures", texture.replace(/\.vtex$/, ".png"));
   const sheetFile = image.replace(/\.png$/, ".json");
@@ -285,9 +311,32 @@ async function buildTexture(out, texture, dist) {
   // Rows of frames by height, a gap between them so the smaller mips do not bleed into neighbours.
   const files = [...new Set(frames.map((frame) => frame.file))];
   const sizes = new Map();
+  // Each frame in its whole cell where the texture says where it lies in it (<name>_seq<s>_<f>.png)
+  const images = new Map();
   for (const file of files) {
     const meta = await sharp(path.join(folder, file)).metadata();
-    sizes.set(file, [meta.width, meta.height]);
+    const place = cells?.frames.get(file.match(/_seq(\d+)_(\d+)\.\w+$/)?.slice(1, 3).join("."));
+    if (place) {
+      const [cx0, cy0, cx1, cy1] = place.cropped;
+      const [ux0, uy0, ux1, uy1] = place.cell;
+      const cellWidth = Math.max(1, Math.round((ux1 - ux0) * cells.width));
+      const cellHeight = Math.max(1, Math.round((uy1 - uy0) * cells.height));
+      const left = Math.min(Math.max(Math.round((cx0 - ux0) * cells.width), 0), cellWidth - 1);
+      const top = Math.min(Math.max(Math.round((cy0 - uy0) * cells.height), 0), cellHeight - 1);
+      const w = Math.min(Math.max(1, Math.round((cx1 - cx0) * cells.width)), cellWidth - left);
+      const h = Math.min(Math.max(1, Math.round((cy1 - cy0) * cells.height)), cellHeight - top);
+      const picture = await sharp(path.join(folder, file)).resize(w, h, { fit: "fill" }).png().toBuffer();
+      images.set(
+        file,
+        await sharp({ create: { width: cellWidth, height: cellHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+          .composite([{ input: picture, left, top }])
+          .png()
+          .toBuffer()
+      );
+      sizes.set(file, [cellWidth, cellHeight]);
+    } else {
+      sizes.set(file, [meta.width, meta.height]);
+    }
   }
   const GAP = 2;
   const area = files.reduce((sum, file) => sum + (sizes.get(file)[0] + GAP) * (sizes.get(file)[1] + GAP), 0);
@@ -321,7 +370,8 @@ async function buildTexture(out, texture, dist) {
   for (const file of files) {
     const [x, y, w, h] = placed.get(file);
     const [ow, oh] = sizes.get(file);
-    const input = ow === w && oh === h ? path.join(folder, file) : await sharp(path.join(folder, file)).resize(w, h, { fit: "fill" }).png().toBuffer();
+    const source = images.get(file) ?? path.join(folder, file);
+    const input = ow === w && oh === h ? source : await sharp(source).resize(w, h, { fit: "fill" }).png().toBuffer();
     composites.push({ input, left: x, top: y });
   }
   await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
@@ -465,9 +515,10 @@ async function main() {
     const files = new Map();
     await source.readFiles(batch.map((file) => `${file}_c`), files);
     const out = convert(files, "textures");
+    const cells = readSheetCells(path.join(temp, "textures-in"));
     source.release();
     for (const texture of batch) {
-      const built = await buildTexture(out, texture, dist).catch((error) => {
+      const built = await buildTexture(out, texture, dist, cells.get(texture.toLowerCase())).catch((error) => {
         console.log(`  ${texture}: ${error.message}`);
         return null;
       });
@@ -605,4 +656,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { buildTexture };
+module.exports = { buildTexture, readSheetCells };

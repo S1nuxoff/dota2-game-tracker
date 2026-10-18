@@ -41,7 +41,7 @@ const IMAGE_FOLDERS = [
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 6;
+const DATA_VERSION = 7;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -227,7 +227,7 @@ function readTexts(read, files) {
 
 // Each hero's page scene as the game sets it: the pedestal, the light, the camera of the page,
 // of the set picker and of each slot. Positions in game units, angles in degrees.
-// { npc_dota_hero_lion: { pedestal, light: { position, angles, color, scale }, ambient, shadow, cameras: { default: { position, angles, fov } } } }
+// { npc_dota_hero_lion: { pedestal, light: { position, angles, color, scale }, ambient: { color, scale, direction }, shadow, cameras: { default: { position, angles, fov } } } }
 function readPortraits(read, files) {
   const file = "scripts/npc/portraits_full_body_loadout.txt";
   if (!files.has(file)) {
@@ -249,7 +249,12 @@ function readPortraits(read, files) {
         color: color(entry.PortraitLightColor),
         scale: Number(entry.PortraitLightScale ?? 1),
       },
-      ambient: { color: color(entry.PortraitAmbientColor), scale: Number(entry.PortraitAmbientScale ?? 1) },
+      // direction: angles in degrees the second light points along
+      ambient: {
+        color: color(entry.PortraitAmbientColor),
+        scale: Number(entry.PortraitAmbientScale ?? 1),
+        ...(entry.PortraitAmbientDirection ? { direction: vector(entry.PortraitAmbientDirection) } : {}),
+      },
       shadow: { color: color(entry.PortraitShadowColor), ground: Number(entry.PortraitGroundShadowScale ?? 1) },
       cameras: Object.fromEntries(
         Object.entries(entry.cameras ?? {}).map(([name, camera]) => [

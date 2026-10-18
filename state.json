@@ -196023,5 +196023,6 @@
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_metalnessmask_psd_d73ddf5.png": true,
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_specmask_psd_f3154b5e.png": true
  },
- "failed": {}
+ "failed": {},
+ "dynamicMaterials": "e388e505"
 }

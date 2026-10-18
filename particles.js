@@ -31,6 +31,8 @@ const STATE_FILE = "particles-state.json";
 const MODELS_FILE = "particle-models.json";
 // Raised when the bundles change shape, to make them all again
 const BUNDLE_VERSION = 1;
+// Raised when textures are built another way, so all of them are built again (2: sheet frames at their own sizes)
+const TEXTURE_VERSION = 2;
 const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const BATCH = 2000;
@@ -278,22 +280,50 @@ async function buildTexture(out, texture, dist) {
   if (frames.length === 0) {
     return null;
   }
-  const first = await sharp(path.join(folder, frames[0].file)).metadata();
-  const columns = Math.ceil(Math.sqrt(frames.length));
-  const rows = Math.ceil(frames.length / columns);
-  const scale = Math.min(1, MAX_ATLAS / Math.max(columns * first.width, rows * first.height));
-  const cellWidth = Math.max(1, Math.floor(first.width * scale));
-  const cellHeight = Math.max(1, Math.floor(first.height * scale));
-  const placed = new Map();
-  const composites = [];
-  for (const [index, frame] of frames.entries()) {
-    const x = (index % columns) * cellWidth;
-    const y = Math.floor(index / columns) * cellHeight;
-    placed.set(frame.file, [x, y, cellWidth, cellHeight]);
-    composites.push({ input: await sharp(path.join(folder, frame.file)).resize(cellWidth, cellHeight, { fit: "fill" }).png().toBuffer(), left: x, top: y });
+  // Frames are packed at their own sizes, which differ within a sheet (a fire's first frame is a
+  // spark of 15x22, its flames up to 103x110); all of them were squeezed to the first one's.
+  // Rows of frames by height, a gap between them so the smaller mips do not bleed into neighbours.
+  const files = [...new Set(frames.map((frame) => frame.file))];
+  const sizes = new Map();
+  for (const file of files) {
+    const meta = await sharp(path.join(folder, file)).metadata();
+    sizes.set(file, [meta.width, meta.height]);
   }
-  const width = columns * cellWidth;
-  const height = rows * cellHeight;
+  const GAP = 2;
+  const area = files.reduce((sum, file) => sum + (sizes.get(file)[0] + GAP) * (sizes.get(file)[1] + GAP), 0);
+  const widest = Math.max(...files.map((file) => sizes.get(file)[0] + GAP));
+  const pack = (scale) => {
+    const rowWidth = Math.max(Math.ceil(widest * scale), Math.ceil(Math.sqrt(area) * scale * 1.1));
+    const spots = new Map();
+    let x = 0;
+    let y = 0;
+    let rowHeight = 0;
+    let width = 0;
+    for (const file of files.slice().sort((a, b) => sizes.get(b)[1] - sizes.get(a)[1])) {
+      const w = Math.max(1, Math.round(sizes.get(file)[0] * scale));
+      const h = Math.max(1, Math.round(sizes.get(file)[1] * scale));
+      if (x > 0 && x + w > rowWidth) {
+        x = 0;
+        y += rowHeight + GAP;
+        rowHeight = 0;
+      }
+      spots.set(file, [x, y, w, h]);
+      x += w + GAP;
+      rowHeight = Math.max(rowHeight, h);
+      width = Math.max(width, x - GAP);
+    }
+    return { spots, width, height: y + rowHeight };
+  };
+  let packed = pack(1);
+  for (let scale = 0.9; Math.max(packed.width, packed.height) > MAX_ATLAS; scale *= 0.9) packed = pack(scale);
+  const { spots: placed, width, height } = packed;
+  const composites = [];
+  for (const file of files) {
+    const [x, y, w, h] = placed.get(file);
+    const [ow, oh] = sizes.get(file);
+    const input = ow === w && oh === h ? path.join(folder, file) : await sharp(path.join(folder, file)).resize(w, h, { fit: "fill" }).png().toBuffer();
+    composites.push({ input, left: x, top: y });
+  }
   await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
     .composite(composites)
     .png()
@@ -425,6 +455,9 @@ async function main() {
   // The textures they draw
   // With the ones the game draws where a renderer's layer names no texture
   const textures = [...new Set([...[...reached].flatMap((file) => state.systems[file]?.textures ?? []), ...DEFAULT_TEXTURES])].filter((texture) => crcOf(texture) !== undefined);
+  if (state.textureVersion !== TEXTURE_VERSION) {
+    state.textures = {};
+  }
   const textureTodo = textures.filter((texture) => state.textures[texture] !== crcOf(texture));
   console.log(`${textures.length} textures, ${textureTodo.length} new or changed`);
   for (let i = 0; i < textureTodo.length; i += BATCH) {
@@ -446,6 +479,8 @@ async function main() {
       }
     }
   }
+
+  state.textureVersion = TEXTURE_VERSION;
 
   // The snapshots they place particles by: each stream's values by its name
   state.snapshots ??= {};
@@ -560,10 +595,14 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}
+
+module.exports = { buildTexture };

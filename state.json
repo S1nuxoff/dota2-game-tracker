@@ -1,5 +1,5 @@
 {
- "manifest": "3225159009864329042",
+ "manifest": "6941387369820823734",
  "models": {
   "models/heroes/antimage/antimage_weapon.vmdl": {
    "hash": "f1fb0cb6",
@@ -191932,6 +191932,27 @@
     "particles/models/items/slark/slark_fall_immortal_shark/slark_fall_immortal_shark.vmdl_c"
    ],
    "cloth": false
+  },
+  "models/heroes/pedestal/dark_carnival_pedestal.vmdl": {
+   "hash": "e7a3a161",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_candle.vmat_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_candle_color_psd_93f90182.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_candle_vmat_g_tmasks2_c1772ea5.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium.vmat_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium_color_psd_37ec26d6.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium_normal_psd_bbc459d1.vtex_c",
+    "materials/models/heroes/pedestal/dark_carnival_pedestal_podium_refl_psd_e6c9704e.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_candles_normal_psd_17e38568.vtex_c",
+    "materials/models/heroes/pudge_cute/pudge_cute_candles_selfillum_psd_e6f04531.vtex_c",
+    "materials/models/props/dark_carnival_pedestal/pedestal_carnival_candleholder.vmat_c",
+    "materials/models/props/dark_carnival_pedestal/pedestal_carnival_candleholder_color_png_689cf744.vtex_c",
+    "materials/models/props/dark_carnival_pedestal/pedestal_carnival_candleholder_normal_png_888e93e6.vtex_c",
+    "materials/models/props/dark_carnival_pedestal/pedestal_carnival_candleholder_refl_png_fca9b992.vtex_c",
+    "models/heroes/pedestal/dark_carnival_pedestal.vmdl_c"
+   ],
+   "cloth": true
   }
  },
  "textures": {
@@ -196024,5 +196045,5 @@
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_specmask_psd_f3154b5e.png": true
  },
  "failed": {},
- "dynamicMaterials": "e388e505"
+ "dynamicMaterials": "a17fea79"
 }

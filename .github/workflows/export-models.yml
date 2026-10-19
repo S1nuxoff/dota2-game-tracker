@@ -1,4 +1,4 @@
-name: Export Models, Data and Sounds
+name: Export Models, Data, Sounds and Scenes
 
 on:
   schedule:
@@ -82,7 +82,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          files=$(ls state.json data-state.json sounds-state.json audio-state.json scenes-state.json particles-state.json particle-models.json 2>/dev/null)
+          files=$(ls state.json data-state.json sounds-state.json audio-state.json particles-state.json particle-models.json 2>/dev/null)
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"
@@ -99,5 +99,56 @@ jobs:
             git checkout "$exported" -- $files
             git diff --cached --quiet && exit 0
             git commit -m "Exported models"
+          done
+          exit 1
+
+  # Scenes and maps (MVP showcases, treasures, event and battle pass scenes, backgrounds) to the
+  # scenes dataset: new or changed map packages only, against scenes-state.json; a run stops
+  # starting new ones after 300 minutes and the next run goes on from there
+  scenes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        run: npm ci
+      - name: Download Source2Viewer ${{ env.VRF_VERSION }}
+        run: |
+          curl -sSL -o vrf.zip "https://github.com/ValveResourceFormat/ValveResourceFormat/releases/download/${VRF_VERSION}/cli-linux-x64.zip"
+          unzip -q vrf.zip -d vrf
+          chmod +x vrf/Source2Viewer-CLI
+          rm vrf.zip
+      - name: Export scenes
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node scenes.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' --max-minutes 300
+      # Only scenes-state.json, on top of whatever the other job pushed meanwhile
+      - name: Commit & push state
+        if: success() || failure()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          files=scenes-state.json
+          git add -- $files
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "Exported scenes"
+          exported=$(git rev-parse HEAD)
+          for attempt in 1 2 3; do
+            git push origin HEAD:main && exit 0
+            git fetch origin main
+            git reset -q --hard origin/main
+            git checkout "$exported" -- $files
+            git diff --cached --quiet && exit 0
+            git commit -m "Exported scenes"
           done
           exit 1

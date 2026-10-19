@@ -64,7 +64,8 @@ async function main() {
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
   const source = game ? localSource(game) : await steamSource(username, password, temp);
-  const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
+  // --force: everything again, the images and videos too, as on the first run
+  const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === DATA_VERSION) {
     console.log(`Game data of manifest ${source.manifestId} is already exported.`);
     return;

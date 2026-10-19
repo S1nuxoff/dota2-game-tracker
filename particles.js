@@ -499,7 +499,8 @@ async function main() {
   const repo = upload ? await hf.prepareRepo(accessToken, process.env.HF_REPO) : null;
   const dist = path.join(temp, "dist");
 
-  const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { systems: {}, textures: {} };
+  // --force: everything again, as on the first run
+  const state = fs.existsSync(STATE_FILE) && !process.argv.includes("--force") ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { systems: {}, textures: {} };
   const crcOf = (file) => vpkDir.tree[`${file}_c`]?.crc;
 
   // Every system reachable from the items', converted where it changed; an unchanged one's

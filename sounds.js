@@ -86,7 +86,8 @@ async function main() {
   const repo = await hf.prepareRepo(accessToken, process.env.HF_SOUNDS_REPO || "dota2-sounds");
   console.log(`Dataset: https://huggingface.co/datasets/${repo.name}`);
 
-  const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
+  // --force: everything again, as on the first run
+  const state = fs.existsSync(STATE_FILE) && !process.argv.includes("--force") ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   const changed = (file) => state[file] !== vpkDir.tree[file].crc;
   const sounds = vpkDir.files.filter((file) => file.startsWith("sounds/") && file.endsWith(".vsnd_c"));
   const todo = sounds.filter(changed);

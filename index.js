@@ -116,6 +116,11 @@ async function main() {
   const wantedSkins = skinsWanted(items);
 
   const state = loadState();
+  // --force: the materials' dynamic parameters and cube maps again too
+  if (force) {
+    delete state.dynamicMaterials;
+    delete state.cubeMaps;
+  }
   // Models the converter failed on are tried again once their file changes
   const failedBefore = (model) => state.failed[model] === vpkDir.tree[`${model}_c`].crc;
   const todo = available

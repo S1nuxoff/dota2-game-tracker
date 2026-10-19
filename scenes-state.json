@@ -46,17 +46,20 @@
      ],
      "fov": 60
     }
-   }
+   },
+   "sha": "817d44b38f2cd8bac3c97b9653701bedffb81fdc"
   },
   "scenes/treasure/calavera_key_background": {
    "fingerprint": "86e01b6f",
    "size": 148,
-   "info": {}
+   "info": {},
+   "sha": "9439f938f680154f9a575997d37c30f5a25b84ed"
   },
   "scenes/treasure/calavera_scene_background": {
    "fingerprint": "19b9708f",
    "size": 152,
-   "info": {}
+   "info": {},
+   "sha": "084908cbaaebf7d2cabec1081b8d983d9e36c23d"
   },
   "scenes/treasure/frostivus2023_chest": {
    "fingerprint": "89bb8d0d",
@@ -104,7 +107,8 @@
      ],
      "fov": 60
     }
-   }
+   },
+   "sha": "c6697e4455aae92a5c9605ece0e8abba5eccfd75"
   },
   "scenes/treasure/generic_chest": {
    "fingerprint": "148542c8",
@@ -152,7 +156,8 @@
      ],
      "fov": 60
     }
-   }
+   },
+   "sha": "4d75c85cc74b4c7f60d06179dacbc45a38a8f60a"
   },
   "scenes/treasure/newbloom_2024_chest": {
    "fingerprint": "e31f4e67",
@@ -200,17 +205,20 @@
      ],
      "fov": 70
     }
-   }
+   },
+   "sha": "2d3ce95465346103347e3661a40418239d4c2f75"
   },
   "scenes/treasure_opened_generic": {
    "fingerprint": "2e93cc",
    "size": 148,
-   "info": {}
+   "info": {},
+   "sha": "b1385f9b670cb2b4582c31daa8a79a7a84b514b8"
   },
   "scenes/treasure_opening": {
    "fingerprint": "5576081e",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "6d75fb738433c419d4cd65bee37dbfc1a275b96b"
   },
   "scenes/mvp/mvp_antimage_persona": {
    "fingerprint": "2842da17",
@@ -332,7 +340,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "300de03a12f44e1476354c2b7c10f64b06826275"
   },
   "scenes/mvp/mvp_crystal_maiden_persona": {
    "fingerprint": "9cee0e7f",
@@ -454,7 +463,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "d705e6176df77b5fb242bf3fa4c8fd5e9e4ecbda"
   },
   "scenes/mvp/mvp_default": {
    "fingerprint": "86054dec",
@@ -489,7 +499,8 @@
       ]
      ]
     }
-   }
+   },
+   "sha": "b3bf86d610a820b8be8feac641b3b09a47054d8b"
   },
   "scenes/mvp/mvp_dragon_knight_persona": {
    "fingerprint": "413ecc43",
@@ -551,7 +562,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "5729b9043dc9b8641bbfd6d12dafda4172cba22e"
   },
   "scenes/mvp/mvp_drow_ranger_arcana": {
    "fingerprint": "f4ae2d36",
@@ -649,7 +661,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "14e7e371842cd4460ffbb8d5312ca7f634e58637"
   },
   "scenes/mvp/mvp_earthshaker_arcana": {
    "fingerprint": "bef1c901",
@@ -711,7 +724,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "55deed16f02f062264d557dd6dc9105e6245b5f8"
   },
   "scenes/mvp/mvp_faceless_void_arcana": {
    "fingerprint": "8ef4e362",
@@ -1133,7 +1147,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "567dc2846008c74b208f4c9773d421d599fcb735"
   },
   "scenes/mvp/mvp_invoker_kid": {
    "fingerprint": "8fd09747",
@@ -1243,7 +1258,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "9e462b14e33e0eb85fefd7672605d28f9d7fe15d"
   },
   "scenes/mvp/mvp_juggernaut_arcana": {
    "fingerprint": "e421e8aa",
@@ -1329,7 +1345,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "b2197831baf2d60abdc50193c37cc07eefc8d04a"
   },
   "scenes/mvp/mvp_mirana_persona": {
    "fingerprint": "bc108913",
@@ -2015,7 +2032,8 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "164bfab2472f01f8debbe76391c673fd1f7c2d07"
   },
   "scenes/mvp/mvp_monkey_king_arcana_form0": {
    "fingerprint": "1a9cb4fd",
@@ -2063,7 +2081,8 @@
      ],
      "fov": 24
     }
-   }
+   },
+   "sha": "0318ac7054cd356ab3533bc6a7eca0ecd0b3b5ab"
   },
   "scenes/mvp/mvp_ogre_magi_arcana": {
    "fingerprint": "8e5d7778",
@@ -2111,7 +2130,8 @@
      ],
      "fov": 14
     }
-   }
+   },
+   "sha": "9cf1e842eef94e71e3467b4c3d04ef7874fa0b5e"
   },
   "scenes/mvp/mvp_phantom_assassin_persona": {
    "fingerprint": "c3413ddb",
@@ -2461,312 +2481,374 @@
       ]
      }
     ]
-   }
+   },
+   "sha": "462cc21656f154682231ebbe2616d46f30a8656f"
   },
   "scenes/10th_anniversary/10th_anniversary_dashboard_highlight": {
    "fingerprint": "8f9619db",
    "size": 160,
-   "info": {}
+   "info": {},
+   "sha": "ec0af83c99faabe9a82b644a51e2021d7aeffbce"
   },
   "scenes/10th_anniversary/10th_anniversary_treasure_rarity": {
    "fingerprint": "3981c4ca",
    "size": 156,
-   "info": {}
+   "info": {},
+   "sha": "738949d955a0fd309a3cb66a4b48cbdd3adcea0c"
   },
   "scenes/700_frontpage": {
    "fingerprint": "26d89f63",
    "size": 36112,
-   "info": {}
+   "info": {},
+   "sha": "4d8c816dd3f8ef4d72e6221b91b969b28072acd8"
   },
   "scenes/700_patchbg": {
    "fingerprint": "15749f6f",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "086531b0551a74b3938fd4ca2b52baf187a8720d"
   },
   "scenes/720_patchbg": {
    "fingerprint": "e0bf5a7",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "45da9701d881fd14f09ccb2ab32479f63ff8b0c0"
   },
   "scenes/armory/ui_armory_edges": {
    "fingerprint": "86cab973",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "bb8fbdc02f1c45e1dcd8559c6a39c3938e194f8c"
   },
   "scenes/badge_level": {
    "fingerprint": "af5efca5",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "b2c16df14da2923ac924749e7585f3ce9db2a4d6"
   },
   "scenes/badge_level_up": {
    "fingerprint": "a4a68222",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "61bf50cc090c118db535ed81535d17769022cc8a"
   },
   "scenes/battlepass_fall2016_header": {
    "fingerprint": "2157d166",
    "size": 152,
-   "info": {}
+   "info": {},
+   "sha": "8b4edf02896b30501a5619bd3767a3586cff4fac"
   },
   "scenes/battlepass_fall2021/aghanimcourierreward": {
    "fingerprint": "7c745b51",
    "size": 12078608,
-   "info": {}
+   "info": {},
+   "sha": "5a98b1bbab6cdde581ca979e565ebe480f7edfaf"
   },
   "scenes/battlepass_fall2021/agh_questspage": {
    "fingerprint": "e7a590",
    "size": 12841464,
-   "info": {}
+   "info": {},
+   "sha": "9d0bc14c5c4e5e8d4f12a5811b7965e061390362"
   },
   "scenes/battlepass_fall2021/bp_2021_dashboard": {
    "fingerprint": "d5a1d82a",
    "size": 304829136,
-   "info": {}
+   "info": {},
+   "sha": "3408b8add3b41f7b7a377f19d8a6c4226306d46d"
   },
   "scenes/battlepass_fall2021/bp_2021_dashboard_bundle": {
    "fingerprint": "65f7d11e",
    "size": 5669060,
-   "info": {}
+   "info": {},
+   "sha": "75c3c3763b6508d74d29ad09c12e8fdde14817ac"
   },
   "scenes/battlepass_fall2021/bp_2021_dashboard_device": {
    "fingerprint": "701ca97a",
    "size": 5810524,
-   "info": {}
+   "info": {},
+   "sha": "f44c2e22defdebe17ae4eb6e53b705d48cccc0b5"
   },
   "scenes/battlepass_fall2021/custom_creeps_fp_cell": {
    "fingerprint": "dc06d0fe",
    "size": 63528004,
-   "info": {}
+   "info": {},
+   "sha": "731f5aebb6c399edb442986b96f7bde9c25fc063"
   },
   "scenes/battlepass_fall2021/custom_towers_fp_cell": {
    "fingerprint": "d7bfcce4",
    "size": 40476164,
-   "info": {}
+   "info": {},
+   "sha": "58f550e42ddbebea97d1437520a0c8ec94e48530"
   },
   "scenes/battlepass_fall2021/drow_arcana": {
    "fingerprint": "79960fcf",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "b4403b6e79a8f0df79b361e725bb99cca674f6b4"
   },
   "scenes/battlepass_fall2021/drow_arcana_fp_cell": {
    "fingerprint": "212153cf",
    "size": 252784144,
-   "info": {}
+   "info": {},
+   "sha": "3879042ef6d8d01eb3a7343b8ac5bbbe25cf8830"
   },
   "scenes/battlepass_fall2021/fall2021_collectorscache_fp_cell": {
    "fingerprint": "bbc9797e",
    "size": 156,
-   "info": {}
+   "info": {},
+   "sha": "942b6b3546f2d41f9dad5fafb68e0fd8388a5429"
   },
   "scenes/battlepass_fall2021/high_five_lvl_1": {
    "fingerprint": "78436414",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "f7f3c45ee353c0cfad8e3911dca5a225236436a9"
   },
   "scenes/battlepass_fall2021/high_five_lvl_2": {
    "fingerprint": "ec61990d",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "7eed7431da20209b9b73468f4eee873ea85d47e7"
   },
   "scenes/battlepass_fall2021/hoodwink_blossom_fp_cell": {
    "fingerprint": "86bcd04a",
    "size": 2255844,
-   "info": {}
+   "info": {},
+   "sha": "5b7c31d0c35c86326ff2a1e17129aeffba3a3aee"
   },
   "scenes/battlepass_fall2021/mirana_persona": {
    "fingerprint": "e4840b87",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "c6c4d98c006c6dd2415e2dcb21d869a6553843ea"
   },
   "scenes/battlepass_fall2021/mirana_persona_reward_line": {
    "fingerprint": "63a40a83",
    "size": 69079920,
-   "info": {}
+   "info": {},
+   "sha": "3a381a1113e17b5213751894eb65674865bce97d"
   },
   "scenes/battlepass_fall2021/quests_reward": {
    "fingerprint": "f9fae7b1",
    "size": 22717260,
-   "info": {}
+   "info": {},
+   "sha": "ee57e741812d310e2f93c62c722c73582bfd5c93"
   },
   "scenes/battlepass_fall2021/rewardline_agh_frag": {
    "fingerprint": "cb346fe5",
    "size": 1137480,
-   "info": {}
+   "info": {},
+   "sha": "282666e5327c434862c37efc1802fd8a76ca9f94"
   },
   "scenes/battlepass_fall2021/rewardline_creepgroup_dire": {
    "fingerprint": "15107e22",
    "size": 10653988,
-   "info": {}
+   "info": {},
+   "sha": "2eb65412b3d21c72f833fba5d8a597666f911755"
   },
   "scenes/battlepass_fall2021/rewardline_creepgroup_radiant": {
    "fingerprint": "b23cf998",
    "size": 9451396,
-   "info": {}
+   "info": {},
+   "sha": "edbc063ff9fd89178d7c47862c74592131fe547d"
   },
   "scenes/battlepass_fall2021/rewardline_mirana_armor": {
    "fingerprint": "b6a8a1d3",
    "size": 148,
-   "info": {}
+   "info": {},
+   "sha": "8790601e825ffa75e56725b128b4557ed30c737f"
   },
   "scenes/battlepass_fall2021/rewardline_towers": {
    "fingerprint": "ab17fbd3",
    "size": 57558556,
-   "info": {}
+   "info": {},
+   "sha": "17aa1175f06c5a309c0f75391837b60dba8f9647"
   },
   "scenes/battlepass_ti10/aegis_rotate": {
    "fingerprint": "1a6395f8",
    "size": 1949500,
-   "info": {}
+   "info": {},
+   "sha": "2f09f100e8dff32c654305d73f48ee2899cbaafe"
   },
   "scenes/battlepass_ti10/aghslogofx": {
    "fingerprint": "f3b7f7c0",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "67100eb96d36b935288777fc114bfc4fd01b8708"
   },
   "scenes/battlepass_ti10/antimage_persona": {
    "fingerprint": "ac86ef59",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "1d8f6e7043bbf0fb7e999a26cc1f9ae7e603150c"
   },
   "scenes/battlepass_ti10/aw_bp_dashboard": {
    "fingerprint": "d58f813d",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "3a2d4f44f9c690502ab9a1722454b02d1065d476"
   },
   "scenes/battlepass_ti10/aw_device_questspage": {
    "fingerprint": "71a0b6af",
    "size": 13268152,
-   "info": {}
+   "info": {},
+   "sha": "5853c88ae5ecdea31e4c77ff812c583c8cc10da4"
   },
   "scenes/battlepass_ti10/bench": {
    "fingerprint": "a653cdae",
    "size": 132,
-   "info": {}
+   "info": {},
+   "sha": "34cebf8bc143471d5e4b34116349c51a578a218b"
   },
   "scenes/battlepass_ti10/custom_towers": {
    "fingerprint": "54dc57d",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "f045af2e57875827d15954cada62e61239fb0666"
   },
   "scenes/battlepass_ti10/dragonknight_persona": {
    "fingerprint": "290f0aab",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "c34a2ad3f2b81e570d5f7ef54c1faeaa44de081a"
   },
   "scenes/battlepass_ti10/dragonknight_slyrak": {
    "fingerprint": "d617201e",
    "size": 23257092,
-   "info": {}
+   "info": {},
+   "sha": "cb64eec5d05b3cab54045c80b68d13c278abcd01"
   },
   "scenes/battlepass_ti10/high_five_lvl_1": {
    "fingerprint": "d865a61c",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "ece375d7e9e5a7e7b5a2a3f682459e251e3f725c"
   },
   "scenes/battlepass_ti10/high_five_lvl_2": {
    "fingerprint": "b6d918e7",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "5f056085faf4344e5681d07f9d485bb6ae6f04e5"
   },
   "scenes/battlepass_ti10/high_five_lvl_3": {
    "fingerprint": "c3c487ce",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "dd54cc08efe24e2c2a0e2f3a7a246df23f31b232"
   },
   "scenes/battlepass_ti10/invoker_persona_dark_artistry": {
    "fingerprint": "9684616f",
    "size": 156,
-   "info": {}
+   "info": {},
+   "sha": "05239c8eef3c4efbbeb293b479cb314017ae384f"
   },
   "scenes/battlepass_ti10/kid_invoker_rewardcell": {
    "fingerprint": "d0bfaaa3",
    "size": 16691880,
-   "info": {}
+   "info": {},
+   "sha": "3fa8253bcb0b11a90153949eff6d5314801764dd"
   },
   "scenes/battlepass_ti10/nemestice_collectorscache_fp_cell": {
    "fingerprint": "4e0d165e",
    "size": 160,
-   "info": {}
+   "info": {},
+   "sha": "efb332e95a6d916ace6f78cacdb566e6adc8a907"
   },
   "scenes/battlepass_ti10/nemestice_collectorscache_popup": {
    "fingerprint": "d6cda57c",
    "size": 156,
-   "info": {}
+   "info": {},
+   "sha": "eadb1bbab809eee00eafae7233127720e105f51f"
   },
   "scenes/battlepass_ti10/nemestice_end_reminder": {
    "fingerprint": "f536cc6e",
    "size": 148,
-   "info": {}
+   "info": {},
+   "sha": "e8354f044de3b73f047539667c1479426da7c4bb"
   },
   "scenes/battlepass_ti10/queenofpain_arcana": {
    "fingerprint": "e858df7e",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "75d6fad6ffd343320a0b8efab2134e090e5c7b73"
   },
   "scenes/battlepass_ti10/queen_of_pain_arcana": {
    "fingerprint": "66af8dad",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "882182d12fdf993c5d747b0dc80d33a7e75c5c38"
   },
   "scenes/battlepass_ti10/rewardintro": {
    "fingerprint": "387c9f72",
    "size": 395576,
-   "info": {}
+   "info": {},
+   "sha": "4572a767f878acf1b74e3b1190633f826cd73da6"
   },
   "scenes/battlepass_ti10/rewardline_dkarmor": {
    "fingerprint": "1494aafd",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "61d7f59ae1e7a000103e4af76053f0812aed3897"
   },
   "scenes/battlepass_ti10/rewardline_dksword": {
    "fingerprint": "d079adf3",
    "size": 1335108,
-   "info": {}
+   "info": {},
+   "sha": "756149f9f74c3a9dd0d206da5e0fd7de009797e5"
   },
   "scenes/battlepass_ti10/rewardline_helmet": {
    "fingerprint": "b890eb61",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "509c0c146329e861e19a8a8f7e5c91ae5565dd60"
   },
   "scenes/battlepass_ti10/rewardline_springhighfive": {
    "fingerprint": "7f935143",
    "size": 152,
-   "info": {}
+   "info": {},
+   "sha": "91ca85e3d72c710b195d1c21bfa21019609bb97f"
   },
   "scenes/battlepass_ti10/roshan_rotate": {
    "fingerprint": "e536134c",
    "size": 2918880,
-   "info": {}
+   "info": {},
+   "sha": "873d950d92f5ff2ec9fd1e8001bc1432d4ddacd2"
   },
   "scenes/battlepass_ti10/spectre_arcana": {
    "fingerprint": "7c57de5f",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "420612fb9cf29c1253e05cf7b9ed1b364e6695ab"
   },
   "scenes/battlepass_ti10/spectre_arcana_rewardcell": {
    "fingerprint": "139bedb6",
    "size": 152,
-   "info": {}
+   "info": {},
+   "sha": "1a9404be8d5314bca2dd607e037e505364373606"
   },
   "scenes/battlepass_ti10/ti10_map_reward": {
    "fingerprint": "57fa95e5",
    "size": 69248716,
-   "info": {}
+   "info": {},
+   "sha": "112bcd2035bbe7ff170eebd3105698c31c292b9b"
   },
   "scenes/battlepass_ti10/ti10_winnermap": {
    "fingerprint": "e8477806",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "e4b5c713b6afc34d012b3ef9105c55a0efe17580"
   },
   "scenes/battlepass_ti10/wk_arc_seal_flame": {
    "fingerprint": "c784a539",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "5e25dba3f2b7169ba8907411f1ba33b2a8388244"
   },
   "scenes/battlepass_ti10/wraith_king_arcana": {
    "fingerprint": "f273ac1a",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "12def06ff9273ed47459c06e2c2422bca1a4b8e4"
   },
   "scenes/battlepass_ti10_flags": {
    "fingerprint": "c932f2de",
@@ -2801,47 +2883,56 @@
       ]
      ]
     }
-   }
+   },
+   "sha": "04ac1d6e2d905b6eeeebd9615e789655101285ec"
   },
   "scenes/battlepass_ti11/aegis_rotate": {
    "fingerprint": "26abfc61",
    "size": 18402552,
-   "info": {}
+   "info": {},
+   "sha": "1f556088bc166211296bbc908e938c5cc61407c6"
   },
   "scenes/battlepass_ti11/dota_ui_dashboard_aegis_active": {
    "fingerprint": "5b1ac204",
    "size": 156,
-   "info": {}
+   "info": {},
+   "sha": "dfad7d7bfb8ce869835cbc8b5b4b4a89259c682f"
   },
   "scenes/battlepass_ti11/dota_ui_mystery_box_reward_ti11": {
    "fingerprint": "e5396f00",
    "size": 403820,
-   "info": {}
+   "info": {},
+   "sha": "030167f026238068aded4a17d87bcc77ecafb496"
   },
   "scenes/battlepass_ti11/high_five_foam_hand": {
    "fingerprint": "23f83bf0",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "9f4fa63471bdbda96ed4fea40ea4bf2b97dfe425"
   },
   "scenes/battlepass_ti11/high_five_lava": {
    "fingerprint": "759ec1c0",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "2f5267ffe020de31b8140ff5bd46c84237d4b89a"
   },
   "scenes/battlepass_ti11/mystery_box_ti11": {
    "fingerprint": "94f76f95",
    "size": 38419292,
-   "info": {}
+   "info": {},
+   "sha": "924680fbd6291c7ac82795e8161d236c6e361680"
   },
   "scenes/battlepass_ti11/razor_arcana_minigame_progress": {
    "fingerprint": "69bdd67b",
    "size": 11794752,
-   "info": {}
+   "info": {},
+   "sha": "797e12b2de0988193bd58d209b35fdc211d27c68"
   },
   "scenes/battlepass_ti11/ti2022_itemfx_icon_bg": {
    "fingerprint": "680513d8",
    "size": 148,
-   "info": {}
+   "info": {},
+   "sha": "6d2883698b0ed30f321477f7e55376cc6b598f9d"
   },
   "scenes/battlepass_ti12/aegis_rotate": {
    "fingerprint": "8e903bbe",
@@ -2876,7 +2967,8 @@
       ]
      ]
     }
-   }
+   },
+   "sha": "b723e9497d04533a3941bd807989dad0072721a8"
   },
   "scenes/battlepass_ti13/aegis_rotate": {
    "fingerprint": "ed0ad387",
@@ -2911,187 +3003,224 @@
       ]
      ]
     }
-   }
+   },
+   "sha": "b89423276d3cacc2bfe84980de43e77597751310"
   },
   "scenes/battlepass_ti6/aegis_rotate": {
    "fingerprint": "c3200a31",
    "size": 2157492,
-   "info": {}
+   "info": {},
+   "sha": "51620d896b066bab53766626beb184b4a7ca00fc"
   },
   "scenes/battlepass_ti6/lina_game_fx": {
    "fingerprint": "7bf69fe3",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "bb80c04670d537c8a6ec1351c6de95a5382f53d7"
   },
   "scenes/battlepass_ti6/lina_game_goalburst": {
    "fingerprint": "41f173f8",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "08cd89c877774c143d08e8c82be121d4eae7017e"
   },
   "scenes/battlepass_ti6/queststart": {
    "fingerprint": "633d6f24",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "04ccd5c48d35a9e8521b2e5a0f6664c05a327703"
   },
   "scenes/battlepass_ti6/singleflag1": {
    "fingerprint": "5d10b454",
    "size": 117136,
-   "info": {}
+   "info": {},
+   "sha": "ef914905c849cd5ae2ca76980057f96fabc8278f"
   },
   "scenes/battlepass_ti6/tree_game": {
    "fingerprint": "a2ebb81b",
    "size": 36509760,
-   "info": {}
+   "info": {},
+   "sha": "93d8aacfc4a4caf9f894bccb6c02c43549e58b0e"
   },
   "scenes/battlepass_ti6/twoflags": {
    "fingerprint": "ac24f79f",
    "size": 116892,
-   "info": {}
+   "info": {},
+   "sha": "c07873e7f5ed7f12212ac474af68bc30a5daa1cf"
   },
   "scenes/battlepass_ti6_header": {
    "fingerprint": "22efc82b",
    "size": 148,
-   "info": {}
+   "info": {},
+   "sha": "f2ab5a7530a383c76f65bcd2c4fee1e90a3250a3"
   },
   "scenes/battlepass_ti6_rewardintro": {
    "fingerprint": "51bdfe13",
    "size": 438384,
-   "info": {}
+   "info": {},
+   "sha": "74e2bf3b62b700bb51f02c4ab66a04e544117ac5"
   },
   "scenes/battlepass_ti7/aegis_rotate": {
    "fingerprint": "fea0cc1d",
    "size": 2154636,
-   "info": {}
+   "info": {},
+   "sha": "fdf2032e58df3315db6b095adf0c700962123e4a"
   },
   "scenes/battlepass_ti7/arcana_vote_ti7": {
    "fingerprint": "e577bf63",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "454b31d04d4c9a5104011204ebbac03633b339c7"
   },
   "scenes/battlepass_ti7/battlepass_bundle": {
    "fingerprint": "699a9bd4",
    "size": 438436,
-   "info": {}
+   "info": {},
+   "sha": "5f6c79dac138cc325700e24db61999ca5c48dc47"
   },
   "scenes/battlepass_ti7/kunkka_prestige": {
    "fingerprint": "cbc74791",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "21fddf54aec428ef5efa0620927afa1c90d838a7"
   },
   "scenes/battlepass_ti7/roshan_rotate": {
    "fingerprint": "c7da452e",
    "size": 2918880,
-   "info": {}
+   "info": {},
+   "sha": "7c58985421e9e2f6b84528948802715653c482c1"
   },
   "scenes/battlepass_ti7/sharkburst": {
    "fingerprint": "dc75ed7d",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "7cbd9a1cb28b7d754aef1a7840ce0e3c88d3602f"
   },
   "scenes/battlepass_ti7/slark_game_fx": {
    "fingerprint": "516af39f",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "3f28a0b497ee52227f4cbf07ea51ef0757a1e411"
   },
   "scenes/battlepass_ti7/slark_game_goalburst": {
    "fingerprint": "fa89d659",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "155ae35cd1012076428827c88f29f5b6889daa57"
   },
   "scenes/battlepass_ti7/terrain_upsell": {
    "fingerprint": "4ad4f62a",
    "size": 62767104,
-   "info": {}
+   "info": {},
+   "sha": "bdc10c59a199fd7abf034ac0b82edb912c381180"
   },
   "scenes/battlepass_ti7/ti7teams": {
    "fingerprint": "eaf27876",
    "size": 10503252,
-   "info": {}
+   "info": {},
+   "sha": "7613da31a7afc51c7488743c78800280f16eb352"
   },
   "scenes/battlepass_ti7/wisp_arcana": {
    "fingerprint": "5ad2208a",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "072d8bc788a1ecadaed85cae3a50c9a89ce9fa63"
   },
   "scenes/battlepass_ti7_flags": {
    "fingerprint": "88cdb4b9",
    "size": 148408,
-   "info": {}
+   "info": {},
+   "sha": "6df193ef807dbd6ef8d4278930cbc9c6be87d716"
   },
   "scenes/battlepass_ti7_header": {
    "fingerprint": "4c0858da",
    "size": 30588,
-   "info": {}
+   "info": {},
+   "sha": "085392d85284f9de29032f5d96a9226b87c23c69"
   },
   "scenes/battlepass_ti7_header_undersea": {
    "fingerprint": "b27bd4d9",
    "size": 33091728,
-   "info": {}
+   "info": {},
+   "sha": "e2dfa51ad96a0b79bbf754f3ad2659998ba64a85"
   },
   "scenes/battlepass_ti8/aegis_rotate": {
    "fingerprint": "63f57728",
    "size": 2169764,
-   "info": {}
+   "info": {},
+   "sha": "1b14e21f7154896a197eaccc9a815d71f14948b6"
   },
   "scenes/battlepass_ti8/battlepass_bundle_background": {
    "fingerprint": "a7a5f967",
    "size": 152,
-   "info": {}
+   "info": {},
+   "sha": "bef852cff7ebe1421c9c810d4eb52440d7b1c7ed"
   },
   "scenes/battlepass_ti8/battlepass_bundle_foreground": {
    "fingerprint": "1f8bddb7",
    "size": 438444,
-   "info": {}
+   "info": {},
+   "sha": "cb7d1e8babf0dc45fc7de09ab8db1d470a876a3a"
   },
   "scenes/battlepass_ti8/custom_creeps": {
    "fingerprint": "d5b2111b",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "dc4eaee6a9cf6f7c139ed6e022dab6e3cd07d76a"
   },
   "scenes/battlepass_ti8/dota_cavern_battlepass": {
    "fingerprint": "703808a7",
    "size": 81946248,
-   "info": {}
+   "info": {},
+   "sha": "161eb45a732cb4d5b268eddd0cc9b15219e26561"
   },
   "scenes/battlepass_ti8/generic_uprays": {
    "fingerprint": "d3f46a45",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "4d295ffa2f8d8b01124c1b27613e3f4bf388ad7c"
   },
   "scenes/battlepass_ti8/grimstroke": {
    "fingerprint": "bb7c59c0",
    "size": 136,
-   "info": {}
+   "info": {},
+   "sha": "77c013c2c48089fcea0eb933eae2af1af2b3b026"
   },
   "scenes/battlepass_ti8/prestige_lion": {
    "fingerprint": "edeb676e",
    "size": 140,
-   "info": {}
+   "info": {},
+   "sha": "8854d254071fe2f24ced9f12e39a52974343778c"
   },
   "scenes/battlepass_ti8/prestige_lion_dark": {
    "fingerprint": "36ed497d",
    "size": 144,
-   "info": {}
+   "info": {},
+   "sha": "462ba574eb570238f867226a47f955ebc7f2a7cc"
   },
   "scenes/battlepass_ti8/prestige_lion_frontpage": {
    "fingerprint": "241e99c0",
    "size": 2216776,
-   "info": {}
+   "info": {},
+   "sha": "3dc8c49d43d3498c5194a63a17eec96921869ebf"
   },
   "scenes/battlepass_ti8/rewardintro": {
    "fingerprint": "c962a98c",
    "size": 439588,
-   "info": {}
+   "info": {},
+   "sha": "01140890d5615b38fa7c7b4bf96d1e2d8f753b10"
   },
   "scenes/battlepass_ti8/roshan_rotate": {
    "fingerprint": "e307eb32",
    "size": 2918880,
-   "info": {}
+   "info": {},
+   "sha": "8055aebf091e7d4a78504c9a2d0645a72b7a70b9"
   },
   "scenes/battlepass_ti8_flags": {
    "fingerprint": "d12381d4",
    "size": 148416,
-   "info": {}
+   "info": {},
+   "sha": "6e6002e5c246856d794ae728f3388cde55e5ba59"
   }
  }
 }

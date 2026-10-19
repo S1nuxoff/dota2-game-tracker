@@ -3,10 +3,14 @@
 // between them, how heavy and damped each is). Source2Viewer leaves it out of the glTF, so each
 // model that has one gets <model>.cloth.json next to its glb, and models/cloth.json lists them:
 //   ["models/heroes/void_spirit/void_spirit.glb", ...]
+// A model whose cloth has effects (m_Effects: wind, stiffening) also gets the animation events that
+// start them (AE_CL_CLOTH_EFFECT) in its file, as `events`:
+//   { "<animation>": [[cycle, effect name, peak, tail, end (seconds), operation], ...] }
 //
 // index.js reads it for the models of each batch it exports. For models exported before this,
-// run it once over the whole state:
-//   HF_TOKEN=... node cloth.js --game "<...>/dota 2 beta/game/dota" [--no-upload]
+// run it once over the whole state (--effects: again over the models with cloth, uploading those
+// whose cloth has effects, after `events` was added):
+//   HF_TOKEN=... node cloth.js --game "<...>/dota 2 beta/game/dota" [--effects] [--no-upload]
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
@@ -43,6 +47,45 @@ function trim(value) {
   return value;
 }
 
+// The cloth effects each animation of a model starts, from its printed blocks: an animation's
+// m_name (three tabs in) comes before its m_eventArray, whose events give m_flCycle and their keys
+function clothEvents(text) {
+  const result = {};
+  let animation = null;
+  let inEvents = false;
+  let event = null;
+  for (const line of text.split("\n")) {
+    const name = line.match(/^\t\t\tm_name = "([^"]+)"/);
+    if (name) {
+      animation = name[1];
+      continue;
+    }
+    if (/^\t\t\tm_eventArray =/.test(line)) {
+      inEvents = true;
+      continue;
+    }
+    if (inEvents && /^\t\t\t[^\t]/.test(line) && !/^\t\t\t[[\]]/.test(line)) inEvents = false;
+    if (!inEvents) continue;
+    if (/^\t\t\t\t\{/.test(line)) {
+      event = {};
+      continue;
+    }
+    if (!event) continue;
+    let match;
+    if ((match = line.match(/^\t{5}m_flCycle = ([-\d.e]+)/))) event.cycle = Number(match[1]);
+    else if ((match = line.match(/^\t{6}FeEffectName = "([^"]*)"/))) event.name = match[1];
+    else if ((match = line.match(/^\t{6}Operation = (\d+)/))) event.operation = Number(match[1]);
+    else if ((match = line.match(/^\t{6}peaktailend = \[ ([^\]]+) \]/))) event.envelope = match[1].split(",").map(Number);
+    else if ((match = line.match(/^\t{5}m_sEventName = "([^"]+)"/))) {
+      if (match[1] === "AE_CL_CLOTH_EFFECT" && event.name && animation) {
+        (result[animation] ??= []).push(trim([event.cycle ?? 0, event.name, ...(event.envelope ?? [0, 0, 0]), event.operation ?? 0]));
+      }
+      event = null;
+    }
+  }
+  return result;
+}
+
 // { "models/....vmdl": feModel } for the models among `buffers` (Map of "<model>_c" to its bytes)
 // whose physics has nodes that move; the rest are left out
 function readCloth(buffers, decompiler, work) {
@@ -67,6 +110,13 @@ function readCloth(buffers, decompiler, work) {
     } catch (error) {
       console.log(`  Cloth of ${name} not read: ${error.message}`);
     }
+  }
+  for (const [name, fe] of Object.entries(result)) {
+    if (!fe.m_Effects) continue;
+    const animations = spawnSync(decompiler, ["-i", pack, "-f", `${name}_c`, "-a"], { encoding: "utf8", maxBuffer: 1024 * 1024 * 1024 });
+    if (animations.error) throw animations.error;
+    const events = clothEvents(animations.stdout);
+    if (Object.keys(events).length) fe.events = events;
   }
   return result;
 }
@@ -110,7 +160,10 @@ async function backfill() {
   const state = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   const source = localSource(game);
   const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_REPO) : null;
-  const todo = Object.keys(state.models).filter((model) => state.models[model].cloth === undefined && source.vpkDir.tree[`${model}_c`]);
+  const effects = process.argv.includes("--effects");
+  const todo = Object.keys(state.models).filter(
+    (model) => (effects ? state.models[model].cloth : state.models[model].cloth === undefined) && source.vpkDir.tree[`${model}_c`]
+  );
   console.log(`${todo.length} models to read for cloth`);
   let found = 0;
   for (let i = 0; i < todo.length; i += CHUNK) {
@@ -118,13 +171,17 @@ async function backfill() {
     const buffers = new Map();
     await source.readFiles(batch.map((model) => `${model}_c`), buffers);
     const cloth = readCloth(buffers, decompiler, path.join(temp, "work"));
+    if (effects) {
+      for (const model of Object.keys(cloth)) if (!cloth[model].m_Effects) delete cloth[model];
+    }
     const files = writeCloth(cloth, distDir);
     if (upload && files.length) await hf.upload(repo, process.env.HF_TOKEN, files, `Cloth of ${files.length} models`);
-    for (const model of batch) state.models[model].cloth = Boolean(cloth[model]);
+    if (!effects) for (const model of batch) state.models[model].cloth = Boolean(cloth[model]);
     found += files.length;
     if (upload) fs.writeFileSync(stateFile, JSON.stringify(state, null, 1));
-    console.log(`${Math.min(i + CHUNK, todo.length)}/${todo.length} read, ${found} with cloth`);
+    console.log(`${Math.min(i + CHUNK, todo.length)}/${todo.length} read, ${found} with cloth${effects ? " effects" : ""}`);
   }
+  if (effects) return;
   const list = clothList(state, temp);
   if (upload) await hf.upload(repo, process.env.HF_TOKEN, [list], "Models with cloth");
   console.log(`${list.count} models with cloth in all${upload ? "" : ` (written to ${distDir}, state not saved)`}`);

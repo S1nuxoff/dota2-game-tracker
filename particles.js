@@ -17,6 +17,8 @@
 //                                            its activities ({ name: { looping, activities } })
 //   particles/model-effects.json             the effects models start on their own (the pedestals'
 //                                            ground fog): { "<model>.vmdl": [{ system, config }] }
+//   particles/map-effects.json               the effects the heroes' page maps start (the god rays over
+//                                            the pedestal): { "<map>.vmap": [{ system, name, origin, angles }] }
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
 // and lists the models the particles draw in particle-models.json, for index.js to export.
@@ -144,6 +146,56 @@ async function modelEffects(source) {
     visit(kv3.parse(fs.readFileSync(file, "utf8"))?.rootNode);
     if (effects.length) {
       found[model] = effects;
+    }
+  }
+  return found;
+}
+
+// The effects the maps of the heroes' pages start themselves (PortraitBackgroundMap: their
+// info_particle_system entities, e.g. the god rays over the pedestal on dota_hud_loadout_2022),
+// read from each map's own VPK beside the game's. { "<map>.vmap": [{ system, name, origin, angles }] },
+// name the entity's (the game's code finds it by that), origin in game units, angles in degrees
+async function mapEffects(source) {
+  if (!source.vpkDir.tree[LOADOUT_PORTRAITS]) {
+    return {};
+  }
+  const portraits = new Map();
+  await source.readFiles([LOADOUT_PORTRAITS], portraits);
+  const text = portraits.get(LOADOUT_PORTRAITS).toString("utf8");
+  const maps = [...new Set([...text.matchAll(/"PortraitBackgroundMap"\s+"([^"]+\.vmap)"/gi)].map((match) => match[1].toLowerCase()))];
+  const loose = source.looseFiles("maps/");
+  const folder = path.join(temp, "maps");
+  fs.mkdirSync(folder, { recursive: true });
+  const run = (args) => spawnSync(DECOMPILER, args, { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }).stdout ?? "";
+  const numbers = (value) => (typeof value === "string" ? value.trim().split(/\s+/).map(Number) : [0, 0, 0]);
+  const found = {};
+  for (const map of maps) {
+    const entry = loose.find((file) => file.path.toLowerCase() === map.replace(/\.vmap$/, ".vpk"));
+    if (!entry) {
+      console.log(`${map}: its VPK is not in the game`);
+      continue;
+    }
+    const file = path.join(folder, path.basename(entry.path));
+    fs.writeFileSync(file, await source.readLoose(entry));
+    const effects = [];
+    for (const lump of run(["-i", file, "-l"]).match(/^\S+\.vents_c/gm) ?? []) {
+      for (const [, body] of run(["-i", file, "-f", lump, "-b", "DATA"]).matchAll(/values = \s*\{([^{}]*)\}/g)) {
+        const entity = {};
+        for (const [, key, value] of body.matchAll(/^\s*(\w+) = (.+)$/gm)) {
+          entity[key.toLowerCase()] = value.startsWith('"') ? value.slice(1, -1) : value;
+        }
+        if (entity.classname === "info_particle_system" && entity.effect_name && entity.start_active !== "false") {
+          effects.push({
+            system: entity.effect_name.toLowerCase(),
+            name: (entity.targetname ?? "").replace(/^\[PR#\]/, ""),
+            origin: numbers(entity.origin),
+            angles: numbers(entity.angles),
+          });
+        }
+      }
+    }
+    if (effects.length) {
+      found[map] = effects;
     }
   }
   return found;
@@ -455,8 +507,10 @@ async function main() {
   const reached = new Set();
   const itemRoots = await rootSystems();
   const effectsOfModels = await modelEffects(source);
-  const roots = [...new Set([...itemRoots, ...Object.values(effectsOfModels).flatMap((effects) => effects.map((effect) => effect.system))])];
-  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more started by the pedestals`);
+  const effectsOfMaps = await mapEffects(source);
+  const started = [...Object.values(effectsOfModels), ...Object.values(effectsOfMaps)].flatMap((effects) => effects.map((effect) => effect.system));
+  const roots = [...new Set([...itemRoots, ...started])];
+  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more started by the pedestals and the heroes' page maps`);
   let frontier = roots;
   const uploads = [];
   let converted = 0;
@@ -617,6 +671,9 @@ async function main() {
   fs.mkdirSync(path.dirname(modelEffectsFile), { recursive: true });
   fs.writeFileSync(modelEffectsFile, JSON.stringify(effectsOfModels));
   uploads.push({ path: "particles/model-effects.json", file: modelEffectsFile });
+  const mapEffectsFile = path.join(dist, "particles/map-effects.json");
+  fs.writeFileSync(mapEffectsFile, JSON.stringify(effectsOfMaps));
+  uploads.push({ path: "particles/map-effects.json", file: mapEffectsFile });
 
   const coverage = path.join(dist, "particles/coverage.json");
   fs.mkdirSync(path.dirname(coverage), { recursive: true });

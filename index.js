@@ -8,7 +8,7 @@ const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("./hf");
 const { steamSource, localSource } = require("./source");
 const { exportSkins } = require("./skins");
-const { exportDynamicMaterials } = require("./materials");
+const { exportDynamicMaterials, exportCubeMaps } = require("./materials");
 const { readCloth, writeCloth, clothList } = require("./cloth");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
@@ -180,6 +180,12 @@ async function main() {
   if (dynamic) {
     await hf.upload(repo, accessToken, [dynamic.upload], "Dynamic material parameters");
     state.dynamicMaterials = dynamic.hash;
+  }
+  // The cube maps the materials reflect, all six faces
+  const cubeMaps = await exportCubeMaps({ state, source, decompiler: DECOMPILER, temp });
+  if (cubeMaps) {
+    await hf.upload(repo, accessToken, cubeMaps.uploads, "Cube maps");
+    state.cubeMaps = cubeMaps.hash;
   }
 
   state.manifest = source.manifestId ?? state.manifest;

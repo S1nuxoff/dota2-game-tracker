@@ -3,6 +3,7 @@ const path = require("path");
 const zlib = require("zlib");
 const { spawnSync } = require("child_process");
 const { writeVpk } = require("./vpk-writer");
+const sharp = require("sharp");
 
 // Materials whose parameters the game works out every frame (DynamicParams in a .vmat: a detail
 // texture scrolling, a glow pulsing). Source2Viewer leaves them out of the glTF, so they are
@@ -96,4 +97,76 @@ async function exportDynamicMaterials({ state, source, decompiler, temp }) {
   return { upload: { path: "materials/dynamic.json", file }, hash };
 }
 
-module.exports = { exportDynamicMaterials, parseDataBlocks, decode };
+// The cube maps the exported models' materials reflect (g_tCubeMap), all six faces: Source2Viewer
+// puts a single face of one in the model's glTF (often a black one). Each is written as a strip
+// of its faces in the texture's own order, rt lf bk ft up dn (D3D's +X -X +Y -Y +Z -Z, in the
+// game's axes), as cubemaps/<texture path>.png, and cubemaps/index.json maps the textures' file
+// names (as the glTF's images name them) to the strips: { "glossy_orange_cube_tga_77c22107.vtex":
+// "cubemaps/materials/models/cubemaps/glossy_orange_cube_tga_77c22107.png" }.
+// Returns { uploads, hash } (the hash kept in the state as cubeMaps), or null when nothing changed.
+const CUBE_FACES = ["rt", "lf", "bk", "ft", "up", "dn"];
+async function exportCubeMaps({ state, source, decompiler, temp }) {
+  const vmats = [...new Set(Object.values(state.models).flatMap((model) => (model.deps ?? []).filter((file) => file.endsWith(".vmat_c"))))]
+    .filter((file) => source.vpkDir.tree[file])
+    .sort();
+  const work = path.join(temp, "cubemaps");
+  fs.rmSync(work, { recursive: true, force: true });
+  fs.mkdirSync(work, { recursive: true });
+  const materials = new Map();
+  await source.readFiles(vmats, materials);
+  const pack = path.join(work, "materials.vpk");
+  writeVpk(pack, materials);
+  const printed = spawnSync(decompiler, ["-i", pack, "-e", "vmat_c", "-b", "DATA"], { encoding: "utf8", maxBuffer: 1024 * 1024 * 1024 });
+  if (printed.error) {
+    throw printed.error;
+  }
+  const cubes = new Set();
+  for (const match of printed.stdout.matchAll(/m_pValue = resource_name:"([^"]+\.vtex)"\s*m_name = resource:"g_tCubeMap"/g)) {
+    cubes.add(`${match[1].toLowerCase()}_c`);
+  }
+  const files = [...cubes].filter((file) => source.vpkDir.tree[file]).sort();
+  const hash = zlib.crc32(files.map((file) => `${file}:${source.vpkDir.tree[file].crc}`).join("\n")).toString(16);
+  if (state.cubeMaps === hash) {
+    return null;
+  }
+  console.log(`Cube maps: ${files.length} reflected by ${vmats.length} materials`);
+  const textures = new Map();
+  await source.readFiles(files, textures);
+  const input = path.join(work, "in");
+  for (const [file, buffer] of textures) {
+    fs.mkdirSync(path.dirname(path.join(input, file)), { recursive: true });
+    fs.writeFileSync(path.join(input, file), buffer);
+  }
+  const output = path.join(work, "out");
+  const result = spawnSync(decompiler, ["-i", input, "--recursive", "-o", output, "-d"], { encoding: "utf8", maxBuffer: 1024 * 1024 * 1024 });
+  if (result.error) {
+    throw result.error;
+  }
+  const index = {};
+  const uploads = [];
+  for (const file of files) {
+    const base = path.join(output, file.replace(/\.vtex_c$/, ""));
+    const faces = CUBE_FACES.map((face) => `${base}_${face}.png`);
+    if (!faces.every((face) => fs.existsSync(face))) {
+      console.log(`  ${file}: not a cube map`);
+      continue;
+    }
+    const meta = await sharp(faces[0]).metadata();
+    const strip = path.join(work, "strips", file.replace(/\.vtex_c$/, ".png"));
+    fs.mkdirSync(path.dirname(strip), { recursive: true });
+    await sharp({ create: { width: meta.width * 6, height: meta.height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 1 } } })
+      .composite(faces.map((face, i) => ({ input: face, left: i * meta.width, top: 0 })))
+      .png()
+      .toFile(strip);
+    const published = `cubemaps/${file.replace(/\.vtex_c$/, ".png")}`;
+    index[path.basename(file).replace(/_c$/, "")] = published;
+    uploads.push({ path: published, file: strip });
+  }
+  const indexFile = path.join(work, "index.json");
+  fs.writeFileSync(indexFile, JSON.stringify(index));
+  uploads.push({ path: "cubemaps/index.json", file: indexFile });
+  console.log(`  ${uploads.length - 1} cube maps written`);
+  return { uploads, hash };
+}
+
+module.exports = { exportDynamicMaterials, exportCubeMaps, parseDataBlocks, decode };

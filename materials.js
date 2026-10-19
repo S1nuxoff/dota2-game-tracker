@@ -103,30 +103,43 @@ async function exportDynamicMaterials({ state, source, decompiler, temp }) {
 // game's axes), as cubemaps/<texture path>.png, and cubemaps/index.json maps the textures' file
 // names (as the glTF's images name them) to the strips: { "glossy_orange_cube_tga_77c22107.vtex":
 // "cubemaps/materials/models/cubemaps/glossy_orange_cube_tga_77c22107.png" }.
-// Returns { uploads, hash } (the hash kept in the state as cubeMaps), or null when nothing changed.
+// state.cubeMaps = { materials, files, hash }: a hash of the materials' CRCs, the cube maps they
+// named, and a hash of those cube maps' CRCs. The materials are read again only when one of them
+// changed; otherwise the cube maps found before are checked by their CRCs alone.
+// Returns { uploads, record } (the record kept in the state as cubeMaps), or null when nothing changed.
 const CUBE_FACES = ["rt", "lf", "bk", "ft", "up", "dn"];
+const crcHash = (source, files) => zlib.crc32(files.map((file) => `${file}:${source.vpkDir.tree[file].crc}`).join("\n")).toString(16);
 async function exportCubeMaps({ state, source, decompiler, temp }) {
   const vmats = [...new Set(Object.values(state.models).flatMap((model) => (model.deps ?? []).filter((file) => file.endsWith(".vmat_c"))))]
     .filter((file) => source.vpkDir.tree[file])
     .sort();
+  const materialsHash = crcHash(source, vmats);
   const work = path.join(temp, "cubemaps");
   fs.rmSync(work, { recursive: true, force: true });
   fs.mkdirSync(work, { recursive: true });
-  const materials = new Map();
-  await source.readFiles(vmats, materials);
-  const pack = path.join(work, "materials.vpk");
-  writeVpk(pack, materials);
-  const printed = spawnSync(decompiler, ["-i", pack, "-e", "vmat_c", "-b", "DATA"], { encoding: "utf8", maxBuffer: 1024 * 1024 * 1024 });
-  if (printed.error) {
-    throw printed.error;
+  let files;
+  if (state.cubeMaps?.materials === materialsHash && Array.isArray(state.cubeMaps.files)) {
+    files = state.cubeMaps.files.filter((file) => source.vpkDir.tree[file]);
+  } else {
+    const materials = new Map();
+    await source.readFiles(vmats, materials);
+    const pack = path.join(work, "materials.vpk");
+    writeVpk(pack, materials);
+    const printed = spawnSync(decompiler, ["-i", pack, "-e", "vmat_c", "-b", "DATA"], { encoding: "utf8", maxBuffer: 1024 * 1024 * 1024 });
+    if (printed.error) {
+      throw printed.error;
+    }
+    const cubes = new Set();
+    for (const match of printed.stdout.matchAll(/m_pValue = resource_name:"([^"]+\.vtex)"\s*m_name = resource:"g_tCubeMap"/g)) {
+      cubes.add(`${match[1].toLowerCase()}_c`);
+    }
+    files = [...cubes].filter((file) => source.vpkDir.tree[file]).sort();
   }
-  const cubes = new Set();
-  for (const match of printed.stdout.matchAll(/m_pValue = resource_name:"([^"]+\.vtex)"\s*m_name = resource:"g_tCubeMap"/g)) {
-    cubes.add(`${match[1].toLowerCase()}_c`);
-  }
-  const files = [...cubes].filter((file) => source.vpkDir.tree[file]).sort();
-  const hash = zlib.crc32(files.map((file) => `${file}:${source.vpkDir.tree[file].crc}`).join("\n")).toString(16);
-  if (state.cubeMaps === hash) {
+  const hash = crcHash(source, files);
+  const record = { materials: materialsHash, files, hash };
+  if (state.cubeMaps?.hash === hash) {
+    // The cube maps are as they were; the materials' hash and list kept up to date
+    state.cubeMaps = record;
     return null;
   }
   console.log(`Cube maps: ${files.length} reflected by ${vmats.length} materials`);
@@ -166,7 +179,7 @@ async function exportCubeMaps({ state, source, decompiler, temp }) {
   fs.writeFileSync(indexFile, JSON.stringify(index));
   uploads.push({ path: "cubemaps/index.json", file: indexFile });
   console.log(`  ${uploads.length - 1} cube maps written`);
-  return { uploads, hash };
+  return { uploads, record };
 }
 
 module.exports = { exportDynamicMaterials, exportCubeMaps, parseDataBlocks, decode };

@@ -185,7 +185,7 @@ async function main() {
   const cubeMaps = await exportCubeMaps({ state, source, decompiler: DECOMPILER, temp });
   if (cubeMaps) {
     await hf.upload(repo, accessToken, cubeMaps.uploads, "Cube maps");
-    state.cubeMaps = cubeMaps.hash;
+    state.cubeMaps = cubeMaps.record;
   }
 
   state.manifest = source.manifestId ?? state.manifest;

@@ -15,6 +15,8 @@
 //                                            effects' own and those items put in their place
 //   models/<path>.sequences.json            a model particles draw: its sequences, whether each loops and
 //                                            its activities ({ name: { looping, activities } })
+//   particles/model-effects.json             the effects models start on their own (the pedestals'
+//                                            ground fog): { "<model>.vmdl": [{ system, config }] }
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
 // and lists the models the particles draw in particle-models.json, for index.js to export.
@@ -29,6 +31,7 @@ const { localSource, steamSource } = require("./source");
 const temp = "./temp/particles";
 const STATE_FILE = "particles-state.json";
 const MODELS_FILE = "particle-models.json";
+const LOADOUT_PORTRAITS = "scripts/npc/portraits_full_body_loadout.txt";
 // Raised when the bundles change shape, to make them all again
 const BUNDLE_VERSION = 1;
 // Raised when textures are built another way, so all of them are built again (2: sheet frames at their own sizes; 3: each in its whole cell)
@@ -106,6 +109,44 @@ async function rootSystems() {
     }
   }
   return [...roots];
+}
+
+// The effects models start on their own (a particle_cfg in the model's game data), for the
+// pedestals the heroes' pages stand on: the loadout pedestal's ground fog and the dust it raises
+// as it turns. { "<model>.vmdl": [{ system, config }] }
+async function modelEffects(source) {
+  if (!source.vpkDir.tree[LOADOUT_PORTRAITS]) {
+    return {};
+  }
+  const portraits = new Map();
+  await source.readFiles([LOADOUT_PORTRAITS], portraits);
+  const text = portraits.get(LOADOUT_PORTRAITS).toString("utf8");
+  const models = [...new Set([...text.matchAll(/"PortraitBackgroundModel"\s+"([^"]+\.vmdl)"/gi)].map((match) => match[1].toLowerCase()))].filter(
+    (model) => source.vpkDir.tree[`${model}_c`]
+  );
+  const files = new Map();
+  await source.readFiles(models.map((model) => `${model}_c`), files);
+  const out = convert(files, "model-effects");
+  source.release();
+  const found = {};
+  for (const model of models) {
+    const file = path.join(out, model);
+    if (!fs.existsSync(file)) {
+      continue;
+    }
+    const effects = [];
+    const visit = (node) => {
+      if (node?.game_class === "particle_cfg" && typeof node.game_keys?.name === "string") {
+        effects.push({ system: node.game_keys.name.toLowerCase(), ...(node.game_keys.config ? { config: node.game_keys.config } : {}) });
+      }
+      for (const child of node?.children ?? []) visit(child);
+    };
+    visit(kv3.parse(fs.readFileSync(file, "utf8"))?.rootNode);
+    if (effects.length) {
+      found[model] = effects;
+    }
+  }
+  return found;
 }
 
 // The snapshots items put in place of others (particle_snapshot: a weapon's own points for the
@@ -412,8 +453,11 @@ async function main() {
   // Every system reachable from the items', converted where it changed; an unchanged one's
   // references come from the state without reading it
   const reached = new Set();
-  let frontier = await rootSystems();
-  console.log(`${frontier.length} particle systems shown by items`);
+  const itemRoots = await rootSystems();
+  const effectsOfModels = await modelEffects(source);
+  const roots = [...new Set([...itemRoots, ...Object.values(effectsOfModels).flatMap((effects) => effects.map((effect) => effect.system))])];
+  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more started by the pedestals`);
+  let frontier = roots;
   const uploads = [];
   let converted = 0;
   while (frontier.length) {
@@ -456,7 +500,6 @@ async function main() {
   // Each effect an item shows with every system it spawns in one file, so the site loads an
   // effect in one request: particles/bundles/<root>.json = { "<path>.vpcf": system, ... }.
   // Made again whenever a system changed, from all of them
-  const roots = await rootSystems();
   const rootsKey = roots.slice().sort().join("|");
   if (converted > 0 || state.bundles !== BUNDLE_VERSION || state.rootsKey !== rootsKey) {
     const all = new Map();
@@ -570,6 +613,11 @@ async function main() {
       classes[name] = (classes[name] ?? 0) + count;
     }
   }
+  const modelEffectsFile = path.join(dist, "particles/model-effects.json");
+  fs.mkdirSync(path.dirname(modelEffectsFile), { recursive: true });
+  fs.writeFileSync(modelEffectsFile, JSON.stringify(effectsOfModels));
+  uploads.push({ path: "particles/model-effects.json", file: modelEffectsFile });
+
   const coverage = path.join(dist, "particles/coverage.json");
   fs.mkdirSync(path.dirname(coverage), { recursive: true });
   fs.writeFileSync(coverage, JSON.stringify({ systems: reached.size, classes: Object.fromEntries(Object.entries(classes).sort((a, b) => b[1] - a[1])) }));

@@ -73,24 +73,88 @@ function forward([pitch, yaw]) {
   return toGltfAxes([Math.cos(p) * Math.cos(y), Math.cos(p) * Math.sin(y), -Math.sin(p)]).map((value) => Number(value.toFixed(4)));
 }
 
-// What the viewer needs to light a scene and look at it the way the game does:
-// the global light, its ambient colors, the hero camera and the point lights
-function sceneInfo(file) {
+// The camera and light the game's interface shows each scene with, from its Panorama layouts:
+// <DOTAScenePanel map="backgrounds/hero_showcase_antimage_persona" camera="herocamera" light="light_hero">.
+// { "backgrounds/hero_showcase_antimage_persona": { camera: "herocamera", light: "light_hero" } };
+// where layouts name different cameras for one map, the one named most often.
+async function layoutLooks(source) {
+  const layouts = source.vpkDir.files.filter((file) => /^panorama\/layout\/.*\.vxml_c$/.test(file));
+  const files = new Map();
+  await source.readFiles(layouts, files);
+  const work = path.join(temp, "layouts");
+  fs.rmSync(work, { recursive: true, force: true });
+  fs.mkdirSync(work, { recursive: true });
+  writeVpk(path.join(work, "layouts.vpk"), files);
+  run(["-i", path.join(work, "layouts.vpk"), "-o", path.join(work, "out"), "-d"]);
+  const counts = {};
+  const xmls = fs.readdirSync(path.join(work, "out"), { recursive: true }).filter((file) => file.endsWith(".xml"));
+  for (const xml of xmls) {
+    const text = fs.readFileSync(path.join(work, "out", xml), "utf8");
+    for (const [panel] of text.matchAll(/<DOTAScenePanel\b[^>]*>/g)) {
+      const attribute = (name) => panel.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1];
+      const map = attribute("map")?.toLowerCase().replace(/^maps\//, "").replace(/\.vmap$/, "");
+      if (!map) {
+        continue;
+      }
+      const key = `${attribute("camera") ?? ""}\n${attribute("light") ?? ""}`;
+      counts[map] ??= {};
+      counts[map][key] = (counts[map][key] ?? 0) + 1;
+    }
+  }
+  fs.rmSync(work, { recursive: true, force: true });
+  const looks = {};
+  for (const [map, keys] of Object.entries(counts)) {
+    // A panel that names a camera before one that leaves it to the map
+    const [camera, light] = Object.entries(keys)
+      .sort((a, b) => Boolean(b[0].split("\n")[0]) - Boolean(a[0].split("\n")[0]) || b[1] - a[1])[0][0]
+      .split("\n");
+    looks[map] = { shown: true, camera: camera || undefined, light: light || undefined };
+  }
+  console.log(`${xmls.length} interface layouts, ${Object.keys(looks).length} scenes shown in them`);
+  return looks;
+}
+
+// An entity's name without the prefix of the prefab it came from: "[PR#]herocamera" -> "herocamera"
+const entityName = (entity) => (entity.targetname ?? "").replace(/^\[[^\]]*\]/, "").toLowerCase();
+
+// What the viewer needs to light a scene and look at it the way the game does: the global light,
+// its ambient colors, the scene's cameras and the one the game shows it with, and the point lights.
+// look: the camera and light the game's interface names for the scene (layoutLooks), if any.
+function sceneInfo(file, look = {}) {
   const entities = [];
+  // Source2Viewer writes the lumps out as text in one way for both of their formats (older maps
+  // keep their keys hashed): "====0====" before each entity, then a key and its value a line
+  const out = path.join(temp, "entities.txt");
   for (const lump of run(["-i", file, "-l"]).match(/^\S+\.vents_c/gm) ?? []) {
-    const text = run(["-i", file, "-f", lump, "-b", "DATA"]);
-    for (const [, body] of text.matchAll(/values = \s*\{([^{}]*)\}/g)) {
+    fs.rmSync(out, { force: true });
+    run(["-i", file, "-f", lump, "-o", out, "-d"]);
+    if (!fs.existsSync(out)) {
+      continue;
+    }
+    for (const body of fs.readFileSync(out, "utf8").split(/^====\d+====\r?$/m).slice(1)) {
       const entity = {};
-      for (const [, key, value] of body.matchAll(/^\s*(\w+) = (.+)$/gm)) {
-        entity[key.toLowerCase()] = value.startsWith('"') ? value.slice(1, -1) : value.startsWith("[") ? JSON.parse(value.replace(/(\d)\s+(?=[-\d])/g, "$1,").replace(/\[\s*,/, "[")) : Number(value);
+      for (const [, key, value] of body.matchAll(/^(\S+)[ \t]+(.+?)\r?$/gm)) {
+        entity[key.toLowerCase()] = value.startsWith('"')
+          ? value.slice(1, -1)
+          : value.startsWith("[")
+            ? value.slice(1, -1).split(",").map(Number)
+            : value === "true" || value === "false"
+              ? value === "true"
+              : Number(value);
       }
       entities.push(entity);
     }
   }
+  fs.rmSync(out, { force: true });
   const numbers = (text) => (typeof text === "string" ? text.split(" ").map(Number) : [0, 0, 0]);
-  const rgb = (value, scale = 1) => (Array.isArray(value) ? value.slice(0, 3).map((part) => Number(((part / 255) * scale).toFixed(3))) : undefined);
+  // Older maps keep colors as text, "255 240 200 255"
+  const rgb = (value, scale = 1) => {
+    const parts = typeof value === "string" ? value.trim().split(/s+/).map(Number) : value;
+    return Array.isArray(parts) && parts.length >= 3 ? parts.slice(0, 3).map((part) => Number(((part / 255) * Number(scale)).toFixed(3))) : undefined;
+  };
   const info = {};
-  const sun = entities.find((entity) => entity.classname === "env_global_light");
+  const suns = entities.filter((entity) => entity.classname === "env_global_light");
+  const sun = suns.find((entity) => look.light && entityName(entity) === look.light.toLowerCase()) ?? suns[0];
   if (sun) {
     info.light = {
       color: rgb(sun.color, sun.lightscale ?? 1),
@@ -98,13 +162,32 @@ function sceneInfo(file) {
       ambient: [rgb(sun.ambientcolor1, sun.ambientscale1 ?? 1), rgb(sun.ambientcolor2, sun.ambientscale2 ?? 1), rgb(sun.ambientcolor3, sun.ambientscale3 ?? 1)],
     };
   }
-  const camera = entities.find((entity) => entity.classname === "point_camera" && /hero_camera/.test(entity.targetname ?? ""));
-  if (camera) {
-    info.camera = { position: toGltf(numbers(camera.origin)), direction: forward(numbers(camera.angles)), fov: camera.fov ?? 30 };
+  // Every named camera of the scene, and the one the game's interface looks through; a scene
+  // the interface does not show keeps its first named camera
+  const cameras = {};
+  for (const entity of entities.filter((entity) => entity.classname === "point_camera" && entityName(entity))) {
+    cameras[entityName(entity)] ??= { position: toGltf(numbers(entity.origin)), direction: forward(numbers(entity.angles)), fov: Number(entity.fov ?? 30) };
+  }
+  const names = Object.keys(cameras);
+  const chosen = cameras[look.camera?.toLowerCase()] ? look.camera.toLowerCase() : names[0];
+  if (names.length) {
+    info.cameras = cameras;
+  }
+  if (chosen) {
+    info.camera = { name: chosen, ...cameras[chosen] };
+  }
+  // What the map is for, as its world says ("background", "game", ...), and whether the game's
+  // interface shows it
+  const world = entities.find((entity) => entity.classname === "worldspawn");
+  if (world?.mapusagetype) {
+    info.usage = world.mapusagetype;
+  }
+  if (look.shown) {
+    info.shown = true;
   }
   const fog = entities.find((entity) => entity.classname === "env_fog_controller");
-  if (fog && Array.isArray(fog.fogcolor)) {
-    info.fog = { color: rgb(fog.fogcolor), start: Number(fog.fogstart) || 0, end: Number(fog.fogend) || 4000, max: fog.fogmaxdensity ?? 1 };
+  if (fog && rgb(fog.fogcolor)) {
+    info.fog = { color: rgb(fog.fogcolor), start: Number(fog.fogstart) || 0, end: Number(fog.fogend) || 4000, max: Number(fog.fogmaxdensity ?? 1) };
   }
   const points = entities
     .filter((entity) => entity.classname === "env_deferred_light" || entity.classname === "light_omni")
@@ -177,10 +260,13 @@ async function main() {
     .slice(0, limit);
   console.log(`${packages.length} scenes and maps, ${todo.length} to export.`);
 
-  if (process.argv.includes("--info") && source.gameDir) {
+  const info = process.argv.includes("--info") && source.gameDir;
+  // The cameras and lights the game shows the scenes with, read when a scene is to be looked at
+  const looks = todo.length || info ? await layoutLooks(source) : {};
+  if (info) {
     for (const scene of packages) {
       if (state.scenes[scene.id] && !state.scenes[scene.id].empty) {
-        state.scenes[scene.id].info = sceneInfo(scene.entry.file);
+        state.scenes[scene.id].info = sceneInfo(scene.entry.file, looks[scene.id]);
       }
     }
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
@@ -260,7 +346,7 @@ async function main() {
     await io.write(target, await io.read(glb));
     const size = fs.statSync(target).size;
 
-    batch.push({ id: scene.id, file: target, record: { sha: scene.sha, size, info: sceneInfo(file) } });
+    batch.push({ id: scene.id, file: target, record: { sha: scene.sha, size, info: sceneInfo(file, looks[scene.id]) } });
     batchBytes += size;
     if (batchBytes >= BATCH_BYTES || Date.now() - batchStarted >= BATCH_MS) {
       await flush();

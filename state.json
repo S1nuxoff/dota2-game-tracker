@@ -191953,6 +191953,1865 @@
     "models/heroes/pedestal/dark_carnival_pedestal.vmdl_c"
    ],
    "cloth": true
+  },
+  "models/creeps/lane_creeps/creep_bad_melee_diretide/creep_bad_melee_diretide.vmdl": {
+   "hash": "d4767fc3",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/undying/undying_zombie.vmat_c",
+    "materials/models/heroes/undying/undying_zombie_color_psd_305dbaa4.vtex_c",
+    "materials/models/heroes/undying/undying_zombie_detailmask_tga_a77d0bdc.vtex_c",
+    "materials/models/heroes/undying/undying_zombie_normal_psd_3495c2b5.vtex_c",
+    "materials/models/heroes/undying/undying_zombie_specmask_tga_6ac129ff.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "models/creeps/lane_creeps/creep_bad_melee_diretide/creep_bad_melee_diretide.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a.vmdl": {
+   "hash": "1d1e9a77",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a.vmat_c",
+    "materials/models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a_color_psd_798f8732.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a_metalnessmask_psd_abf6ba8b.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a_normal_psd_c1f6b451.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a_specmask_psd_bb1ab904.vtex_c",
+    "materials/models/heroes/drow/diffusewarp_diffusewarp_psd_b1607356.vtex_c",
+    "models/creeps/neutral_creeps/n_creep_satyr_spawn_a/n_creep_satyr_spawn_a.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/creeps/neutral_creeps/n_creep_troll_skeleton/n_creep_skeleton_melee.vmdl": {
+   "hash": "933027f1",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/courier/aghanim_courier/aghanim_courier_gold_cube_psd_36f0ff1b.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_alt_2_color_psd_984c3521.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_alt_2_metalnessmask_psd_40dc0134.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_alt_color_psd_eafd9c83.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_color_psd_d3663aff.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_metalnessmask_psd_524e16ff.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_metalnessmask_psd_e5738a29.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_normal_psd_3d9cddc8.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_specmask_psd_4277ba0c.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_specmask_psd_9bed7ba0.vtex_c",
+    "materials/models/creeps/neutral_creeps/n_creep_skeleton_melee_specmask_psd_b19ed93d.vtex_c",
+    "materials/models/creeps/neutral_creeps/neutral_skeleton.vmat_c",
+    "materials/models/creeps/neutral_creeps/neutral_skeleton_alt.vmat_c",
+    "materials/models/creeps/neutral_creeps/neutral_skeleton_alt2.vmat_c",
+    "models/creeps/neutral_creeps/n_creep_troll_skeleton/n_creep_skeleton_melee.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/events/crownfall/shmup_shooting/frozen_ashes_winterwyvern_death_model.vmdl": {
+   "hash": "3beb69ed",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_backitem_detail_psd_dfb19726.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_color.vmat_c",
+    "materials/models/heroes/winterwyvern/ww_color_psd_7abc041a.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_detailmask_tga_4ea7f29a.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_detailmask_tga_5f2961c0.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_detailmask_tga_d8f7e48c.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_normal_tga_cbeb8b99.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_shmup_01.vmat_c",
+    "materials/models/heroes/winterwyvern/ww_shmup_01_color_psd_ece28071.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_shmup_02.vmat_c",
+    "materials/models/heroes/winterwyvern/ww_shmup_02_color_psd_22543740.vtex_c",
+    "materials/models/heroes/winterwyvern/ww_specmask_tga_f733c86c.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back.vmat_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back_color_tga_88cd8b17.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back_detailmask_tga_e4ee8235.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back_normal_tga_4ad59716.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back_shmup_03.vmat_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back_shmup_03_color_psd_b8442303.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_back/frozen_ashes_back_specmask_tga_b9077a6c.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head.vmat_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_color_tga_3e508154.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_detailmask_tga_2d0b0ec5.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_detailmask_tga_a1d8f20b.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_normal_tga_9b8af848.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_shmup_01.vmat_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_shmup_01_color_psd_107868f5.vtex_c",
+    "materials/models/items/winter_wyvern/frozen_ashes_head/frozen_ashes_head_specmask_tga_d7c9d395.vtex_c",
+    "models/events/crownfall/shmup_shooting/frozen_ashes_winterwyvern_death_model.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/bard/bard_frogling.vmdl": {
+   "hash": "4378d366",
+   "deps": [
+    "materials/default/tower_fresnelwarprim_psd_c38ecf47.vtex_c",
+    "materials/models/courier/ram/cube_ram_dark_gold_cube_psd_af10d4bb.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/bard/bard_frog_diffusewarp_psd_fe2cd50d.vtex_c",
+    "materials/models/heroes/bard/frogling.vmat_c",
+    "materials/models/heroes/bard/frogling_bell.vmat_c",
+    "materials/models/heroes/bard/frogling_bell_color_psd_86f0ce13.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_mask_psd_f3bbb7d1.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_metalnessmask_psd_65a84794.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_normal_psd_7f08691c.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_specmask_psd_19f0f564.vtex_c",
+    "materials/models/heroes/bard/frogling_color_psd_766d01d5.vtex_c",
+    "materials/models/heroes/bard/frogling_diffusemask_psd_b1d87823.vtex_c",
+    "materials/models/heroes/bard/frogling_normal_psd_f6dc3481.vtex_c",
+    "materials/models/heroes/bard/frogling_props.vmat_c",
+    "materials/models/heroes/bard/frogling_props_color_psd_9104b569.vtex_c",
+    "materials/models/heroes/bard/frogling_props_specmask_psd_607d70e4.vtex_c",
+    "materials/models/heroes/bard/frogling_props_vmat_g_tmasks1_b9053fff.vtex_c",
+    "materials/models/heroes/bard/frogling_props_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/heroes/bard/frogling_specmask_psd_bbb9c715.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks.vmat_c",
+    "materials/models/heroes/bard/frogling_sticks_color_psd_3b6a535d.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_normal_psd_c653d685.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_specmask_psd_b3b3593d.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_vmat_g_tcubemapseparatemask_670d93d.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/heroes/hoodwink/mouse_fresnelwarprim_psd_22d56ec4.vtex_c",
+    "models/heroes/bard/bard_frogling.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/heroes/bard/bard_frogling_fx.vmdl": {
+   "hash": "3f2026c6",
+   "deps": [
+    "materials/default/tower_fresnelwarprim_psd_c38ecf47.vtex_c",
+    "materials/models/courier/ram/cube_ram_dark_gold_cube_psd_af10d4bb.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/bard/bard_frog_diffusewarp_psd_fe2cd50d.vtex_c",
+    "materials/models/heroes/bard/frogling.vmat_c",
+    "materials/models/heroes/bard/frogling_bell.vmat_c",
+    "materials/models/heroes/bard/frogling_bell_color_psd_86f0ce13.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_mask_psd_f3bbb7d1.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_metalnessmask_psd_65a84794.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_normal_psd_7f08691c.vtex_c",
+    "materials/models/heroes/bard/frogling_bell_specmask_psd_19f0f564.vtex_c",
+    "materials/models/heroes/bard/frogling_color_psd_766d01d5.vtex_c",
+    "materials/models/heroes/bard/frogling_diffusemask_psd_b1d87823.vtex_c",
+    "materials/models/heroes/bard/frogling_normal_psd_f6dc3481.vtex_c",
+    "materials/models/heroes/bard/frogling_props.vmat_c",
+    "materials/models/heroes/bard/frogling_props_color_psd_9104b569.vtex_c",
+    "materials/models/heroes/bard/frogling_props_specmask_psd_607d70e4.vtex_c",
+    "materials/models/heroes/bard/frogling_props_vmat_g_tmasks1_b9053fff.vtex_c",
+    "materials/models/heroes/bard/frogling_props_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/heroes/bard/frogling_specmask_psd_bbb9c715.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks.vmat_c",
+    "materials/models/heroes/bard/frogling_sticks_color_psd_3b6a535d.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_normal_psd_c653d685.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_specmask_psd_b3b3593d.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_vmat_g_tcubemapseparatemask_670d93d.vtex_c",
+    "materials/models/heroes/bard/frogling_sticks_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/heroes/hoodwink/mouse_fresnelwarprim_psd_22d56ec4.vtex_c",
+    "models/heroes/bard/bard_frogling_fx.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/heroes/beastmaster/beastmaster_drums_kit.vmdl": {
+   "hash": "b2564702",
+   "deps": [
+    "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
+    "materials/models/heroes/beastmaster/beastmaster_drums.vmat_c",
+    "materials/models/heroes/beastmaster/beastmaster_drums_feathers.vmat_c",
+    "materials/models/heroes/beastmaster/beastmaster_feather_color_psd_a281cc44.vtex_c",
+    "materials/models/heroes/beastmaster/beastmaster_feather_mask_psd_458e6ee3.vtex_c",
+    "materials/models/heroes/beastmaster/drums/drums_low_color_png_7aaff0e6.vtex_c",
+    "materials/models/heroes/beastmaster/drums/drums_low_normal_png_a554fe9d.vtex_c",
+    "materials/models/heroes/beastmaster/drums/drums_low_refl_png_39ef54d5.vtex_c",
+    "models/heroes/beastmaster/beastmaster_drums_kit.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/crystal_maiden_persona/crystal_maiden_persona_attack_fx_model.vmdl": {
+   "hash": "f156d267",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/dota_default_cube_tga_c95513b9.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_crystal.vmat_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_crystal_color_tga_2fada39e.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_crystal_detailmask_tga_caed6080.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_crystal_normal_tga_86f64628.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_crystal_specmask_tga_d2cc3cc9.vtex_c",
+    "materials/models/heroes/crystal_maiden_persona/cm_persona_motion_detail_psd_bfd6470.vtex_c",
+    "models/heroes/crystal_maiden_persona/crystal_maiden_persona_attack_fx_model.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/crystal_maiden_persona/crystal_maiden_persona_ult_model.vmdl": {
+   "hash": "381c942b",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/drow/diffusewarp_fresnelwarprim_tga_f219f306.vtex_c",
+    "models/heroes/crystal_maiden_persona/crystal_maiden_persona_ult_model.vmdl_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff.vmat_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_color_png_f3681785.vtex_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_normal_png_c534e6a9.vtex_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_vmat_g_tmasks1_b4f03311.vtex_c",
+    "models/heroes/crystal_maiden_persona/debut/materials/ult_cliff/cm_persona_ult_cliff_vmat_g_tmasks2_daa4f96f.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/dark_seer/dark_seer_gloves_fx_02.vmdl": {
+   "hash": "f11efeb",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/particle/dark_seer/dark_seer_gloves_fx_color_png_1e2a8709.vtex_c",
+    "materials/particle/dark_seer/dark_seer_gloves_fx_normal_png_cdca2fc9.vtex_c",
+    "models/heroes/dark_seer/dark_seer_gloves_fx_02.vmdl_c",
+    "models/heroes/dark_seer/dark_seer_gloves_fx_02/unnamed_1_vmorf.vtex_c",
+    "particles/units/heroes/hero_dark_seer/dark_seer_glove_fx.vmat_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/dark_willow/dark_willow_taunt_rose.vmdl": {
+   "hash": "8d5af799",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_immortal_chakram/dark_willow_immortal_rose.vmat_c",
+    "materials/models/items/dark_willow/dark_willow_immortal_chakram/dark_willow_immortal_rose_color_psd_e799e1aa.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_immortal_chakram/dark_willow_immortal_rose_specmask_psd_88b133e4.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_immortal_chakram/dark_willow_immortal_rose_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_immortal_chakram/dark_willow_immortal_rose_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_immortal_chakram/dark_willow_immortal_rose_wind_high_psd_232024a1.vtex_c",
+    "models/heroes/dark_willow/dark_willow_taunt_rose.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/faceless_void/faceless_void_taunt.vmdl": {
+   "hash": "53d0af51",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/faceless_void/body_color_psd_e132f2a0.vtex_c",
+    "materials/models/heroes/faceless_void/body_normal_tga_c26f9b18.vtex_c",
+    "materials/models/heroes/faceless_void/body_specmask_tga_62cdffb3.vtex_c",
+    "materials/models/heroes/faceless_void/faceless_void_particle.vmat_c",
+    "materials/models/heroes/faceless_void/faceless_void_particle_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "models/heroes/faceless_void/faceless_void_taunt.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/hoodwink_debut_leaf_01.vmdl": {
+   "hash": "a984a4c5",
+   "deps": [
+    "models/heroes/hoodwink/debut/hoodwink_debut_leaf_01.vmdl_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color.vmat_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color_psd_d324b103.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/hoodwink_debut_leaf_03.vmdl": {
+   "hash": "893df3f2",
+   "deps": [
+    "models/heroes/hoodwink/debut/hoodwink_debut_leaf_03.vmdl_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color.vmat_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color_psd_d324b103.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/hoodwink_debut_leaf_05.vmdl": {
+   "hash": "e5ef80ac",
+   "deps": [
+    "models/heroes/hoodwink/debut/hoodwink_debut_leaf_05.vmdl_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color.vmat_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color_psd_d324b103.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/hoodwink_debut_leaf_06.vmdl": {
+   "hash": "9380f3ab",
+   "deps": [
+    "models/heroes/hoodwink/debut/hoodwink_debut_leaf_06.vmdl_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color.vmat_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color_psd_d324b103.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/hoodwink_debut_leaf_07.vmdl": {
+   "hash": "89da7a8d",
+   "deps": [
+    "models/heroes/hoodwink/debut/hoodwink_debut_leaf_07.vmdl_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color.vmat_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color_psd_d324b103.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/hoodwink_debut_leaf_08.vmdl": {
+   "hash": "d2812c7a",
+   "deps": [
+    "models/heroes/hoodwink/debut/hoodwink_debut_leaf_08.vmdl_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color.vmat_c",
+    "models/heroes/hoodwink/debut/materials/hoodwink_debut_leaves_color_psd_d324b103.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_dark_0.vmdl": {
+   "hash": "a9c2ad16",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_dark_0.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_dark_1.vmdl": {
+   "hash": "b79708cb",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_dark_1.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_dark_2.vmdl": {
+   "hash": "590fc371",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_dark_2.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_light_0.vmdl": {
+   "hash": "9cc97344",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_light_0.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_light_1.vmdl": {
+   "hash": "aae52697",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_light_1.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_light_2.vmdl": {
+   "hash": "ce155de6",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_light_2.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_med_0.vmdl": {
+   "hash": "6408b7cc",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_med_0.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_med_1.vmdl": {
+   "hash": "d029e47e",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_med_1.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_med_2.vmdl": {
+   "hash": "ba5b2d23",
+   "deps": [
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/hood_debut_leaves_individual_med_2.vmdl_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves.vmat_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_color_png_abe4327e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_normal_png_a012219e.vtex_c",
+    "models/heroes/hoodwink/debut/models/hood_debut_leaves/materials/hood_debut_leaves_specmask_png_ae9b3256.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/invoker_kid/invoker_kid_book.vmdl": {
+   "hash": "5beb940b",
+   "deps": [
+    "materials/models/heroes/invoker_kid/invoker_kid_book.vmat_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_book_color_psd_84f5c9e.vtex_c",
+    "materials/models/heroes/invoker_kid/invoker_kid_book_normal_psd_66f93923.vtex_c",
+    "models/heroes/invoker_kid/invoker_kid_book.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/juggernaut/juggernaut_arcana.vmdl": {
+   "hash": "b7049218",
+   "deps": [
+    "materials/models/heroes/juggernaut/juggernaut_diffusewarp_psd_7064ba4f.vtex_c",
+    "materials/models/heroes/statuseffects/colorwarp_juggernaut_arcana_z000_tga_19c180e3.vtex_c",
+    "materials/models/heroes/wraith_king/wraith_king_detail_psd_16d225fa.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_body_color_psd_f2e54e0.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_body_detailmask_psd_7aeaf1a.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_body_normal_psd_9f8fc471.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_body_specmask_psd_4dc95eae.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_body_specmask_psd_72c93ed7.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_fresnelwarprim_psd_14ee89.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_fresnelwarprim_psd_ba757c21.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_torso.vmat_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_torso_v2.vmat_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_torso_v2_vmat_g_tdetail2_ff7cc154.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_torso_vmat_g_tdetail2_ff7cc154.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_v2_base_detail_psd_c10366eb.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_v2_body_color_psd_a2d3167b.vtex_c",
+    "models/heroes/juggernaut/juggernaut_arcana.vmdl_c",
+    "models/heroes/juggernaut/juggernaut_arcana/juggernaut_base_arcana_vmorf.vtex_c"
+   ],
+   "cloth": true
+  },
+  "models/heroes/leshrac/mesh/discoball_model.vmdl": {
+   "hash": "cc294ea8",
+   "deps": [
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/courier/greevil/greevil_iridescence_specwarp_psd_ff2e1514.vtex_c",
+    "materials/models/heroes/crystal_maiden/cube_cm_arcana_cube_tga_8bc6e9bb.vtex_c",
+    "materials/models/heroes/dawnbreaker/dawnbreaker_cube_psd_3c8b59f9.vtex_c",
+    "materials/models/heroes/leshrac/leshrac_taunt_discoball.vmat_c",
+    "materials/models/heroes/leshrac/leshrac_taunt_discoball_vmat_g_tmasks1_282a8dd9.vtex_c",
+    "materials/models/heroes/leshrac/leshrac_taunt_discoball_vmat_g_tmasks2_d8f98791.vtex_c",
+    "materials/models/props_generic/discoball_hero_line.vmat_c",
+    "materials/models/props_generic/discoball_hero_line_vmat_g_tcolor_60603cdf.vtex_c",
+    "materials/models/props_generic/discoball_hero_line_vmat_g_tmasks1_282a8dd9.vtex_c",
+    "materials/models/props_generic/discoball_hero_line_vmat_g_tmasks2_d8f98791.vtex_c",
+    "materials/models/props_structures/metal_spike001_color_psd_7d40b013.vtex_c",
+    "materials/models/ui/compendium_points/compendium_points_fresnelwarpspec_tga_6f4c7ef9.vtex_c",
+    "models/heroes/leshrac/mesh/discoball_model.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/mars/mars_volume_smoke.vmdl": {
+   "hash": "561908c5",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke.vmat_c",
+    "materials/models/heroes/mars/mars_volume_smoke_diffusewarp_psd_22c9cacf.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_fresnelwarprim_psd_4b1aeb1b.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_normal_psd_5f5c93da.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_trans_psd_ff9f25b.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_vmat_g_tmasks2_efce3874.vtex_c",
+    "models/heroes/mars/mars_volume_smoke.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/monkey_king/monkey_king_taunt_bananas.vmdl": {
+   "hash": "1c858c9c",
+   "deps": [
+    "materials/models/items/venomancer/banana/veno_banana.vmat_c",
+    "materials/models/items/venomancer/banana/veno_banana_color_psd_f32fe284.vtex_c",
+    "materials/models/items/venomancer/banana/veno_banana_normal_psd_9250de6d.vtex_c",
+    "materials/models/items/venomancer/banana/veno_banana_refl_psd_f76ba130.vtex_c",
+    "models/heroes/monkey_king/monkey_king_taunt_bananas.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/rubick/rubick_tree_fx.vmdl": {
+   "hash": "ff4d03c9",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/heroes/tiny_01/tiny_tree_color.vmat_c",
+    "materials/models/heroes/tiny_01/tiny_tree_color_psd_f1777a94.vtex_c",
+    "materials/models/heroes/tiny_01/tiny_tree_normals_normal_psd_b4a71cd5.vtex_c",
+    "materials/models/heroes/tiny_01/tiny_tree_selfillummask_tga_450c4bc7.vtex_c",
+    "materials/models/heroes/tiny_01/tiny_tree_specmask_tga_a5da4fcb.vtex_c",
+    "models/heroes/rubick/rubick_tree_fx.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/snapfire/maya/snapfire_cookie.vmdl": {
+   "hash": "4baaf39d",
+   "deps": [
+    "materials/models/heroes/snapfire/snapfire_cookie.vmat_c",
+    "materials/models/heroes/snapfire/snapfire_cookie_color_psd_769e597d.vtex_c",
+    "materials/models/heroes/snapfire/snapfire_cookie_normal_psd_313f78c3.vtex_c",
+    "materials/models/heroes/snapfire/snapfire_cookie_refl_psd_615caeb2.vtex_c",
+    "models/heroes/snapfire/maya/snapfire_cookie.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/techies/fx_techies_remote_cart.vmdl": {
+   "hash": "db58ee27",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/techies_metal_cube_tga_12f60802.vtex_c",
+    "materials/models/heroes/techies/remote_cart_color_png_81c79dc6.vtex_c",
+    "materials/models/heroes/techies/remote_cart_metalnessmask_png_f6ebdb17.vtex_c",
+    "materials/models/heroes/techies/remote_cart_normal_png_6510d044.vtex_c",
+    "materials/models/heroes/techies/remote_cart_specmask_png_17ef4eb3.vtex_c",
+    "materials/models/heroes/techies/techies_remote_cart.vmat_c",
+    "models/heroes/techies/fx_techies_remote_cart.vmdl_c",
+    "models/heroes/techies/fx_techies_remote_cart/unnamed_1_vmorf.vtex_c"
+   ],
+   "cloth": true
+  },
+  "models/heroes/techies/techies_sign.vmdl": {
+   "hash": "551e86dc",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/techies_metal_cube_tga_12f60802.vtex_c",
+    "materials/models/heroes/techies/techies_metal_cube_tga_ca5b4207.vtex_c",
+    "materials/models/heroes/techies/techies_rubick_sign.vmat_c",
+    "materials/models/heroes/techies/techies_rubick_sign_color_psd_70b82f23.vtex_c",
+    "materials/models/heroes/techies/techies_sign.vmat_c",
+    "materials/models/heroes/techies/techies_sign_color_psd_38bbb74b.vtex_c",
+    "materials/models/heroes/techies/techies_sign_diffusemask_tga_996154d2.vtex_c",
+    "materials/models/heroes/techies/techies_sign_normal_psd_3e45147b.vtex_c",
+    "materials/models/heroes/techies/techies_sign_specmask_tga_43c99679.vtex_c",
+    "models/heroes/techies/techies_sign.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/tiny_01/tiny_01.vmdl": {
+   "hash": "c007629c",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/tiny_01/tiny1_base.vmat_c",
+    "materials/models/heroes/tiny_01/tiny1_base_color_psd_81f17942.vtex_c",
+    "materials/models/heroes/tiny_01/tiny1_base_normal_psd_a42a6ecd.vtex_c",
+    "materials/models/heroes/tiny_01/tiny1_base_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/heroes/tiny_01/tiny1_base_vmat_g_tmasks2_74fc6c98.vtex_c",
+    "models/heroes/tiny_01/tiny_01.vmdl_c",
+    "models/heroes/tiny_01/tiny_01/tiny_01_model_vmorf.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/heroes/zuus/zuus.vmdl": {
+   "hash": "1f135543",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/zuus/zuus_color.vmat_c",
+    "materials/models/heroes/zuus/zuus_color_psd_40f4f8c0.vtex_c",
+    "materials/models/heroes/zuus/zuus_diffusewarp_psd_feaf9b25.vtex_c",
+    "materials/models/heroes/zuus/zuus_metalnessmask_tga_36afaa66.vtex_c",
+    "materials/models/heroes/zuus/zuus_normal_psd_5d33a388.vtex_c",
+    "materials/models/heroes/zuus/zuus_specmask_tga_9af9bca4.vtex_c",
+    "models/heroes/zuus/zuus.vmdl_c",
+    "models/heroes/zuus/zuus/zuus_model_vmorf.vtex_c"
+   ],
+   "cloth": true
+  },
+  "models/items/abaddon/wandering_poet_mount/abaddon_wandering_poet_guitar_prop.vmdl": {
+   "hash": "c0957b63",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/abaddon/abaddon_detail_psd_45c064ed.vtex_c",
+    "materials/models/items/abaddon/wandering_poet_mount/wandering_poet_mount.vmat_c",
+    "materials/models/items/abaddon/wandering_poet_mount/wandering_poet_mount_color_tga_16a59dde.vtex_c",
+    "materials/models/items/abaddon/wandering_poet_mount/wandering_poet_mount_detailmask_tga_fabb59ed.vtex_c",
+    "materials/models/items/abaddon/wandering_poet_mount/wandering_poet_mount_normal_tga_96a60371.vtex_c",
+    "materials/models/items/abaddon/wandering_poet_mount/wandering_poet_mount_specmask_tga_3cd25739.vtex_c",
+    "models/items/abaddon/wandering_poet_mount/abaddon_wandering_poet_guitar_prop.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/ancient_apparition/ti9_aa_taunt/aa_ti9_taunt_heart.vmdl": {
+   "hash": "9abf7c06",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/n_creep_centaur_conqueror_metal_cube_psd_5a6afca0.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_heart_fx.vmat_c",
+    "materials/models/heroes/pangolier/pangolier_heart_fx_color_psd_422dea4b.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_heart_fx_normal_psd_95709f8d.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_heart_fx_specmask_psd_a40c9a96.vtex_c",
+    "materials/models/heroes/pangolier/pangolier_heart_fx_vmat_g_tmasks1_dd6eb43b.vtex_c",
+    "models/items/ancient_apparition/ti9_aa_taunt/aa_ti9_taunt_heart.vmdl_c",
+    "models/items/ancient_apparition/ti9_aa_taunt/aa_ti9_taunt_heart/aa_ti9_taunt_heart_model_vmorf.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/items/arc_warden/arc_warden_2021_taunt/aw_2021_taunt_cane.vmdl": {
+   "hash": "cddd1a85",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_cane.vmat_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_cane_color_psd_d9f24b0b.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_cane_metalnessmask_psd_983993b5.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_cane_normal_psd_d0514a55.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_cane_specmask_psd_d57f7adb.vtex_c",
+    "models/items/arc_warden/arc_warden_2021_taunt/aw_2021_taunt_cane.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/arc_warden/arc_warden_2021_taunt/aw_2021_taunt_hat.vmdl": {
+   "hash": "52607066",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_cube_tga_3e998d35.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_top_hat.vmat_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_top_hat_color_psd_6553286f.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_top_hat_metalnessmask_psd_d9ceec95.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_top_hat_normal_psd_aca31e79.vtex_c",
+    "materials/models/items/arc_warden/arc_warden_2021_taunt/arc_warden_2021_taunt_top_hat_specmask_psd_7bd0d217.vtex_c",
+    "models/items/arc_warden/arc_warden_2021_taunt/aw_2021_taunt_hat.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/axe/ti9_jungle_axe/axe_ti9_arm_export.vmdl": {
+   "hash": "da6de342",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/witchdoctor/witchdoctor_diffusewarp_psd_b5522d5e.vtex_c",
+    "materials/models/items/axe/ti9_jungle_axe/ti9_jungle_axe.vmat_c",
+    "materials/models/items/axe/ti9_jungle_axe/ti9_jungle_axe_color_psd_6de25c70.vtex_c",
+    "materials/models/items/axe/ti9_jungle_axe/ti9_jungle_axe_detail_psd_faae2e50.vtex_c",
+    "materials/models/items/axe/ti9_jungle_axe/ti9_jungle_axe_detailmask_psd_5392a74c.vtex_c",
+    "materials/models/items/axe/ti9_jungle_axe/ti9_jungle_axe_normal_psd_d1766251.vtex_c",
+    "materials/models/items/axe/ti9_jungle_axe/ti9_jungle_axe_specmask_psd_4331cb8a.vtex_c",
+    "models/items/axe/ti9_jungle_axe/axe_ti9_arm_export.vmdl_c",
+    "models/items/axe/ti9_jungle_axe/axe_ti9_arm_export/axe_ti9_arm_export_model_vmorf.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/items/bane/ti10_bane_taunt/ti10_bane_food_left.vmdl": {
+   "hash": "d2b87462",
+   "deps": [
+    "materials/models/props_gameplay/cheese_color.vmat_c",
+    "materials/models/props_gameplay/cheese_color_tga_2c3024bc.vtex_c",
+    "materials/models/props_gameplay/cheese_normal_psd_842e4f5.vtex_c",
+    "materials/models/props_gameplay/cheese_refl_psd_ed6193e.vtex_c",
+    "models/items/bane/ti10_bane_taunt/ti10_bane_food_left.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/bane/ti10_bane_taunt/ti10_bane_food_right.vmdl": {
+   "hash": "2e5d3fe2",
+   "deps": [
+    "materials/models/props_gameplay/cheese_color.vmat_c",
+    "materials/models/props_gameplay/cheese_color_tga_2c3024bc.vtex_c",
+    "materials/models/props_gameplay/cheese_normal_psd_842e4f5.vtex_c",
+    "materials/models/props_gameplay/cheese_refl_psd_ed6193e.vtex_c",
+    "models/items/bane/ti10_bane_taunt/ti10_bane_food_right.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/bounty_hunter/bh_taunt_goldpiles/bh_taunt_goldpiles_pile.vmdl": {
+   "hash": "e5ee2df9",
+   "deps": [
+    "materials/models/props_debris/goldcoins_color.vmat_c",
+    "materials/models/props_debris/goldcoins_color_psd_834d7c23.vtex_c",
+    "models/items/bounty_hunter/bh_taunt_goldpiles/bh_taunt_goldpiles_pile.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/bounty_hunter/bh_taunt_goldpiles/bh_taunt_goldpiles_pileexit.vmdl": {
+   "hash": "ec9d532a",
+   "deps": [
+    "materials/models/props_debris/goldcoins_color.vmat_c",
+    "materials/models/props_debris/goldcoins_color_psd_834d7c23.vtex_c",
+    "models/items/bounty_hunter/bh_taunt_goldpiles/bh_taunt_goldpiles_pileexit.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/bounty_hunter/bh_taunt_goldpiles/bh_taunt_goldpiles_pilefollow.vmdl": {
+   "hash": "319388b6",
+   "deps": [
+    "materials/models/props_debris/goldcoins_color.vmat_c",
+    "materials/models/props_debris/goldcoins_color_psd_834d7c23.vtex_c",
+    "models/items/bounty_hunter/bh_taunt_goldpiles/bh_taunt_goldpiles_pilefollow.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/chaos_knight/ti9_taunt/ck_taunt_fence.vmdl": {
+   "hash": "fc3d1bf0",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "models/items/chaos_knight/ti9_taunt/ck_taunt_fence.vmdl_c",
+    "models/items/chaos_knight/ti9_taunt/ti9_ck_fence.vmat_c",
+    "models/items/chaos_knight/ti9_taunt/ti9_ck_fence_color_psd_fcf14f80.vtex_c",
+    "models/items/chaos_knight/ti9_taunt/ti9_ck_fence_normal_psd_b752241c.vtex_c",
+    "models/items/chaos_knight/ti9_taunt/ti9_ck_fence_specmask_psd_121db8f.vtex_c",
+    "models/items/chaos_knight/ti9_taunt/ti9_ck_fence_specmask_psd_3b493c0e.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden.vmdl": {
+   "hash": "80b1065b",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden.vmat_c",
+    "materials/models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/snowmaiden_color_png_701214a7.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/snowmaiden_normal_png_a85c01db.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/snowmaiden_specmask_png_a5a2751a.vtex_c",
+    "models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden_snow.vmdl": {
+   "hash": "eb978bff",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden.vmat_c",
+    "materials/models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/snowmaiden_color_png_701214a7.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/snowmaiden_normal_png_a85c01db.vtex_c",
+    "materials/models/items/crystal_maiden/snowman/snowmaiden_specmask_png_a5a2751a.vtex_c",
+    "models/items/crystal_maiden/snowman/crystal_maiden_snowmaiden_snow.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/dark_willow/dark_willow_ether_head/dark_willow_ether_head_glass.vmdl": {
+   "hash": "b2fcd573",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/courier/winter2022/cotton_donkey_courier_sparkle_cube_tga_2bf5203c.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_ether_head/dark_willow_ether_head_glass_fx.vmat_c",
+    "materials/models/items/dark_willow/dark_willow_ether_head/dark_willow_ether_head_glass_fx_vmat_g_tcolor_9058c712.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_ether_head/dark_willow_ether_head_glass_fx_vmat_g_tmasks1_a348360d.vtex_c",
+    "materials/models/items/dark_willow/dark_willow_ether_head/dark_willow_ether_head_glass_fx_vmat_g_tmasks2_c1772ea5.vtex_c",
+    "models/items/dark_willow/dark_willow_ether_head/dark_willow_ether_head_glass.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/drow/drow_arcana/drow_arcana_projectile_model.vmdl": {
+   "hash": "f96bbe4a",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_dark.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_dark_color_psd_d3d06a1c.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_dark_style2.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_metalnessmask_psd_916b1913.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_normal_psd_77e286ec.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_specmask_psd_a7a731bf.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_style1_color_psd_679411a.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_cube_psd_1bd6fac3.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_diffusewarp_psd_87f360cf.vtex_c",
+    "models/items/drow/drow_arcana/drow_arcana_projectile_model.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/drow/drow_arcana/drow_arcana_weapon.vmdl": {
+   "hash": "ad61e22f",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/dawnbreaker/dawnbreaker_detail_psd_a59f05f.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_color_psd_8b564510.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_metalnessmask_psd_916b1913.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_metalnessmask_psd_9de7b2eb.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_normal_psd_77e286ec.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_specmask_psd_a7a731bf.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_style1.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_bolt_style1_color_psd_679411a.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_cube_psd_1bd6fac3.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_detail_psd_74d1c3cf.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_diffusewarp_psd_87f360cf.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_frost_scrolling_color_psd_c197925a.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_frost_scrolling_normal_psd_4ab2164f.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_frost_scrolling_specmask_psd_c3067f02.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_frost_weapon.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_frost_weapon_vmat_g_tmasks1_d7e1ea79.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_style1_cube_psd_2a416fea.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_color_psd_c48141ed.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_detailmask_psd_dd01ba78.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_detailmask_psd_de4c65cc.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_normal_psd_8c082b50.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_specmask_psd_7e87cc5c.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_style1.vmat_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_style1_color_psd_d63bf6bd.vtex_c",
+    "materials/models/items/drow/drow_arcana/drow_arcana_weapon_style1_normal_psd_5859d311.vtex_c",
+    "materials/models/items/ogre_magi/ogre_arcana/ogre_arcana_fresnelwarprim_psd_9019d1df.vtex_c",
+    "materials/particle/ice_surface_envmap_cube_tga_a394eab4.vtex_c",
+    "models/items/drow/drow_arcana/drow_arcana_weapon.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/drow/drow_taunt_2024/drow_taunt_2024_apple.vmdl": {
+   "hash": "c6c4bb60",
+   "deps": [
+    "materials/models/items/drow/drow_taunt_2024/drow_taunt_2024_apple.vmat_c",
+    "materials/models/items/drow/drow_taunt_2024/drow_taunt_2024_apple_color_png_8d883a90.vtex_c",
+    "materials/models/items/drow/drow_taunt_2024/drow_taunt_2024_apple_mask_png_189f3fa3.vtex_c",
+    "materials/models/items/drow/drow_taunt_2024/drow_taunt_2024_apple_normal_png_b680a214.vtex_c",
+    "materials/models/items/drow/drow_taunt_2024/drow_taunt_2024_apple_refl_png_e1e55389.vtex_c",
+    "models/items/drow/drow_taunt_2024/drow_taunt_2024_apple.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/elder_titan/taunt_motorcycle_alt_back_weapon/elder_titan_taunt_motorcycle_alt_back_weapon.vmdl": {
+   "hash": "13607f57",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_hammer_color.vmat_c",
+    "materials/models/heroes/elder_titan/elder_titan_hammer_color_psd_79fa4942.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_hammer_detailmask_tga_97c9a258.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_hammer_normal_tga_e23002f.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_hammer_specmask_tga_1a9dc672.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_motion_detail_psd_7fe1f23d.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_totem_color.vmat_c",
+    "materials/models/heroes/elder_titan/elder_titan_totem_color_psd_5693257f.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_totem_detailmask_tga_779c50e5.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_totem_normal_tga_de08e953.vtex_c",
+    "materials/models/heroes/elder_titan/elder_titan_totem_specmask_tga_77b52cde.vtex_c",
+    "models/items/elder_titan/taunt_motorcycle_alt_back_weapon/elder_titan_taunt_motorcycle_alt_back_weapon.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/ember_spirit/ember_taunt_steak/ember_ti10_taunt_steak.vmdl": {
+   "hash": "292b834a",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/particle/gibs_meat_normal_tga_e133b90a.vtex_c",
+    "models/heroes/ember_spirit/ember_taunt_item/ember_taunt_steak.vmat_c",
+    "models/heroes/ember_spirit/ember_taunt_item/ember_taunt_steak_tga_f586b49b.vtex_c",
+    "models/heroes/ember_spirit/ember_taunt_item/ember_taunt_steak_vmat_g_tmasks2_1597a51b.vtex_c",
+    "models/items/ember_spirit/ember_taunt_steak/ember_ti10_taunt_steak.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/faceless_void/faceless_void_arcana/fv_arcana_tentacle_a.vmdl": {
+   "hash": "e764519e",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/fv_arcana_cube_psd_168d51a2.vtex_c",
+    "materials/models/cubemaps/glossy_blue_cube_tga_bee8895f.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_1_alt_detail_psd_18a87c61.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_1_detail_psd_d186e973.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base.vmat_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_alt_color_tga_4898c494.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_alt_detailmask_psd_69718392.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_alt_normal_tga_b64d9ed4.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_alt_specmask_tga_9f45a453.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_alt_style.vmat_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_color_tga_a681c994.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_detailmask_tga_4a107c97.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_normal_tga_71bdb8d1.vtex_c",
+    "materials/models/items/faceless_void/faceless_void_arcana/fv_arcana_base_specmask_tga_e316161.vtex_c",
+    "models/items/faceless_void/faceless_void_arcana/fv_arcana_tentacle_a.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/hex/fish_hex/tide_fish_hex.vmdl": {
+   "hash": "aa0ab521",
+   "deps": [
+    "materials/cubemaps/wraithking_arcana_alt_cube_psd_92beb487.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_sideshow_fresnelwarprim_psd_73bc45dc.vtex_c",
+    "materials/models/heroes/spirit_breaker/spirit_breaker_ti10_specwarp_psd_c7606752.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_hex_normal_psd_e08be82.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_tide.vmat_c",
+    "materials/models/items/hex/fish_hex/fish_tide_color_psd_eb9c1f2c.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_tide_selfillummask_psd_e24a9aba.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_tide_specmask_psd_2701c388.vtex_c",
+    "models/items/hex/fish_hex/tide_fish_hex.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/hoodwink/hoodwink_taunt/hdwk_taunt_acorns.vmdl": {
+   "hash": "7148133e",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_costume.vmat_c",
+    "materials/models/heroes/hoodwink/hoodwink_costume_color_psd_ba45c9a9.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_costume_detailmask_psd_6ffb934e.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_costume_normal_psd_b92c35e6.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_costume_specmask_psd_55dc102.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_day_cube_psd_9be77795.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_detail_psd_10a4773c.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_fur_fresnelwarprim_psd_4df18e57.vtex_c",
+    "models/items/hoodwink/hoodwink_taunt/hdwk_taunt_acorns.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/hoodwink/hoodwink_taunt/hdwk_taunt_acorns_2021.vmdl": {
+   "hash": "3b283c67",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/hoodwink/hoodwink_detail_psd_10a4773c.vtex_c",
+    "materials/models/items/hoodwink/hood_2021_blossom_armor/hood_2021_blossom_armor.vmat_c",
+    "materials/models/items/hoodwink/hood_2021_blossom_armor/hood_2021_blossom_armor_color_tga_cc2996e8.vtex_c",
+    "materials/models/items/hoodwink/hood_2021_blossom_armor/hood_2021_blossom_armor_detailmask_tga_4bff539d.vtex_c",
+    "materials/models/items/hoodwink/hood_2021_blossom_armor/hood_2021_blossom_armor_normal_tga_a961b0f9.vtex_c",
+    "materials/models/items/hoodwink/hood_2021_blossom_armor/hood_2021_blossom_armor_specmask_tga_af87e0d4.vtex_c",
+    "models/items/hoodwink/hoodwink_taunt/hdwk_taunt_acorns_2021.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/juggernaut/arcana/jugg_dragon.vmdl": {
+   "hash": "aadfc335",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/axe/axe_fresnelwarpspec_tga_5d532465.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_fur_fresnelwarprim_psd_c12f7900.vtex_c",
+    "materials/models/items/juggernaut/arcana/jugg_dragon.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_dragon_additive.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_dragon_additive_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/items/juggernaut/arcana/jugg_dragon_bladefury.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_dragon_translucent.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_v2_dragon.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_v2_dragon_additive.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_v2_dragon_additive_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/items/juggernaut/arcana/jugg_v2_dragon_bladefury.vmat_c",
+    "materials/models/items/juggernaut/arcana/jugg_v2_dragon_translucent.vmat_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_color_psd_677d0092.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_color_psd_e61aeeec.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_effect_color_psd_d250a3ce.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_normal_png_c49d57c.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_selfillummask_png_7c8872f5.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_selfillummask_psd_5322a881.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_specmask_png_86ec75c3.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_specmask_png_a70ccccc.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_dragon_specmask_psd_fee54fbf.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_v2_dragon_color_psd_16e94cad.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_v2_dragon_color_psd_bee74ec5.vtex_c",
+    "materials/models/items/juggernaut/arcana/juggernaut_arcana_v2_dragon_effect_color_psd_7e7b714c.vtex_c",
+    "models/items/juggernaut/arcana/jugg_dragon.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/keeper_of_the_light/keeper_ti10_taunt/kotl_ti10_taunt_prop.vmdl": {
+   "hash": "c1269fc1",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_cube_tga_3e998d35.vtex_c",
+    "materials/models/heroes/pedestal/effigy_pedestal_ti5.vmat_c",
+    "materials/models/heroes/pedestal/effigy_pedestal_ti5_color_psd_278e4a64.vtex_c",
+    "materials/models/heroes/pedestal/effigy_pedestal_ti5_diffusemask_tga_7c6a4bce.vtex_c",
+    "materials/models/heroes/pedestal/effigy_pedestal_ti5_normal_psd_89e0c578.vtex_c",
+    "materials/models/heroes/pedestal/effigy_pedestal_ti5_specmask_tga_cb292aeb.vtex_c",
+    "models/items/keeper_of_the_light/keeper_ti10_taunt/kotl_ti10_taunt_prop.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/marci/red_riding_hood_basket/red_riding_hood_basket.vmdl": {
+   "hash": "92df0da9",
+   "deps": [
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_basket.vmat_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_basket_color_tga_715766f5.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_basket_normal_tga_ded4bd72.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_basket_specmask_tga_4834f9cb.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies.vmat_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies_color_tga_7071ccb2.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies_normal_tga_f1e4996b.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies_specmask_tga_391a9fe5.vtex_c",
+    "models/items/marci/red_riding_hood_basket/red_riding_hood_basket.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/marci/red_riding_hood_basket/red_riding_hood_cookies.vmdl": {
+   "hash": "b0a1f57b",
+   "deps": [
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies.vmat_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies_color_tga_7071ccb2.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies_normal_tga_f1e4996b.vtex_c",
+    "materials/models/items/marci/red_riding_hood_basket/red_riding_hood_cookies_specmask_tga_391a9fe5.vtex_c",
+    "models/items/marci/red_riding_hood_basket/red_riding_hood_cookies.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/medusa/medusa_ti10_taunt/medusa_taunt_base.vmdl": {
+   "hash": "f38d0e9d",
+   "deps": [
+    "materials/models/props_stone/columns/colosseum_column001.vmat_c",
+    "materials/models/props_stone/columns/colosseum_column001_color_psd_59b07d0c.vtex_c",
+    "materials/models/props_stone/columns/colosseum_column001_mask_psd_5a8a69fa.vtex_c",
+    "materials/models/props_stone/columns/colosseum_column001_normal_psd_eeb1ab31.vtex_c",
+    "materials/models/props_stone/columns/colosseum_column001_refl_psd_523abab4.vtex_c",
+    "models/items/medusa/medusa_ti10_taunt/medusa_taunt_base.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/medusa/medusa_ti10_taunt/medusa_taunt_creep.vmdl": {
+   "hash": "dbed08e6",
+   "deps": [
+    "materials/models/items/medusa/medusa_ti10_taunt/creep_creep_rad_melee_color_psd_7bec096e.vtex_c",
+    "materials/models/items/medusa/medusa_ti10_taunt/creep_creep_rad_melee_refl_png_f3258a93.vtex_c",
+    "materials/models/items/medusa/medusa_ti10_taunt/medusa_ti10_taunt_creep.vmat_c",
+    "models/items/medusa/medusa_ti10_taunt/medusa_taunt_creep.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/morphling/morphling_automaton/morphling_automaton_death.vmdl": {
+   "hash": "92574d4",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/cubemaps/glossy_terrorblade_cube_tga_76826f2f.vtex_c",
+    "materials/models/heroes/axe/axe_fresnelwarprim_tga_39db9975.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morph_carnival_fresnelwarprim_psd_97d75f13.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_cube_psd_f91aeaa3.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_detail_psd_28a415c4.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal.vmat_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_color_psd_3ec70108.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_detailmask_psd_a1e4775b.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_normal_psd_1fc785d9.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_metal/morphling_dark_carnival_metal_specmask_psd_74e0a9bf.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_carnival_diffusewarp_psd_19bf16af.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood.vmat_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_color_psd_458a6a17.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_detailmask_psd_fd39367c.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_normal_psd_8f421f17.vtex_c",
+    "materials/models/items/morphling/morphling_dark_carnival/morphling_dark_carnival_wood/morphling_dark_carnival_wood_specmask_psd_86e7b63a.vtex_c",
+    "models/items/morphling/morphling_automaton/morphling_automaton_death.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/morphling/ti10_morphling_taunt_shotgun/ti10_morphling_taunt_shotgun.vmdl": {
+   "hash": "b778cda8",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/glossy_cube_tga_4cca90d9.vtex_c",
+    "materials/models/heroes/morphling/morphling_color.vmat_c",
+    "materials/models/heroes/morphling/morphling_color_psd_404e21e5.vtex_c",
+    "materials/models/heroes/morphling/morphling_colorwarp3d_z000_tga_1abcd3f2.vtex_c",
+    "materials/models/heroes/morphling/morphling_detailmask_tga_f0b2b32f.vtex_c",
+    "materials/models/heroes/morphling/morphling_motion_water_detail_psd_52f4abe8.vtex_c",
+    "materials/models/heroes/morphling/morphling_normal_psd_1d7bd637.vtex_c",
+    "materials/models/heroes/morphling/morphling_specmask_tga_9a527079.vtex_c",
+    "models/items/morphling/ti10_morphling_taunt_shotgun/ti10_morphling_taunt_shotgun.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/necrolyte/ti9_cache_necro_fowl_plague_shoulder/necro_egg.vmdl": {
+   "hash": "290dea60",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/heroes/wraith_king/wraith_king_detail_psd_16d225fa.vtex_c",
+    "materials/models/items/necrolyte/ti9_cache_necro_fowl_plague_shoulder/ti9_cache_necro_fowl_plague_egg.vmat_c",
+    "materials/models/items/necrolyte/ti9_cache_necro_fowl_plague_shoulder/ti9_cache_necro_fowl_plague_egg_vmat_g_tcolor_5e47e3fc.vtex_c",
+    "materials/models/items/necrolyte/ti9_cache_necro_fowl_plague_shoulder/ti9_cache_necro_fowl_plague_egg_vmat_g_tmasks1_8b347a6.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_specmask_psd_c44f5d27.vtex_c",
+    "models/items/necrolyte/ti9_cache_necro_fowl_plague_shoulder/necro_egg.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball.vmdl": {
+   "hash": "f92b0dfc",
+   "deps": [
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball.vmat_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_color_psd_38bbd953.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_color_psd_a1719459.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_debris.vmat_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_normal_psd_b514b065.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_refl_psd_51d710df.vtex_c",
+    "models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_loadout.vmdl": {
+   "hash": "eca91a1d",
+   "deps": [
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball.vmat_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_color_psd_38bbd953.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_color_psd_a1719459.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_debris.vmat_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_normal_psd_b514b065.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_refl_psd_51d710df.vtex_c",
+    "models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_loadout.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/obsidian_destroyer/od_taunt_2022/od_taunt_roll_fx_end_model.vmdl": {
+   "hash": "695a87b8",
+   "deps": [
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball.vmat_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_color_psd_a1719459.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_normal_psd_b514b065.vtex_c",
+    "materials/models/items/obsidian_destroyer/od_taunt_2022/od_taunt_ball_refl_psd_51d710df.vtex_c",
+    "models/items/obsidian_destroyer/od_taunt_2022/od_taunt_roll_fx_end_model.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/phantom_lancer/taunt_pole_vault/pl_taunt_pole_vault.vmdl": {
+   "hash": "bc5a3b00",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/props_gameplay/soccer_goal.vmat_c",
+    "materials/models/props_gameplay/soccer_goal_color_psd_57f2f644.vtex_c",
+    "materials/models/props_gameplay/soccer_goal_leaves.vmat_c",
+    "materials/models/props_gameplay/soccer_goal_normal_psd_28a65129.vtex_c",
+    "materials/models/props_gameplay/soccer_goal_refl_psd_827fdfbc.vtex_c",
+    "materials/models/props_nature/leaves_bamboo00_color_psd_a7cc2580.vtex_c",
+    "models/items/phantom_lancer/taunt_pole_vault/pl_taunt_pole_vault.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/phoenix/phoenix_taunt/phoenix_taunt_egg.vmdl": {
+   "hash": "3dcad130",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg.vmat_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_color_psd_7d153950.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2.vmat_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2_color_psd_cb5789cd.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2_vmat_g_tmasks1_b73aa9b7.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2_vmat_g_tmasks2_b3c333e7.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_specmask_psd_b40798b.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_vmat_g_tmasks1_b73aa9b7.vtex_c",
+    "models/items/phoenix/phoenix_taunt/phoenix_taunt_egg.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked.vmdl": {
+   "hash": "707afece",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/default/dota_default_cube_tga_c95513b9.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cooked.vmat_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cooked_color_psd_5289a9ac.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cooked_normal_psd_c85770b3.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cooked_specmask_psd_3b7ef6f8.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cooked_vmat_g_tmasks1_b73aa9b7.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked.vmat_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked_color_psd_bd6e4028.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked_vmat_g_tmasks1_b73aa9b7.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked_vmat_g_tmasks2_b3c333e7.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2.vmat_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2_color_psd_cb5789cd.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2_vmat_g_tmasks1_b73aa9b7.vtex_c",
+    "materials/models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_skin2_vmat_g_tmasks2_b3c333e7.vtex_c",
+    "models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked.vmdl_c",
+    "models/items/phoenix/phoenix_taunt/phoenix_taunt_egg_cracked/phoenix_taunt_egg_cracked_model_vmorf.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet.vmdl": {
+   "hash": "7f901d7c",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/drow/diffusewarp_diffusewarp_psd_b1607356.vtex_c",
+    "materials/models/heroes/mars/mars_fresnelwarprim_psd_aad1d229.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet.vmat_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_color_psd_e9567266.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_normal_psd_5913e738.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_specmask_psd_16d854bd.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_vmat_g_tmasks1_b9053fff.vtex_c",
+    "models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/primal_beast/pb_taunt_2022/lollipop/lollipop.vmdl": {
+   "hash": "ed18c7f8",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop.vmat_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_color_psd_bbb7f9e4.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_cube_psd_13ed0a2b.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_normal_psd_4c33e6d3.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_vmat_g_tmasks1_9cb48d82.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_vmat_g_tmasks2_12c84ba6.vtex_c",
+    "models/items/primal_beast/pb_taunt_2022/lollipop/lollipop.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle.vmdl": {
+   "hash": "e423b8e8",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_cube_psd_13ed0a2b.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle.vmat_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_color_psd_b15c49b3.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_normal_psd_e022be03.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_selfillummask_psd_a92adafd.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_vmat_g_tmasks2_12c84ba6.vtex_c",
+    "models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/primal_beast/pb_taunt_2022/milk_bottle/pb_taunt_props.vmdl": {
+   "hash": "cb349ee6",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/drow/diffusewarp_diffusewarp_psd_b1607356.vtex_c",
+    "materials/models/heroes/mars/mars_fresnelwarprim_psd_aad1d229.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet.vmat_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_color_psd_e9567266.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_normal_psd_5913e738.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_specmask_psd_16d854bd.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/baby_bonnet/baby_bonnet_vmat_g_tmasks1_b9053fff.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop.vmat_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_color_psd_bbb7f9e4.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_cube_psd_13ed0a2b.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_normal_psd_4c33e6d3.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_vmat_g_tmasks1_9cb48d82.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/lollipop/lollipop_vmat_g_tmasks2_12c84ba6.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle.vmat_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_color_psd_b15c49b3.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_normal_psd_e022be03.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_selfillummask_psd_a92adafd.vtex_c",
+    "materials/models/items/primal_beast/pb_taunt_2022/milk_bottle/milk_bottle_vmat_g_tmasks2_12c84ba6.vtex_c",
+    "models/items/primal_beast/pb_taunt_2022/milk_bottle/pb_taunt_props.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/pudge/arcana/pudge_arcana_base.vmdl": {
+   "hash": "a981158b",
+   "deps": [
+    "materials/cubemaps/palegreen_day_cube_psd_a88a532d.vtex_c",
+    "materials/debug/debugempty.vtex_c",
+    "materials/debug/debugempty_tga_a85f4679.vtex_c",
+    "materials/default/default_color_tga_11bf3739.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_f28a904b.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_base.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_base_style1.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_body_color_psd_161d3abb.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_body_detailmask_psd_56bf5aa5.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_body_normal_psd_3d165f43.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_body_specmask_psd_24b9326e.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_chains_scroll.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_chains_scroll_style1.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_chains_scroll_style_teleport.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_edge_glow.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_edge_glow_color_psd_71ef2f8a.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_edge_glow_style1.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_edge_glow_style_teleport.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_style1_body_color_psd_11a02cf1.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_style1_detail_psd_1ef25fb1.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_style1_edge_glow_color_psd_7ceb2040.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_color_psd_ef24cfd3.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_detail_psd_cf8a6189.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_metalnessmask_psd_867cfa8a.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_normal_psd_a9a96c57.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_specmask_psd_421bc11d.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_specmask_psd_86194ba3.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_style1_color_psd_e5bc4f5f.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_style1_detail_psd_a509efac.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_chains2_style1_normal_psd_92fe5fd9.vtex_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/arcana/pudge_hungry_clown_car_arcana.vmat_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/arcana/pudge_hungry_clown_car_arcana_color_psd_99f408af.vtex_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/arcana_style1/pudge_hungry_clown_car_arcana_style1.vmat_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/arcana_style1/pudge_hungry_clown_car_arcana_style1_color_psd_bd3d696d.vtex_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/pudge_hungry_clown_car.vmat_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/pudge_hungry_clown_car_color_psd_3e9e9296.vtex_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/pudge_hungry_clown_car_metalnessmask_png_d21b66e3.vtex_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/pudge_hungry_clown_car_normal_png_f589eee6.vtex_c",
+    "materials/models/items/pudge/pudge_hungry_clown_car/pudge_hungry_clown_car_specmask_png_4d1ceeed.vtex_c",
+    "materials/models/props_structures/tower_upgrade/obsidian_cube_psd_21247ff7.vtex_c",
+    "models/items/pudge/arcana/pudge_arcana_base.vmdl_c",
+    "models/items/pudge/arcana/pudge_arcana_base/head_vmorf.vtex_c",
+    "models/items/pudge/pudge_hungry_clown_car/pudge_hungry_clown_car.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/items/pudge/arcana/pudge_arcana_loadout_chain.vmdl": {
+   "hash": "106f71b",
+   "deps": [
+    "materials/cubemaps/palegreen_day_cube_psd_a88a532d.vtex_c",
+    "materials/cubemaps/red_day_cube_psd_6a8fe464.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook_color_psd_f8bd01fb.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook_detailmask_psd_a9fa416c.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook_normal_psd_a9f00292.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook_specmask_psd_77eafccd.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook_style1.vmat_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_hook_style1_color_psd_46a8aa69.vtex_c",
+    "materials/models/items/pudge/arcana/pudge_arcana_style1_detail_psd_1ef25fb1.vtex_c",
+    "models/items/pudge/arcana/pudge_arcana_loadout_chain.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/shadow_demon/the_gate_of_hell_back/the_gate_of_hell_orb.vmdl": {
+   "hash": "5e594b8a",
+   "deps": [
+    "materials/debug/debugempty.vmat_c",
+    "materials/debug/debugempty_color_tga_6f67a2f8.vtex_c",
+    "models/items/shadow_demon/the_gate_of_hell_back/the_gate_of_hell_orb.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart.vmdl": {
+   "hash": "56155a92",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/techies_metal_cube_tga_12f60802.vtex_c",
+    "materials/models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart.vmat_c",
+    "materials/models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart_color_tga_2f233098.vtex_c",
+    "materials/models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart_detailmask_tga_4b5718bf.vtex_c",
+    "materials/models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart_normal_tga_614b980e.vtex_c",
+    "materials/models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart_specmask_tga_784bc33f.vtex_c",
+    "models/items/techies/farming_techies_remote_cart/farming_techies_remote_cart.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_coin.vmdl": {
+   "hash": "5f29261b",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_color_png_f47597c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_detailmask_png_63f1c1ad.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_normal_png_a6118ef0.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_specmask_png_8baeddd8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_coin.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_compass.vmdl": {
+   "hash": "7b786deb",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_color_png_f47597c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_detailmask_png_63f1c1ad.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_normal_png_a6118ef0.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_specmask_png_8baeddd8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_compass.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_key.vmdl": {
+   "hash": "be59106d",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_color_png_f47597c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_detailmask_png_63f1c1ad.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_normal_png_a6118ef0.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_specmask_png_8baeddd8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_key.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_knife.vmdl": {
+   "hash": "b43d37fb",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_color_png_f47597c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_detailmask_png_63f1c1ad.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_normal_png_a6118ef0.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_specmask_png_8baeddd8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_knife.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_scroll.vmdl": {
+   "hash": "bbca447a",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_color_png_f47597c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_detailmask_png_63f1c1ad.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_normal_png_a6118ef0.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_specmask_png_8baeddd8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_scroll.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_tentacle.vmdl": {
+   "hash": "14b42a15",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_color_png_f47597c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_detailmask_png_63f1c1ad.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_normal_png_a6118ef0.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_specmask_png_8baeddd8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props/tidehunter_arcana_props_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props/tidehunter_arcana_tentacle.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/props_sealife/tide_arcana_kunkka.vmdl": {
+   "hash": "1b6d8b99",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props_sealife/tidehunter_arcana_props_sealife.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props_sealife/tidehunter_arcana_props_sealife_color_png_47c4ba60.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props_sealife/tidehunter_arcana_props_sealife_detailmask_png_27ff966e.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props_sealife/tidehunter_arcana_props_sealife_normal_png_39524ed5.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props_sealife/tidehunter_arcana_props_sealife_specmask_png_d1040ebb.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/props_sealife/tidehunter_arcana_props_sealife_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/props_sealife/tide_arcana_kunkka.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/items/tidehunter/tidehunter_arcana/taunt/tidehunter_arcana_watermelon.vmdl": {
+   "hash": "5cb21489",
+   "deps": [
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/watermelon/tidehunter_arcana_watermelon.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/watermelon/tidehunter_arcana_watermelon_color_png_7ee80af7.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/watermelon/tidehunter_arcana_watermelon_detailmask_png_7ae60836.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/watermelon/tidehunter_arcana_watermelon_normal_png_875e96d8.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/watermelon/tidehunter_arcana_watermelon_specmask_png_8690394f.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/watermelon/tidehunter_arcana_watermelon_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/taunt/tidehunter_arcana_watermelon.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tidehunter/tidehunter_arcana/tidehunter_arcana.vmdl": {
+   "hash": "9e93eb63",
+   "deps": [
+    "materials/cubemaps/wraithking_arcana_alt_cube_psd_92beb487.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/heroes/pudge/pudge_diffusewarp_psd_674611da.vtex_c",
+    "materials/models/heroes/pudge/pudge_fresnelwarprim_tga_92846393.vtex_c",
+    "materials/models/heroes/ringmaster/ringmaster_sideshow_fresnelwarprim_psd_73bc45dc.vtex_c",
+    "materials/models/heroes/spirit_breaker/spirit_breaker_ti10_specwarp_psd_c7606752.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_hex.vmat_c",
+    "materials/models/items/hex/fish_hex/fish_hex_color_psd_3c86c939.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_hex_metalnessmask_tga_fe831400.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_hex_normal_psd_e08be82.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_hex_specmask_tga_9968e2c0.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_tide.vmat_c",
+    "materials/models/items/hex/fish_hex/fish_tide_color_psd_eb9c1f2c.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_tide_selfillummask_psd_e24a9aba.vtex_c",
+    "materials/models/items/hex/fish_hex/fish_tide_specmask_psd_2701c388.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/base_body/tidehunter_arcana_base_body.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/base_body/tidehunter_arcana_base_body_color_png_50f8d2c.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/base_body/tidehunter_arcana_base_body_detailmask_png_1db84033.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/base_body/tidehunter_arcana_base_body_normal_png_692ecbe7.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/base_body/tidehunter_arcana_base_body_specmask_png_a7776e95.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/base_body/tidehunter_arcana_base_body_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/offhand/tidehunter_arcana_offhand.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/offhand/tidehunter_arcana_offhand_color_png_f830670f.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/offhand/tidehunter_arcana_offhand_detailmask_png_f176a776.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/offhand/tidehunter_arcana_offhand_normal_png_5db7fd73.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/offhand/tidehunter_arcana_offhand_specmask_png_3277c311.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/offhand/tidehunter_arcana_offhand_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/tidehunter_arcana_cube_psd_d0f092c.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/weapon/tidehunter_arcana_weapon.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/weapon/tidehunter_arcana_weapon_color_png_f321db66.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/weapon/tidehunter_arcana_weapon_detailmask_png_f8da27e5.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/weapon/tidehunter_arcana_weapon_normal_png_475be578.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/weapon/tidehunter_arcana_weapon_specmask_png_bd3a4f9f.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana/weapon/tidehunter_arcana_weapon_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/offhand/tidehunter_arcana_offhand_style1.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/offhand/tidehunter_arcana_offhand_style1_color_png_2ef15ecd.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/offhand/tidehunter_arcana_offhand_style1_detailmask_png_99066c16.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/offhand/tidehunter_arcana_offhand_style1_normal_png_8eb8ab44.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/offhand/tidehunter_arcana_offhand_style1_specmask_png_2fd1a556.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/offhand/tidehunter_arcana_offhand_style1_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style1/tidehunter_arcana_green_cube_psd_7704f380.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/base_body/tidehunter_arcana_base_body_style2.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/base_body/tidehunter_arcana_base_body_style2_color_png_f0ea7b7f.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/base_body/tidehunter_arcana_base_body_style2_detailmask_png_3df69ea1.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/base_body/tidehunter_arcana_base_body_style2_normal_png_feaca1e2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/base_body/tidehunter_arcana_base_body_style2_specmask_png_52faa6af.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/base_body/tidehunter_arcana_base_body_style2_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/offhand/tidehunter_arcana_offhand_style2.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/offhand/tidehunter_arcana_offhand_style2_color_png_153aab4a.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/offhand/tidehunter_arcana_offhand_style2_detailmask_png_233c9531.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/offhand/tidehunter_arcana_offhand_style2_normal_png_ca748549.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/offhand/tidehunter_arcana_offhand_style2_specmask_png_ee1b24b3.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_arcana/arcana_style2/offhand/tidehunter_arcana_offhand_style2_vmat_g_tdetail2_8149ba91.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/taunt/tidehunter_arcana_taunt_offhand.vmdl_c",
+    "models/items/tidehunter/tidehunter_arcana/tidehunter_arcana.vmdl_c",
+    "models/items/tidehunter/tidehunter_arcana/tidehunter_arcana/tidehunter_arcana_base_body_head_lod0_vmorf.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/tidehunter_arcana/tidehunter_arcana_base_body_no_fin_head_lod0_vmorf.vtex_c",
+    "models/items/tidehunter/tidehunter_arcana/tidehunter_arcana_fishprop.vmdl_c",
+    "models/items/tidehunter/tidehunter_arcana/tidehunter_arcana_weapon_chain_prop.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/items/tidehunter/tidehunter_taunt_2022/water_melon/tide_taunt_2022_watermelons.vmdl": {
+   "hash": "95a30cff",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_taunt_2022/water_melon/water_melon.vmat_c",
+    "materials/models/items/tidehunter/tidehunter_taunt_2022/water_melon/water_melon_color_psd_9e1ef8b3.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_taunt_2022/water_melon/water_melon_normal_psd_fbf61b38.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_taunt_2022/water_melon/water_melon_vmat_g_tmasks1_176f23c2.vtex_c",
+    "materials/models/items/tidehunter/tidehunter_taunt_2022/water_melon/water_melon_vmat_g_tmasks2_e128eb40.vtex_c",
+    "models/items/tidehunter/tidehunter_taunt_2022/water_melon/tide_taunt_2022_watermelons.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tiny/tiny_ti9_taunt/tiny_01_taunt_rocks.vmdl": {
+   "hash": "425949d8",
+   "deps": [
+    "materials/models/particle/simrock.vmat_c",
+    "materials/models/particle/simrock_color_psd_3c39ce43.vtex_c",
+    "models/items/tiny/tiny_ti9_taunt/tiny_01_taunt_rocks.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/tiny/tiny_ti9_taunt/tiny_03_taunt_rocks.vmdl": {
+   "hash": "8fdc7db8",
+   "deps": [
+    "materials/models/particle/simrock.vmat_c",
+    "materials/models/particle/simrock_color_psd_3c39ce43.vtex_c",
+    "models/items/tiny/tiny_ti9_taunt/tiny_03_taunt_rocks.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/underlord/taunt_pizza/au_taunt_pizza.vmdl": {
+   "hash": "2d57faf3",
+   "deps": [
+    "materials/models/items/underlord/ti_11_taunt/pizza_base_color_png_6424ac1d.vtex_c",
+    "materials/models/items/underlord/ti_11_taunt/pizza_norma_png_96905687.vtex_c",
+    "materials/models/items/underlord/ti_11_taunt/pizza_specular_png_47fad6c3.vtex_c",
+    "materials/models/items/underlord/ti_11_taunt/ti11_underlord_taunt.vmat_c",
+    "models/items/underlord/taunt_pizza/au_taunt_pizza.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/ursa/ti9_taunt_unicycle/ti10_ti9_ursa_taunt_cymbal.vmdl": {
+   "hash": "e289e2fa",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_ram_gold_cube_tga_f91d133c.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal_color_psd_8e633011.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal_normal_psd_231ba06e.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal_specmask_psd_fb9f7f39.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbals.vmat_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbals_vmat_g_tmasks1_50b2ec5f.vtex_c",
+    "models/items/ursa/ti9_taunt_unicycle/ti10_ti9_ursa_taunt_cymbal.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cycle.vmdl": {
+   "hash": "6075c41b",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_metal_grey_contrast_cube_tga_bf5974b2.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_unicycle.vmat_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_unicycle_color_psd_9fdbf39a.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_unicycle_metalnessmask_psd_2af8247a.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_unicycle_normal_psd_92ec03ee.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_unicycle_specmask_psd_74e48126.vtex_c",
+    "models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cycle.vmdl_c",
+    "models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cycle/ti9_ursa_taunt_cycle_vmorf.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal.vmdl": {
+   "hash": "ca7fdfb5",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_ram_gold_cube_tga_f91d133c.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal_color_psd_8e633011.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal_normal_psd_231ba06e.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal_specmask_psd_fb9f7f39.vtex_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbals.vmat_c",
+    "materials/models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbals_vmat_g_tmasks1_50b2ec5f.vtex_c",
+    "models/items/ursa/ti9_taunt_unicycle/ti9_ursa_taunt_cymbal.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/vengefulspirit/vengeful_spirit_arcana/vengeful_spirit_arcana_crown_prop.vmdl": {
+   "hash": "506b7bb6",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/windrunner/windrunner_fresnelwarprim_tga_49edb275.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/alt/vengeful_spirit_arcana_alt_cube_psd_6eeaae59.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/alt/vengeful_spirit_arcana_alt_detail_psd_a3520086.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/alt/vengeful_spirit_arcana_alt_diffusewarp_psd_30769fa7.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/alt/vengeful_spirit_arcana_head_alt.vmat_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/alt/vengeful_spirit_arcana_head_alt_color_psd_e7c51cd0.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/alt/vengeful_spirit_arcana_head_alt_detailmask_psd_5f446e07.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/vengeful_spirit_arcana_head_normal_psd_55772f7c.vtex_c",
+    "materials/models/items/vengefulspirit/vengeful_spirit_arcana/vengeful_spirit_arcana_head_specmask_psd_52c83312.vtex_c",
+    "models/items/vengefulspirit/vengeful_spirit_arcana/vengeful_spirit_arcana_crown_prop.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/venomancer/banana/veno_banana.vmdl": {
+   "hash": "64c2385d",
+   "deps": [
+    "materials/models/items/venomancer/banana/veno_banana.vmat_c",
+    "materials/models/items/venomancer/banana/veno_banana_color_psd_f32fe284.vtex_c",
+    "materials/models/items/venomancer/banana/veno_banana_normal_psd_9250de6d.vtex_c",
+    "materials/models/items/venomancer/banana/veno_banana_refl_psd_f76ba130.vtex_c",
+    "models/items/venomancer/banana/veno_banana.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/venomancer/mechamancer/mechabanana.vmdl": {
+   "hash": "c868a10",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/items/venomancer/mechamancer/mechabanana/mechabanana.vmat_c",
+    "materials/models/items/venomancer/mechamancer/mechabanana/mechabanana_color_tga_c14c7d00.vtex_c",
+    "materials/models/items/venomancer/mechamancer/mechabanana/mechabanana_metalnessmask_tga_fa43b6b3.vtex_c",
+    "materials/models/items/venomancer/mechamancer/mechabanana/mechabanana_normal_tga_47eb7dd1.vtex_c",
+    "materials/models/items/venomancer/mechamancer/mechabanana/mechabanana_specmask_tga_1d09ba92.vtex_c",
+    "models/items/venomancer/mechamancer/mechabanana.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly.vmdl": {
+   "hash": "f34a68ab",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly.vmat_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_color_psd_198091cd.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_normal_psd_a698a9c2.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_selfillummask_psd_f64f0b82.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_style1.vmat_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_style1_color_psd_69ecc25b.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_style1_vmat_g_tmasks2_6e30699e.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly_vmat_g_tmasks2_6e30699e.vtex_c",
+    "materials/models/items/windrunner/windrunner_arcana/windranger_arcana_diffusewarp_psd_69aea3f5.vtex_c",
+    "models/items/windrunner/windrunner_arcana/windranger_arcana_butterfly.vmdl_c",
+    "models/props_consumables/fatsnake/fatsnake_fresnelwarprim_psd_99bccae3.vtex_c"
+   ],
+   "cloth": false
+  },
+  "models/items/wraith_king/arcana/wk_arc_throne_model.vmdl": {
+   "hash": "f34fc0c3",
+   "deps": [
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_color_psd_2a3a4ec2.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_normal_png_2d932579.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_specexp_png_86259a89.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_specmask_png_c4cffa87.vtex_c",
+    "materials/models/items/wraith_king/arcana/wraith_king_arcana_throne.vmat_c",
+    "models/items/wraith_king/arcana/wk_arc_throne_model.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/items/wraith_king/arcana/wk_sk_arc_taunt_throne_model.vmdl": {
+   "hash": "2fac8218",
+   "deps": [
+    "materials/default/default_ao_tga_56a28bd.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_color_psd_2a3a4ec2.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_normal_png_2d932579.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_specexp_png_86259a89.vtex_c",
+    "materials/models/items/wraith_king/arcana/wk_arcana_throne_specmask_png_c4cffa87.vtex_c",
+    "materials/models/items/wraith_king/arcana/wraith_king_arcana_throne.vmat_c",
+    "materials/models/items/wraith_king/arcana/wraith_king_arcana_throne_taunt.vmat_c",
+    "materials/models/props_structures/props_generic_00_color_psd_af5b07a3.vtex_c",
+    "materials/models/props_structures/props_generic_00_mask_psd_6fedb377.vtex_c",
+    "materials/models/props_structures/props_generic_00_normal_psd_af2dfdbc.vtex_c",
+    "materials/models/props_structures/props_generic_00_refl_psd_250188ee.vtex_c",
+    "models/items/wraith_king/arcana/wk_sk_arc_taunt_throne_model.vmdl_c"
+   ],
+   "cloth": true
+  },
+  "models/particle/crownfall_feather.vmdl": {
+   "hash": "75222570",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/cubemaps/cube_legion_commander_cube_tga_3cd63b2e.vtex_c",
+    "materials/models/items/legion_commander/radiant_conqueror_shoulder/radiant_conqueror_shoulder.vmat_c",
+    "materials/models/items/legion_commander/radiant_conqueror_shoulder/radiant_conqueror_shoulder_color_png_f2241dcb.vtex_c",
+    "materials/models/items/legion_commander/radiant_conqueror_shoulder/radiant_conqueror_shoulder_detailmask_png_f4e06330.vtex_c",
+    "materials/models/items/legion_commander/radiant_conqueror_shoulder/radiant_conqueror_shoulder_normal_png_e9888845.vtex_c",
+    "materials/models/items/legion_commander/radiant_conqueror_shoulder/radiant_conqueror_shoulder_specmask_png_57262c83.vtex_c",
+    "materials/particle/feathers/crownfall_feathers_color_psd_54241113.vtex_c",
+    "materials/particle/feathers/crownfall_feathers_fx.vmat_c",
+    "materials/particle/feathers/crownfall_feathers_fx_vmat_g_tdetail2_8149ba91.vtex_c",
+    "materials/particle/feathers/crownfall_feathers_fx_vmat_g_tmasks1_12da05e1.vtex_c",
+    "materials/particle/feathers/crownfall_feathers_v2_color_psd_24e152a2.vtex_c",
+    "materials/particle/feathers/crownfall_feathers_v2_fx.vmat_c",
+    "materials/particle/feathers/crownfall_feathers_v2_fx_vmat_g_tmasks1_69dc521f.vtex_c",
+    "models/particle/crownfall_feather.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/particle/sphere_alt.vmdl": {
+   "hash": "1b0ff77e",
+   "deps": [
+    "maps/cavern_assets/materials/overlays/caustic_crystal_01_trans_psd_6708a897.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/bane/bane_specularwarp_specwarp_psd_f2ffaaf5.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield.vmat_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_background.vmat_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_background_vmat_g_tcolor_1a810808.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_background_vmat_g_tmasks1_d78dbb3f.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_background_vmat_g_tmasks2_d8f98791.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_background_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_vmat_g_tmasks1_c9427453.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_vmat_g_tmasks2_d8f98791.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_abaddon_avernal_mist_shield_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_void_spirit_pulse_shield.vmat_c",
+    "materials/models/particle/sphere/sphere_alt_void_spirit_pulse_shield_cube_psd_fa540ea0.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_void_spirit_pulse_shield_vmat_g_tmasks1_c9427453.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_void_spirit_pulse_shield_vmat_g_tmasks2_d8f98791.vtex_c",
+    "materials/models/particle/sphere/sphere_alt_void_spirit_pulse_shield_vmat_g_tnormal_5a28bd86.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_cubemap_cube_tga_e24e2e2e.vtex_c",
+    "materials/models/props_structures/metal_spike001_color_psd_5374f11c.vtex_c",
+    "materials/models/ui/compendium_points/compendium_points_fresnelwarpspec_tga_bdf5830f.vtex_c",
+    "models/particle/sphere_alt.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/pets/icewrack_wolf/icewrack_wolf.vmdl": {
+   "hash": "c9ed8756",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_color.vmat_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_color_psd_9f025ec5.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_cubemap_cube_tga_e24e2e2e.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_diffusemask_tga_7017308.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_normal_psd_47825c90.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf2_specmask_tga_86c291ee.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf3_color.vmat_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf3_color_psd_2c2b8d43.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf3_metalnessmask_tga_7736c560.vtex_c",
+    "materials/models/pets/icewrack_wolf/icewrack_wolf3_specmask_tga_975d5903.vtex_c",
+    "models/pets/icewrack_wolf/icewrack_wolf.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/pets/red_riding_hood/red_riding_hood.vmdl": {
+   "hash": "56d8b7d0",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood.vmat_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_color_tga_a597f013.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_detailmask_tga_88dfec3a.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_extras.vmat_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_extras_color_tga_db215d89.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_extras_detailmask_tga_66d73be8.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_extras_normal_tga_7b8af8fd.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_extras_specmask_tga_de8da3d2.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_normal_tga_cd6b221d.vtex_c",
+    "materials/models/pets/red_riding_hood/red_riding_hood_specmask_tga_ee074ccb.vtex_c",
+    "models/pets/red_riding_hood/red_riding_hood.vmdl_c",
+    "models/pets/red_riding_hood/red_riding_hood/red_riding_hood_lod0_vmorf.vtex_c",
+    "models/pets/red_riding_hood/red_riding_hood/red_riding_hood_lod1_vmorf.vtex_c"
+   ],
+   "cloth": true
+  },
+  "models/props_debris/wood_step001.vmdl": {
+   "hash": "1fe616c7",
+   "deps": [
+    "materials/models/props_debris/wood_step001.vmat_c",
+    "materials/models/props_debris/wood_step001_color_psd_916f00d1.vtex_c",
+    "models/props_debris/wood_step001.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/props_gameplay/heart001.vmdl": {
+   "hash": "5f6d8de8",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/props_gameplay/heart001.vmat_c",
+    "materials/models/props_gameplay/heart001_cube_psd_9b647a0c.vtex_c",
+    "materials/models/props_gameplay/heart001_vmat_g_tcolor_b2648a75.vtex_c",
+    "materials/models/props_gameplay/heart001_vmat_g_tmasks1_3fd6c990.vtex_c",
+    "materials/models/props_gameplay/heart001_vmat_g_tmasks2_d746ab71.vtex_c",
+    "models/props_gameplay/heart001.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/props_rock/riveredge_rocks_small007.vmdl": {
+   "hash": "b302aa1e",
+   "deps": [
+    "materials/models/props_rock/riveredge_rocks_small.vmat_c",
+    "materials/models/props_rock/riveredge_rocks_small2.vmat_c",
+    "materials/models/props_rock/riveredge_rocks_small_color_psd_155150cc.vtex_c",
+    "materials/models/props_rock/riveredge_rocks_small_refl_tga_60332080.vtex_c",
+    "models/props_rock/riveredge_rocks_small007.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "models/props_rock/riveredge_rocks_small009.vmdl": {
+   "hash": "fb617661",
+   "deps": [
+    "materials/models/props_rock/riveredge_rocks_small.vmat_c",
+    "materials/models/props_rock/riveredge_rocks_small2.vmat_c",
+    "materials/models/props_rock/riveredge_rocks_small_color_psd_155150cc.vtex_c",
+    "materials/models/props_rock/riveredge_rocks_small_refl_tga_60332080.vtex_c",
+    "models/props_rock/riveredge_rocks_small009.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "particles/models/items/wisp/wisp_ti10_taunt/wisp_questionmark.vmdl": {
+   "hash": "a657c3e1",
+   "deps": [
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/particle/wisp/wisp_taunt_question_color.vmat_c",
+    "materials/particle/wisp/wisp_taunt_question_color_psd_b6f987dd.vtex_c",
+    "materials/particle/wisp/wisp_taunt_question_color_vmat_g_tspecular_df00f125.vtex_c",
+    "particles/models/items/wisp/wisp_ti10_taunt/wisp_questionmark.vmdl_c"
+   ],
+   "cloth": false
+  },
+  "particles/units/heroes/hero_techies/techies_explosion_fx.vmdl": {
+   "hash": "e2e1eeb6",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_diffusewarp_psd_22c9cacf.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_fresnelwarprim_psd_4b1aeb1b.vtex_c",
+    "materials/models/heroes/mars/mars_volume_smoke_normal_psd_5f5c93da.vtex_c",
+    "materials/particle/explosion/fx_explosion_sphere_detail_psd_79403724.vtex_c",
+    "materials/particle/techies/explosion/techies_explosion_b_fx.vmat_c",
+    "materials/particle/techies/explosion/techies_explosion_b_fx_vmat_g_tmasks1_e20268d7.vtex_c",
+    "materials/particle/techies/explosion/techies_explosion_fx.vmat_c",
+    "materials/particle/techies/explosion/techies_explosion_fx_background.vmat_c",
+    "materials/particle/techies/explosion/techies_explosion_fx_background_vmat_g_tmasks1_8ec9a960.vtex_c",
+    "materials/particle/techies/explosion/techies_explosion_fx_vmat_g_tmasks1_e20268d7.vtex_c",
+    "materials/particle/techies/techies_explosion_b_fx_psd_1febff5a.vtex_c",
+    "materials/particle/techies/techies_explosion_b_fx_psd_ee999b01.vtex_c",
+    "materials/particle/techies/techies_explosion_fx_psd_b28ac263.vtex_c",
+    "particles/units/heroes/hero_techies/techies_explosion_fx.vmdl_c"
+   ],
+   "cloth": false
   }
  },
  "textures": {

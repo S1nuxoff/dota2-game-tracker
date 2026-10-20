@@ -13,8 +13,11 @@
 //   particles/<path>.vsnap.json              a snapshot: points placed on a model ({ position: [[x, y, z]],
 //                                            radius: [r], ... } by stream, in the model's space), the
 //                                            effects' own and those items put in their place
-//   models/<path>.sequences.json            a model particles draw: its sequences, whether each loops and
-//                                            its activities ({ name: { looping, activities } })
+//   models/<path>.sequences.json            an exported model or one particles draw: its sequences, whether
+//                                            each loops, its activities, the animation it plays (the glb's
+//                                            clip, where not its name) and the particle effects its
+//                                            animations start ({ name: { looping, activities, clip, effects:
+//                                            [{ at, system, config, stopOnChange, immediately, stop }] } })
 //   particles/model-effects.json             the effects models start on their own (the pedestals'
 //                                            ground fog): { "<model>.vmdl": [{ system, config }] }
 //   particles/map-effects.json               the effects the heroes' page maps start (the god rays over
@@ -24,7 +27,8 @@
 // and lists the models the particles draw in particle-models.json, for index.js to export.
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
+const readline = require("readline");
 const sharp = require("sharp");
 const hf = require("./hf");
 const kv3 = require("./kv3");
@@ -43,6 +47,9 @@ const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Vi
 const BATCH = 2000;
 // What a sprite or trail (a soft white dot) and a rope draw where a layer names no texture
 const DEFAULT_TEXTURES = ["materials/particle/base_sprite.vtex", "materials/particle/base_rope.vtex"];
+// Raised when the models' sequence files change shape, to read them all again (2: the animation
+// each plays and the particle effects it starts)
+const SEQUENCE_FORMAT = 2;
 // Models print their whole mesh data, so fewer at a time
 const MODEL_BATCH = 300;
 // Atlases larger than this are scaled down; the particles are small on screen
@@ -274,17 +281,122 @@ function readAttachments(files) {
   return found;
 }
 
+// The particle events of each animation of the models in folder (written there by readBlocks),
+// from their printed ANIM blocks: Map(model => { "<animation>": [event, ...] }) with each event
+// as KV3 gives it (m_sEventName, m_flCycle, m_EventData). A hero's ANIM block prints tens of
+// megabytes (every bone's bounds), so the print is read line by line, keeping only the events.
+function readAnimationEvents(folder) {
+  return new Promise((resolve, reject) => {
+    const found = new Map();
+    const child = spawn(DECOMPILER, ["-i", folder, "--recursive", "-b", "ANIM"]);
+    const lines = readline.createInterface({ input: child.stdout, crlfDelay: Infinity });
+    let file = null;
+    let animation = null;
+    let inEvents = false;
+    let event = null;
+    lines.on("line", (line) => {
+      const start = line.match(/^\[\d+\/\d+\] (.+)$/);
+      if (start) {
+        file = path.relative(folder, start[1].trim()).split(path.sep).join("/").replace(/_c$/, "");
+        animation = null;
+        inEvents = false;
+        return;
+      }
+      // An animation's m_name (three tabs in) comes before its m_eventArray, whose events are
+      // objects four tabs in
+      const name = line.match(/^\t\t\tm_name = "([^"]*)"/);
+      if (name) {
+        animation = name[1];
+        return;
+      }
+      if (/^\t\t\tm_eventArray =/.test(line)) {
+        inEvents = true;
+        return;
+      }
+      if (!inEvents) return;
+      if (/^\t\t\t[^\t[\]]/.test(line)) {
+        inEvents = false;
+        return;
+      }
+      if (/^\t\t\t\t\{/.test(line)) {
+        event = [line];
+      } else if (event && /^\t\t\t\t\},?$/.test(line)) {
+        event.push("}");
+        const text = event.join("\n");
+        event = null;
+        if (!/PARTICLE/.test(text) || !file || !animation) return;
+        try {
+          const parsed = kv3.parse(text);
+          if (!found.has(file)) found.set(file, {});
+          (found.get(file)[animation] ??= []).push(parsed);
+        } catch {
+          // An event KV3 cannot read is left out
+        }
+      } else if (event) {
+        event.push(line);
+      }
+    });
+    child.on("error", reject);
+    lines.on("close", () => resolve(found));
+  });
+}
+
+// What a particle event of an animation does on the site, or null for others:
+//   { at: cycle, system, config, stopOnChange, immediately }   starts an effect (its control
+//                                                               point configuration by name)
+//   { at: cycle, system, stop: true, immediately }              ends the effects of that system
+function animationEffect(event) {
+  const data = event.m_EventData ?? {};
+  const system = typeof data.name === "string" ? data.name.toLowerCase() : null;
+  if (!system?.endsWith(".vpcf")) return null;
+  const at = Number(event.m_flCycle) || 0;
+  if (/^AE_CL_CREATE_PARTICLE_EFFECT/.test(event.m_sEventName)) {
+    return {
+      at,
+      system,
+      ...(data.config && { config: data.config }),
+      ...(data.attachment && { attachment: data.attachment }),
+      ...(data.attachType && { attachType: data.attachType }),
+      ...(data.stop_on_seq_change && { stopOnChange: true }),
+      ...(data.stop_immediately && { immediately: true }),
+    };
+  }
+  if (/^AE_CL_STOP_PARTICLE_EFFECT/.test(event.m_sEventName)) {
+    return { at, system, stop: true, ...(data.stop_immediately && { immediately: true }) };
+  }
+  return null;
+}
+
 // The sequences of models, from their sequence data block (the glb has their animations, not
-// how they play): Map(model => { game_idle: { looping: true, activities: ["ACT_DOTA_IDLE"] } })
-function readSequences(files) {
+// how they play): Map(model => { game_idle: { looping: true, activities: ["ACT_DOTA_IDLE"],
+// clip: "@game_idle", effects: [...] } }). `clip` is the animation the sequence plays (the glb's
+// clips are named by the animations), given where it is not the sequence's own name; `effects`
+// the particle effects its animations start and stop (animationEffect), by their cycle.
+async function readSequences(files) {
   const found = new Map();
-  for (const [file, blocks] of readBlocks(files, "ASEQ")) {
+  const blocks = readBlocks(files, "ASEQ");
+  const events = await readAnimationEvents(path.join(temp, "models-in"));
+  for (const [file, list] of blocks) {
     const sequences = {};
-    for (const data of blocks) {
+    const animations = events.get(file) ?? {};
+    for (const data of list) {
+      const names = data?.m_localSequenceNameArray ?? [];
       for (const sequence of data?.m_localS1SeqDescArray ?? []) {
         if (!sequence?.m_sName) continue;
         const activities = (sequence.m_activityArray ?? []).map((activity) => activity?.m_name).filter(Boolean);
-        sequences[sequence.m_sName] = { looping: Boolean(sequence.m_flags?.m_bLooping), ...(activities.length && { activities }) };
+        const clips = [...new Set((sequence.m_fetch?.m_localReferenceArray ?? []).map((index) => names[index]).filter(Boolean))];
+        const clip = clips[0];
+        const effects = clips
+          .flatMap((name) => (animations[name] ?? []).map(animationEffect))
+          .filter(Boolean)
+          .filter((effect, index, all) => all.findIndex((other) => JSON.stringify(other) === JSON.stringify(effect)) === index)
+          .sort((a, b) => a.at - b.at);
+        sequences[sequence.m_sName] = {
+          looping: Boolean(sequence.m_flags?.m_bLooping),
+          ...(activities.length && { activities }),
+          ...(clip && clip !== sequence.m_sName && { clip }),
+          ...(effects.length && { effects }),
+        };
       }
     }
     if (Object.keys(sequences).length) {
@@ -510,10 +622,54 @@ async function main() {
   const effectsOfModels = await modelEffects(source);
   const effectsOfMaps = await mapEffects(source);
   const started = [...Object.values(effectsOfModels), ...Object.values(effectsOfMaps)].flatMap((effects) => effects.map((effect) => effect.system));
-  const roots = [...new Set([...itemRoots, ...started])];
-  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more started by the pedestals and the heroes' page maps`);
-  let frontier = roots;
   const uploads = [];
+
+  // How each model plays its sequences (looping, activities, the animation each plays, the
+  // particle effects its animations start: Void Spirit's portal on his loadout spawn), for every
+  // exported model and every model particles draw; what those animations start is shown too.
+  // state.sequenceEffects keeps each model's systems, so an unchanged model is not read again.
+  const exported = fs.existsSync("state.json") ? Object.keys(JSON.parse(fs.readFileSync("state.json", "utf8")).models ?? {}) : [];
+  if (state.sequenceFormat !== SEQUENCE_FORMAT) {
+    state.sequences = {};
+    state.sequenceEffects = {};
+    state.sequenceFormat = SEQUENCE_FORMAT;
+  }
+  state.sequenceEffects ??= {};
+  const exportSequences = async (list) => {
+    const todo = [...new Set(list)].filter((model) => crcOf(model) !== undefined && state.sequences[model] !== crcOf(model));
+    console.log(`${todo.length} models with new or changed sequences`);
+    for (let i = 0; i < todo.length; i += MODEL_BATCH) {
+      const batch = todo.slice(i, i + MODEL_BATCH);
+      const files = new Map();
+      await source.readFiles(batch.map((model) => `${model}_c`), files);
+      source.release();
+      const found = await readSequences(files);
+      for (const [model, sequences] of found) {
+        const json = path.join(dist, model.replace(/\.vmdl$/, ".sequences.json"));
+        fs.mkdirSync(path.dirname(json), { recursive: true });
+        fs.writeFileSync(json, JSON.stringify(sequences));
+        uploads.push({ path: model.replace(/\.vmdl$/, ".sequences.json"), file: json });
+      }
+      for (const model of batch) {
+        state.sequences[model] = crcOf(model);
+        const systems = [...new Set(Object.values(found.get(model) ?? {}).flatMap((sequence) => (sequence.effects ?? []).filter((effect) => !effect.stop).map((effect) => effect.system)))];
+        if (systems.length) {
+          state.sequenceEffects[model] = systems;
+        } else {
+          delete state.sequenceEffects[model];
+        }
+      }
+      process.stdout.write(`\r${Math.min(i + MODEL_BATCH, todo.length)}/${todo.length} models' sequences read`);
+    }
+    if (todo.length) console.log();
+  };
+  const knownParticleModels = fs.existsSync(MODELS_FILE) ? JSON.parse(fs.readFileSync(MODELS_FILE, "utf8")) : [];
+  await exportSequences([...exported, ...knownParticleModels]);
+  const animated = [...new Set(Object.values(state.sequenceEffects).flat())];
+
+  const roots = [...new Set([...itemRoots, ...started, ...animated])];
+  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more started by the pedestals, the heroes' page maps and the models' animations`);
+  let frontier = roots;
   let converted = 0;
   while (frontier.length) {
     const next = new Set();
@@ -696,7 +852,6 @@ async function main() {
     }
     console.log(`${Object.keys(state.attached).length} models with attachments in the dataset`);
   }
-  const exported = fs.existsSync("state.json") ? Object.keys(JSON.parse(fs.readFileSync("state.json", "utf8")).models ?? {}) : [];
   const modelTodo = exported.filter((model) => crcOf(model) !== undefined && state.attachments[model] !== crcOf(model));
   console.log(`${exported.length} models, ${modelTodo.length} with new or changed attachments`);
   for (let i = 0; i < modelTodo.length; i += MODEL_BATCH) {
@@ -720,25 +875,9 @@ async function main() {
       }
     }
   }
-  // How the models particles draw play their sequences (looping, activities)
-  state.sequences ??= {};
-  const sequenceTodo = models.filter((model) => crcOf(model) !== undefined && state.sequences[model] !== crcOf(model));
-  console.log(`${models.length} particle models, ${sequenceTodo.length} with new or changed sequences`);
-  for (let i = 0; i < sequenceTodo.length; i += MODEL_BATCH) {
-    const batch = sequenceTodo.slice(i, i + MODEL_BATCH);
-    const files = new Map();
-    await source.readFiles(batch.map((model) => `${model}_c`), files);
-    source.release();
-    for (const [model, sequences] of readSequences(files)) {
-      const json = path.join(dist, model.replace(/\.vmdl$/, ".sequences.json"));
-      fs.mkdirSync(path.dirname(json), { recursive: true });
-      fs.writeFileSync(json, JSON.stringify(sequences));
-      uploads.push({ path: model.replace(/\.vmdl$/, ".sequences.json"), file: json });
-    }
-    for (const model of batch) {
-      state.sequences[model] = crcOf(model);
-    }
-  }
+  // The sequences of models particles draw that were not listed before (their animations'
+  // effects are shown from the next run)
+  await exportSequences(models);
 
   const attachedList = path.join(dist, "particles/attached-models.json");
   fs.writeFileSync(attachedList, JSON.stringify(Object.keys(state.attached).sort().map((model) => model.replace(/\.vmdl$/, ".attachments.json"))));
@@ -762,4 +901,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { buildTexture, readSheetCells };
+module.exports = { buildTexture, readSheetCells, readSequences };

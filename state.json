@@ -197904,9 +197904,9 @@
   "textures/materials/models/items/techies/mh_palico_techies/techies_palico_tank_treads_rainbow_specmask_psd_f3154b5e.png": true
  },
  "failed": {},
- "dynamicMaterials": "a17fea79",
+ "dynamicMaterials": "62fed1e",
  "cubeMaps": {
-  "materials": "a17fea79",
+  "materials": "62fed1e",
   "files": [
    "maps/cavern_assets/models/crystals/crystal02_exterior_cube_psd_3c40cf6d.vtex_c",
    "maps/reef_assets/characters/hatchetfish/darkreef_hatchetfish_cube_psd_fda3eed.vtex_c",
@@ -197976,14 +197976,16 @@
    "materials/models/items/undying/idol_of_ruination/cube_idol_gold_cube_tga_9da219f2.vtex_c",
    "materials/models/items/undying/pale_augur/pale_augur_cube_psd_60d4cbab.vtex_c",
    "materials/models/items/wraith_king/blistering_shade/blistering_shade_cube_psd_db442328.vtex_c",
+   "materials/models/pets/icewrack_wolf/icewrack_wolf2_cubemap_cube_tga_e24e2e2e.vtex_c",
    "materials/models/props_gameplay/heart001_cube_psd_9b647a0c.vtex_c",
    "materials/models/props_structures/tower_upgrade/blue_cube_psd_c8e2b474.vtex_c",
    "materials/models/props_structures/tower_upgrade/bronze_cube_psd_838b53e7.vtex_c",
    "materials/models/props_structures/tower_upgrade/obsidian_2_cube_psd_8ff81daa.vtex_c",
+   "materials/models/props_structures/tower_upgrade/obsidian_cube_psd_21247ff7.vtex_c",
    "materials/models/ui/eaglesong_trophy/cube_eaglesong_trophy_cube_psd_ff42adb8.vtex_c",
    "materials/particle/ice_surface_envmap_cube_tga_a394eab4.vtex_c",
    "models/items/mirana/ti8_wyvernmount/ti8_wyvernmoung_cube_psd_fb6383cc.vtex_c"
   ],
-  "hash": "c22b3418"
+  "hash": "55e01394"
  }
 }

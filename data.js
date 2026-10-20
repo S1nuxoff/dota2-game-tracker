@@ -38,6 +38,8 @@ const IMAGE_FOLDERS = [
   "panorama/images/masks/hero_model_preview_mask_loadout_psd",
   // The same for the Armory's scene (#CollectionSceneBody)
   "panorama/images/masks/hero_model_preview_mask_psd",
+  // The rock texture of the dashboard's bottom left panel (#FriendlistBottom)
+  "panorama/images/textures/miniprofile_rock_darker_psd",
   // The interface's vector icons (the hero page's full screen button), kept as SVG
   "panorama/images/control_icons/24px/",
 ];
@@ -45,7 +47,7 @@ const IMAGE_FOLDERS = [
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 11;
+const DATA_VERSION = 12;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";

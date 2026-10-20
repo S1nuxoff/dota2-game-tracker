@@ -47,7 +47,7 @@ const IMAGE_FOLDERS = [
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 13;
+const DATA_VERSION = 14;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -269,7 +269,13 @@ function readPortraits(read, files) {
         scale: Number(entry.PortraitAmbientScale ?? 1),
         ...(entry.PortraitAmbientDirection ? { direction: vector(entry.PortraitAmbientDirection) } : {}),
       },
-      shadow: { color: color(entry.PortraitShadowColor), ground: Number(entry.PortraitGroundShadowScale ?? 1) },
+      // The fill hero.vfx adds where the key light's shadow falls (cb2[6] color, cb2[6].w scale);
+      // client.dll's defaults when a key is missing: 89 89 89, 1.5, 1.5
+      shadow: {
+        color: color(entry.PortraitShadowColor ?? "89 89 89"),
+        scale: Number(entry.PortraitShadowScale ?? 1.5),
+        ground: Number(entry.PortraitGroundShadowScale ?? 1.5),
+      },
       ...(entry.GroundfogFXColor ? { groundfog: vector(entry.GroundfogFXColor) } : {}),
       cameras: Object.fromEntries(
         Object.entries(entry.cameras ?? {}).map(([name, camera]) => [

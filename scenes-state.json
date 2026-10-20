@@ -3981,7 +3981,8 @@
        -0.0488,
        -0.9988
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "creeps_2021_fp_cam"
      }
     },
     "camera": {
@@ -3996,7 +3997,8 @@
       -0.0488,
       -0.9988
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "creeps_2021_fp_cam"
     },
     "usage": "background",
     "shown": true
@@ -4040,30 +4042,32 @@
      "camera_frontpage_towers": {
       "position": [
        0,
-       0.4749,
-       14.5677
+       0.4815,
+       13.1017
       ],
       "direction": [
        0,
-       0.2298,
-       -0.9732
+       0.2529,
+       -0.9675
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "towers_2021_fp_cam"
      }
     },
     "camera": {
      "name": "camera_frontpage_towers",
      "position": [
       0,
-      0.4749,
-      14.5677
+      0.4815,
+      13.1017
      ],
      "direction": [
       0,
-      0.2298,
-      -0.9732
+      0.2529,
+      -0.9675
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "towers_2021_fp_cam"
     },
     "usage": "background",
     "shown": true
@@ -4186,31 +4190,33 @@
     "cameras": {
      "camera_frontpage": {
       "position": [
-       0.3681,
-       -0.1505,
-       9.8163
+       0.2354,
+       -0.0465,
+       8.3948
       ],
       "direction": [
-       -0.0872,
-       0.348,
-       -0.9334
+       -0.0863,
+       0.3722,
+       -0.9241
       ],
-      "fov": 18
+      "fov": 18,
+      "animated": "drow_arcana_reward_line_camera_anim"
      }
     },
     "camera": {
      "name": "camera_frontpage",
      "position": [
-      0.3681,
-      -0.1505,
-      9.8163
+      0.2354,
+      -0.0465,
+      8.3948
      ],
      "direction": [
-      -0.0872,
-      0.348,
-      -0.9334
+      -0.0863,
+      0.3722,
+      -0.9241
      ],
-     "fov": 18
+     "fov": 18,
+     "animated": "drow_arcana_reward_line_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -4466,16 +4472,17 @@
     "cameras": {
      "camera_frontpage": {
       "position": [
-       0.3681,
-       -0.1505,
-       9.8163
+       -2.5646,
+       -1.0122,
+       9.9827
       ],
       "direction": [
-       -0.0872,
-       0.348,
-       -0.9334
+       0.2411,
+       0.2564,
+       -0.936
       ],
-      "fov": 18
+      "fov": 18,
+      "animated": "hoodwink_reward_line_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -4494,16 +4501,17 @@
     "camera": {
      "name": "camera_frontpage",
      "position": [
-      0.3681,
-      -0.1505,
-      9.8163
+      -2.5646,
+      -1.0122,
+      9.9827
      ],
      "direction": [
-      -0.0872,
-      0.348,
-      -0.9334
+      0.2411,
+      0.2564,
+      -0.936
      ],
-     "fov": 18
+     "fov": 18,
+     "animated": "hoodwink_reward_line_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -4640,16 +4648,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       -1.8603,
-       0.0763,
-       32.7647
+       -1.2066,
+       0.9094,
+       22.0936
       ],
       "direction": [
-       0.0613,
-       0.0864,
-       -0.9944
+       0.0446,
+       0.2019,
+       -0.9784
       ],
-      "fov": 24
+      "fov": 24,
+      "animated": "mirana_persona_reward_line_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -4668,16 +4677,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      -1.8603,
-      0.0763,
-      32.7647
+      -1.2066,
+      0.9094,
+      22.0936
      ],
      "direction": [
-      0.0613,
-      0.0864,
-      -0.9944
+      0.0446,
+      0.2019,
+      -0.9784
      ],
-     "fov": 24
+     "fov": 24,
+     "animated": "mirana_persona_reward_line_camera_anim"
     },
     "usage": "background",
     "shown": true
@@ -10440,16 +10450,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       -9.1934,
-       1.6452,
-       -15.1816
+       -9.0576,
+       1.7287,
+       -14.5129
       ],
       "direction": [
        0.0085,
        0.125,
        0.9921
       ],
-      "fov": 26
+      "fov": 26,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -10468,16 +10479,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      -9.1934,
-      1.6452,
-      -15.1816
+      -9.0576,
+      1.7287,
+      -14.5129
      ],
      "direction": [
       0.0085,
       0.125,
       0.9921
      ],
-     "fov": 26
+     "fov": 26,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true
@@ -11297,16 +11309,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       2.6444,
-       2.8369,
-       -13.6457
+       1.6804,
+       1.0354,
+       -15.0912
       ],
       "direction": [
-       0.0338,
-       -0.9035,
-       0.4273
+       0.3858,
+       -0.1012,
+       0.9171
       ],
-      "fov": 40
+      "fov": 40,
+      "animated": "ofrenda_layout_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -11390,16 +11403,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      2.6444,
-      2.8369,
-      -13.6457
+      1.6804,
+      1.0354,
+      -15.0912
      ],
      "direction": [
-      0.0338,
-      -0.9035,
-      0.4273
+      0.3858,
+      -0.1012,
+      0.9171
      ],
-     "fov": 40
+     "fov": 40,
+     "animated": "ofrenda_layout_anim"
     },
     "usage": "background",
     "points": [
@@ -11454,16 +11468,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       2.6444,
-       2.8369,
-       -13.6457
+       1.6804,
+       1.0354,
+       -15.0912
       ],
       "direction": [
-       0.0338,
-       -0.9035,
-       0.4273
+       0.3858,
+       -0.1012,
+       0.9171
       ],
-      "fov": 48
+      "fov": 48,
+      "animated": "ofrenda_layout_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -11547,16 +11562,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      2.6444,
-      2.8369,
-      -13.6457
+      1.6804,
+      1.0354,
+      -15.0912
      ],
      "direction": [
-      0.0338,
-      -0.9035,
-      0.4273
+      0.3858,
+      -0.1012,
+      0.9171
      ],
-     "fov": 48
+     "fov": 48,
+     "animated": "ofrenda_layout_anim"
     },
     "usage": "background",
     "points": [
@@ -14019,31 +14035,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       12.7,
-       0
+       1.2352,
+       16.9075,
+       -1.9773
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0213,
+       -0.1987,
+       -0.9798
       ],
-      "fov": 35
+      "fov": 35,
+      "animated": "frontpage"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      12.7,
-      0
+      1.2352,
+      16.9075,
+      -1.9773
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0213,
+      -0.1987,
+      -0.9798
      ],
-     "fov": 35
+     "fov": 35,
+     "animated": "frontpage"
     },
     "usage": "background",
     "fog": {
@@ -14094,44 +14112,47 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -22.8625,
+       0.7297,
+       4.228
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.8091,
+       0.34,
+       -0.4793
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "dawnbreaker_frontpage_cam"
      },
      "dashboard_cam": {
       "position": [
-       0,
-       0,
-       0
+       -22.8625,
+       0.7297,
+       4.228
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.8091,
+       0.34,
+       -0.4793
       ],
-      "fov": 59.700001
+      "fov": 59.700001,
+      "animated": "dawnbreaker_frontpage_cam"
      }
     },
     "camera": {
      "name": "dashboard_cam",
      "position": [
-      0,
-      0,
-      0
+      -22.8625,
+      0.7297,
+      4.228
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.8091,
+      0.34,
+      -0.4793
      ],
-     "fov": 59.700001
+     "fov": 59.700001,
+     "animated": "dawnbreaker_frontpage_cam"
     },
     "usage": "background",
     "shown": true,
@@ -14327,31 +14348,33 @@
     "cameras": {
      "intro_camera": {
       "position": [
-       0,
-       0,
-       0
+       18.365,
+       0.4873,
+       28.953
       ],
       "direction": [
-       -1,
-       0,
-       0
+       -0.089,
+       0.1114,
+       0.9898
       ],
-      "fov": 42.5
+      "fov": 42.5,
+      "animated": "hoodwink_frontpage_camera_anim"
      }
     },
     "camera": {
      "name": "intro_camera",
      "position": [
-      0,
-      0,
-      0
+      18.365,
+      0.4873,
+      28.953
      ],
      "direction": [
-      -1,
-      0,
-      0
+      -0.089,
+      0.1114,
+      0.9898
      ],
-     "fov": 42.5
+     "fov": 42.5,
+     "animated": "hoodwink_frontpage_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -14403,31 +14426,33 @@
     "cameras": {
      "intro_camera": {
       "position": [
-       0,
-       0,
-       0
+       18.365,
+       0.4873,
+       28.953
       ],
       "direction": [
-       -1,
-       0,
-       0
+       -0.089,
+       0.1114,
+       0.9898
       ],
-      "fov": 42.5
+      "fov": 42.5,
+      "animated": "hoodwink_frontpage_camera_anim"
      }
     },
     "camera": {
      "name": "intro_camera",
      "position": [
-      0,
-      0,
-      0
+      18.365,
+      0.4873,
+      28.953
      ],
      "direction": [
-      -1,
-      0,
-      0
+      -0.089,
+      0.1114,
+      0.9898
      ],
-     "fov": 42.5
+     "fov": 42.5,
+     "animated": "hoodwink_frontpage_camera_anim"
     },
     "usage": "background",
     "fog": {
@@ -14950,16 +14975,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       0.9684,
+       3.3817,
+       11.6012
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       -0.014,
+       -0.0257,
+       -0.9995
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "pb_persona_frontpage_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -14978,16 +15004,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      0.9684,
+      3.3817,
+      11.6012
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      -0.014,
+      -0.0257,
+      -0.9995
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "pb_persona_frontpage_camera"
     },
     "usage": "background",
     "fog": {
@@ -15064,31 +15091,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       12.7,
-       0
+       1.2352,
+       16.9075,
+       -1.9773
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0213,
+       -0.1987,
+       -0.9798
       ],
-      "fov": 35
+      "fov": 35,
+      "animated": "frontpage"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      12.7,
-      0
+      1.2352,
+      16.9075,
+      -1.9773
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0213,
+      -0.1987,
+      -0.9798
      ],
-     "fov": 35
+     "fov": 35,
+     "animated": "frontpage"
     },
     "usage": "background",
     "fog": {
@@ -15305,31 +15334,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       12.7,
-       0
+       0.7652,
+       14.6373,
+       11.2433
       ],
       "direction": [
+       0.0139,
        0,
-       0,
-       1
+       -0.9999
       ],
-      "fov": 17
+      "fov": 17,
+      "animated": "frontpage"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      12.7,
-      0
+      0.7652,
+      14.6373,
+      11.2433
      ],
      "direction": [
+      0.0139,
       0,
-      0,
-      1
+      -0.9999
      ],
-     "fov": 17
+     "fov": 17,
+     "animated": "frontpage"
     },
     "usage": "background"
    }
@@ -15459,31 +15490,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       12.7,
-       0
+       -1.8987,
+       13.8574,
+       4.208
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.5772,
+       -0.0482,
+       -0.8151
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "debut_end"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      12.7,
-      0
+      -1.8987,
+      13.8574,
+      4.208
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.5772,
+      -0.0482,
+      -0.8151
      ],
-     "fov": 60
+     "fov": 60,
+     "animated": "debut_end"
     },
     "usage": "background",
     "shown": true,
@@ -15876,16 +15909,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0.1524,
-       0
+       1.9214,
+       0.8509,
+       23.2737
       ],
       "direction": [
-       -0.1736,
-       0.0175,
-       0.9847
+       0.151,
+       0.2502,
+       -0.9564
       ],
-      "fov": 70
+      "fov": 70,
+      "animated": "pudge_arcana_debut_camera_animation"
      },
      "hero_camera_3": {
       "position": [
@@ -15917,16 +15951,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0.1524,
-      0
+      1.9214,
+      0.8509,
+      23.2737
      ],
      "direction": [
-      -0.1736,
-      0.0175,
-      0.9847
+      0.151,
+      0.2502,
+      -0.9564
      ],
-     "fov": 70
+     "fov": 70,
+     "animated": "pudge_arcana_debut_camera_animation"
     },
     "usage": "background",
     "shown": true,
@@ -16131,30 +16166,32 @@
      "hero_camera": {
       "position": [
        0,
-       0,
-       0
+       3.6255,
+       2.9424
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0007,
+       0.0644,
+       -0.9979
       ],
-      "fov": 57
+      "fov": 57,
+      "animated": "debut_camera_rubick_arcana_spawn_tk3"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
       0,
-      0,
-      0
+      3.6255,
+      2.9424
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0007,
+      0.0644,
+      -0.9979
      ],
-     "fov": 57
+     "fov": 57,
+     "animated": "debut_camera_rubick_arcana_spawn_tk3"
     },
     "usage": "background",
     "shown": true
@@ -16197,30 +16234,32 @@
      "hero_camera": {
       "position": [
        0,
-       0,
-       0
+       10.7173,
+       27.4565
       ],
       "direction": [
-       0,
-       0,
-       1
+       -0.2677,
+       -0.0138,
+       -0.9634
       ],
-      "fov": 45
+      "fov": 45,
+      "animated": "debut_camera_rubick_arcana_idle_right_tk3"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
       0,
-      0,
-      0
+      10.7173,
+      27.4565
      ],
      "direction": [
-      0,
-      0,
-      1
+      -0.2677,
+      -0.0138,
+      -0.9634
      ],
-     "fov": 45
+     "fov": 45,
+     "animated": "debut_camera_rubick_arcana_idle_right_tk3"
     },
     "usage": "background",
     "shown": true
@@ -16263,30 +16302,32 @@
      "hero_camera": {
       "position": [
        0,
-       0,
-       0
+       10.7173,
+       27.4565
       ],
       "direction": [
-       0,
-       0,
-       1
+       -0.2677,
+       -0.0138,
+       -0.9634
       ],
-      "fov": 45
+      "fov": 45,
+      "animated": "debut_camera_rubick_arcana_idle_right_tk3"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
       0,
-      0,
-      0
+      10.7173,
+      27.4565
      ],
      "direction": [
-      0,
-      0,
-      1
+      -0.2677,
+      -0.0138,
+      -0.9634
      ],
-     "fov": 45
+     "fov": 45,
+     "animated": "debut_camera_rubick_arcana_idle_right_tk3"
     },
     "usage": "background"
    }
@@ -16328,30 +16369,32 @@
      "hero_camera": {
       "position": [
        0,
-       0,
-       0
+       3.6255,
+       2.9424
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0007,
+       0.0644,
+       -0.9979
       ],
-      "fov": 57
+      "fov": 57,
+      "animated": "debut_camera_rubick_arcana_spawn_tk3"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
       0,
-      0,
-      0
+      3.6255,
+      2.9424
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0007,
+      0.0644,
+      -0.9979
      ],
-     "fov": 57
+     "fov": 57,
+     "animated": "debut_camera_rubick_arcana_spawn_tk3"
     },
     "usage": "background",
     "fog": {
@@ -16935,16 +16978,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       0.1772,
+       -8.752,
+       41.4699
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       -0.028,
+       0.2151,
+       -0.9761
       ],
-      "fov": 30
+      "fov": 30,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -16963,16 +17007,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      0.1772,
+      -8.752,
+      41.4699
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      -0.028,
+      0.2151,
+      -0.9761
      ],
-     "fov": 30
+     "fov": 30,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -17088,16 +17133,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       0
+       -15.618,
+       33.8238,
+       4.5731
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.7876,
+       0.5698,
+       -0.2347
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "battlemaiden_debut_spawn_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -17116,16 +17162,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      0
+      -15.618,
+      33.8238,
+      4.5731
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.7876,
+      0.5698,
+      -0.2347
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "battlemaiden_debut_spawn_camera"
     },
     "usage": "background",
     "shown": true,
@@ -17191,16 +17238,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -0.219,
+       6.7403,
+       17.0918
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.0125,
+       0.2283,
+       -0.9735
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "dk_persona_debut_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -17219,16 +17267,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      -0.219,
+      6.7403,
+      17.0918
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.0125,
+      0.2283,
+      -0.9735
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "dk_persona_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -17284,16 +17333,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -0.219,
+       6.7403,
+       17.0918
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.0125,
+       0.2283,
+       -0.9735
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "dk_persona_debut_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -17312,16 +17362,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      -0.219,
+      6.7403,
+      17.0918
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.0125,
+      0.2283,
+      -0.9735
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "dk_persona_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -17387,16 +17438,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       5.2433,
+       -0.6212,
+       8.8629
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.1229,
+       0.3331,
+       -0.9348
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -17415,16 +17467,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      5.2433,
+      -0.6212,
+      8.8629
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.1229,
+      0.3331,
+      -0.9348
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -17516,16 +17569,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       5.2433,
+       -0.6212,
+       8.8629
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.1229,
+       0.3331,
+       -0.9348
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -17544,16 +17598,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      5.2433,
+      -0.6212,
+      8.8629
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.1229,
+      0.3331,
+      -0.9348
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -17823,16 +17878,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -8.271,
+       2.1678,
+       32.4857
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.2256,
+       0.0548,
+       -0.9726
       ],
-      "fov": 26
+      "fov": 26,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -17849,16 +17905,17 @@
      },
      "1039_hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -8.271,
+       2.1678,
+       32.4857
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.2256,
+       0.0548,
+       -0.9726
       ],
-      "fov": 26
+      "fov": 26,
+      "animated": "debut_camera_anim"
      },
      "1039_hero_camera_post": {
       "position": [
@@ -17877,16 +17934,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      -8.271,
+      2.1678,
+      32.4857
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.2256,
+      0.0548,
+      -0.9726
      ],
-     "fov": 26
+     "fov": 26,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -20326,16 +20384,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       0.034,
+       -0.0033,
+       22.102
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.0469,
+       0.0238,
+       -0.9986
       ],
-      "fov": 45
+      "fov": 45,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -20354,16 +20413,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      0.034,
+      -0.0033,
+      22.102
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.0469,
+      0.0238,
+      -0.9986
      ],
-     "fov": 45
+     "fov": 45,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -21043,16 +21103,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       0.034,
+       -0.0033,
+       22.102
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.0469,
+       0.0238,
+       -0.9986
       ],
-      "fov": 45
+      "fov": 45,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -21071,16 +21132,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      0.034,
+      -0.0033,
+      22.102
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.0469,
+      0.0238,
+      -0.9986
      ],
-     "fov": 45
+     "fov": 45,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -21760,16 +21822,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       0.034,
+       -0.0033,
+       22.102
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.0469,
+       0.0238,
+       -0.9986
       ],
-      "fov": 45
+      "fov": 45,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -21788,16 +21851,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      0.034,
+      -0.0033,
+      22.102
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.0469,
+      0.0238,
+      -0.9986
      ],
-     "fov": 45
+     "fov": 45,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -22237,16 +22301,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       0.034,
+       -0.0033,
+       22.102
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.0469,
+       0.0238,
+       -0.9986
       ],
-      "fov": 45
+      "fov": 45,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -22265,16 +22330,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      0.034,
+      -0.0033,
+      22.102
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.0469,
+      0.0238,
+      -0.9986
      ],
-     "fov": 45
+     "fov": 45,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -23040,16 +23106,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       0
+       0.4223,
+       3.1211,
+       0.7734
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       -0.094,
+       0.0522,
+       -0.9942
       ],
-      "fov": 51
+      "fov": 51,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -23068,16 +23135,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      0
+      0.4223,
+      3.1211,
+      0.7734
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      -0.094,
+      0.0522,
+      -0.9942
      ],
-     "fov": 51
+     "fov": 51,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -23337,16 +23405,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       0
+       0.4223,
+       3.1211,
+       0.7734
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       -0.094,
+       0.0522,
+       -0.9942
       ],
-      "fov": 62
+      "fov": 62,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -23365,16 +23434,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      0
+      0.4223,
+      3.1211,
+      0.7734
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      -0.094,
+      0.0522,
+      -0.9942
      ],
-     "fov": 62
+     "fov": 62,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -23710,16 +23780,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       26.5581,
+       34.1061,
+       -21.9239
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       -0.7751,
+       -0.5457,
+       0.3184
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "debut_camera_anim"
      },
      "hero_camera_post": {
       "position": [
@@ -23738,16 +23809,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      26.5581,
+      34.1061,
+      -21.9239
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      -0.7751,
+      -0.5457,
+      0.3184
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -24509,16 +24581,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -0.0006,
+       2.7379,
+       14.7126
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0,
+       0.0893,
+       -0.996
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "pb_persona_debut_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -24537,16 +24610,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      -0.0006,
+      2.7379,
+      14.7126
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0,
+      0.0893,
+      -0.996
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "pb_persona_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -24612,16 +24686,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -0.0006,
+       2.7379,
+       14.7126
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0,
+       0.0893,
+       -0.996
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "pb_persona_debut_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -24640,16 +24715,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      -0.0006,
+      2.7379,
+      14.7126
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0,
+      0.0893,
+      -0.996
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "pb_persona_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -24879,16 +24955,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       0
+       -0.0006,
+       5.6852,
+       5.5952
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0001,
+       -0.1254,
+       -0.9921
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "razr_arc_debut_camera"
      },
      "hero_camera_post": {
       "position": [
@@ -24907,16 +24984,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      0
+      -0.0006,
+      5.6852,
+      5.5952
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0001,
+      -0.1254,
+      -0.9921
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "razr_arc_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -25042,44 +25120,47 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       0
+       -0.0006,
+       5.6852,
+       5.5952
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0001,
+       -0.1254,
+       -0.9921
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "razr_arc_debut_camera"
      },
      "hero_camera_post": {
       "position": [
-       0,
-       0,
-       0
+       0.6054,
+       4.0012,
+       8.3422
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0556,
+       -0.0138,
+       -0.9984
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "razr_arc_debut_camera_last_frame"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      0
+      -0.0006,
+      5.6852,
+      5.5952
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0001,
+      -0.1254,
+      -0.9921
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "razr_arc_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -32568,31 +32649,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -0.701,
+       -0.9833,
+       -42.5536
       ],
       "direction": [
        0,
        0,
        1
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "crownfall_debut_camera_anim"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      0,
-      0
+      -0.701,
+      -0.9833,
+      -42.5536
      ],
      "direction": [
       0,
       0,
       1
      ],
-     "fov": 60
+     "fov": 60,
+     "animated": "crownfall_debut_camera_anim"
     },
     "usage": "background",
     "shown": true,
@@ -33487,31 +33570,33 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       -56.8452
+       514.8652,
+       1.2148,
+       -59.7932
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.5099,
+       0.2749,
+       -0.8152
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "debut_end"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      -56.8452
+      514.8652,
+      1.2148,
+      -59.7932
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.5099,
+      0.2749,
+      -0.8152
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "debut_end"
     },
     "usage": "background",
     "shown": true,
@@ -33563,31 +33648,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -0.2764,
+       1.5125,
+       17.477
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0766,
+       0.099,
+       -0.9921
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "spct_arc_debut_spawn_camera"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      0,
-      0
+      -0.2764,
+      1.5125,
+      17.477
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0766,
+      0.099,
+      -0.9921
      ],
-     "fov": 60
+     "fov": 60,
+     "animated": "spct_arc_debut_spawn_camera"
     },
     "usage": "background",
     "shown": true
@@ -33629,31 +33716,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -0.2764,
+       1.5125,
+       17.477
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.0766,
+       0.099,
+       -0.9921
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "spct_arc_debut_spawn_camera"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      0,
-      0
+      -0.2764,
+      1.5125,
+      17.477
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.0766,
+      0.099,
+      -0.9921
      ],
-     "fov": 60
+     "fov": 60,
+     "animated": "spct_arc_debut_spawn_camera"
     },
     "usage": "background",
     "shown": true
@@ -34425,31 +34514,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -0.221,
+       3.6395,
+       9.5553
       ],
       "direction": [
-       0,
-       0,
-       1
+       -0.0908,
+       -0.0417,
+       -0.995
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "vs_debut_spawn_camera"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      0,
-      0
+      -0.221,
+      3.6395,
+      9.5553
      ],
      "direction": [
-      0,
-      0,
-      1
+      -0.0908,
+      -0.0417,
+      -0.995
      ],
-     "fov": 60
+     "fov": 60,
+     "animated": "vs_debut_spawn_camera"
     },
     "usage": "background",
     "shown": true,
@@ -34515,31 +34606,33 @@
     "cameras": {
      "419_herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -6.4201,
+       10.7132,
+       2.3573
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.5571,
+       -0.7852,
+       -0.2705
       ],
-      "fov": 46.799999
+      "fov": 46.799999,
+      "animated": "wr_arc_debut_camera"
      }
     },
     "camera": {
      "name": "419_herocamera",
      "position": [
-      0,
-      0,
-      0
+      -6.4201,
+      10.7132,
+      2.3573
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.5571,
+      -0.7852,
+      -0.2705
      ],
-     "fov": 46.799999
+     "fov": 46.799999,
+     "animated": "wr_arc_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -34591,31 +34684,33 @@
     "cameras": {
      "419_herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -6.4201,
+       10.7132,
+       2.3573
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.5571,
+       -0.7852,
+       -0.2705
       ],
-      "fov": 46.799999
+      "fov": 46.799999,
+      "animated": "wr_arc_debut_camera"
      }
     },
     "camera": {
      "name": "419_herocamera",
      "position": [
-      0,
-      0,
-      0
+      -6.4201,
+      10.7132,
+      2.3573
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.5571,
+      -0.7852,
+      -0.2705
      ],
-     "fov": 46.799999
+     "fov": 46.799999,
+     "animated": "wr_arc_debut_camera"
     },
     "usage": "background",
     "shown": true,
@@ -34922,16 +35017,17 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       12.214,
-       3.8045,
-       12.4955
+       -0.3176,
+       -0.6037,
+       7.8097
       ],
       "direction": [
-       -0.6988,
-       -0.0193,
-       -0.715
+       0.1071,
+       0.3942,
+       -0.9127
       ],
-      "fov": 55
+      "fov": 55,
+      "animated": "debut_camera_last_frame"
      },
      "hero_camera_post": {
       "position": [
@@ -34950,16 +35046,17 @@
     "camera": {
      "name": "hero_camera",
      "position": [
-      12.214,
-      3.8045,
-      12.4955
+      -0.3176,
+      -0.6037,
+      7.8097
      ],
      "direction": [
-      -0.6988,
-      -0.0193,
-      -0.715
+      0.1071,
+      0.3942,
+      -0.9127
      ],
-     "fov": 55
+     "fov": 55,
+     "animated": "debut_camera_last_frame"
     },
     "usage": "background",
     "points": [
@@ -40644,31 +40741,33 @@
     "cameras": {
      "herocamera": {
       "position": [
-       0,
-       0,
-       0
+       -6.4201,
+       10.7132,
+       2.3573
       ],
       "direction": [
-       0,
-       0,
-       1
+       0.5571,
+       -0.7852,
+       -0.2705
       ],
-      "fov": 46.799999
+      "fov": 46.799999,
+      "animated": "wr_arc_debut_camera"
      }
     },
     "camera": {
      "name": "herocamera",
      "position": [
-      0,
-      0,
-      0
+      -6.4201,
+      10.7132,
+      2.3573
      ],
      "direction": [
-      0,
-      0,
-      1
+      0.5571,
+      -0.7852,
+      -0.2705
      ],
-     "fov": 46.799999
+     "fov": 46.799999,
+     "animated": "wr_arc_debut_camera"
     },
     "fog": {
      "color": [
@@ -47349,31 +47448,33 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       -7.857
+       0.2446,
+       1.6262,
+       11.3942
       ],
       "direction": [
        0,
-       0,
-       1
+       -0.0071,
+       -1
       ],
-      "fov": 65
+      "fov": 65,
+      "animated": "diretide_camera_anim_lastframe"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      -7.857
+      0.2446,
+      1.6262,
+      11.3942
      ],
      "direction": [
       0,
-      0,
-      1
+      -0.0071,
+      -1
      ],
-     "fov": 65
+     "fov": 65,
+     "animated": "diretide_camera_anim_lastframe"
     },
     "shown": true,
     "fog": {
@@ -47554,31 +47655,33 @@
     "cameras": {
      "hero_camera": {
       "position": [
-       0,
-       0,
-       0
+       0.2446,
+       1.134,
+       9.3167
       ],
       "direction": [
        0,
-       0,
-       1
+       0.3033,
+       -0.9529
       ],
-      "fov": 65
+      "fov": 65,
+      "animated": "diretide_camera_anim_lastframe"
      }
     },
     "camera": {
      "name": "hero_camera",
      "position": [
-      0,
-      0,
-      0
+      0.2446,
+      1.134,
+      9.3167
      ],
      "direction": [
       0,
-      0,
-      1
+      0.3033,
+      -0.9529
      ],
-     "fov": 65
+     "fov": 65,
+     "animated": "diretide_camera_anim_lastframe"
     },
     "shown": true
    }
@@ -55008,31 +55111,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       0,
-       0,
-       0
+       0.9158,
+       0.778,
+       20.2868
       ],
       "direction": [
-       0,
-       0,
-       1
+       -0.0262,
+       0.2708,
+       -0.9623
       ],
-      "fov": 30
+      "fov": 30,
+      "animated": "cam_anim_dollyreverse"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      0,
-      0,
-      0
+      0.9158,
+      0.778,
+      20.2868
      ],
      "direction": [
-      0,
-      0,
-      1
+      -0.0262,
+      0.2708,
+      -0.9623
      ],
-     "fov": 30
+     "fov": 30,
+     "animated": "cam_anim_dollyreverse"
     },
     "usage": "background",
     "shown": true,
@@ -55084,31 +55189,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       0,
-       0,
-       0
+       0.9158,
+       0.778,
+       20.2868
       ],
       "direction": [
-       0,
-       0,
-       1
+       -0.0262,
+       0.2708,
+       -0.9623
       ],
-      "fov": 30
+      "fov": 30,
+      "animated": "cam_anim_dollyreverse"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      0,
-      0,
-      0
+      0.9158,
+      0.778,
+      20.2868
      ],
      "direction": [
-      0,
-      0,
-      1
+      -0.0262,
+      0.2708,
+      -0.9623
      ],
-     "fov": 30
+     "fov": 30,
+     "animated": "cam_anim_dollyreverse"
     },
     "usage": "background",
     "shown": true,
@@ -60212,31 +60319,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       38.0999,
-       25.1365,
-       38.0999
+       -71.5364,
+       25.9141,
+       93.6108
       ],
       "direction": [
-       -0.7067,
-       0.0354,
-       -0.7066
+       0.3454,
+       0.8881,
+       -0.3031
       ],
-      "fov": 60
+      "fov": 60,
+      "animated": "bp22_meteor_versus_layout"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      38.0999,
-      25.1365,
-      38.0999
+      -71.5364,
+      25.9141,
+      93.6108
      ],
      "direction": [
-      -0.7067,
-      0.0354,
-      -0.7066
+      0.3454,
+      0.8881,
+      -0.3031
      ],
-     "fov": 60
+     "fov": 60,
+     "animated": "bp22_meteor_versus_layout"
     },
     "usage": "background",
     "shown": true
@@ -60430,31 +60539,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       0,
-       0,
-       0
+       -0.0018,
+       1.3327,
+       48.5853
       ],
       "direction": [
        0,
-       0,
-       1
+       0.0343,
+       -0.9994
       ],
-      "fov": 40
+      "fov": 40,
+      "animated": "cam_anim_dollyforward"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      0,
-      0,
-      0
+      -0.0018,
+      1.3327,
+      48.5853
      ],
      "direction": [
       0,
-      0,
-      1
+      0.0343,
+      -0.9994
      ],
-     "fov": 40
+     "fov": 40,
+     "animated": "cam_anim_dollyforward"
     },
     "shown": true,
     "fog": {
@@ -60505,31 +60616,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       0,
-       0,
-       0
+       -0.0018,
+       0.7603,
+       20.4591
       ],
       "direction": [
        0,
-       0,
-       1
+       0.2709,
+       -0.9626
       ],
-      "fov": 40
+      "fov": 40,
+      "animated": "cam_anim_dollyreverse"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      0,
-      0,
-      0
+      -0.0018,
+      0.7603,
+      20.4591
      ],
      "direction": [
       0,
-      0,
-      1
+      0.2709,
+      -0.9626
      ],
-     "fov": 40
+     "fov": 40,
+     "animated": "cam_anim_dollyreverse"
     },
     "shown": true,
     "fog": {
@@ -60801,31 +60914,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       19.05,
-       1.905,
-       19.05
+       11.2578,
+       1.6349,
+       20.4836
       ],
       "direction": [
-       -0.7067,
-       0.0354,
-       -0.7066
+       -0.6746,
+       0.0628,
+       -0.7355
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "muerta_dire_versus_layout_x0"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      19.05,
-      1.905,
-      19.05
+      11.2578,
+      1.6349,
+      20.4836
      ],
      "direction": [
-      -0.7067,
-      0.0354,
-      -0.7066
+      -0.6746,
+      0.0628,
+      -0.7355
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "muerta_dire_versus_layout_x0"
     },
     "usage": "background",
     "shown": true,
@@ -60989,31 +61104,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       19.05,
-       1.905,
-       19.05
+       -4.2096,
+       5.4308,
+       14.5333
       ],
       "direction": [
-       -0.7067,
-       0.0354,
-       -0.7066
+       0.4605,
+       0.5874,
+       -0.6655
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "muerta_radiant_versus_layout_x0"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      19.05,
-      1.905,
-      19.05
+      -4.2096,
+      5.4308,
+      14.5333
      ],
      "direction": [
-      -0.7067,
-      0.0354,
-      -0.7066
+      0.4605,
+      0.5874,
+      -0.6655
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "muerta_radiant_versus_layout_x0"
     },
     "usage": "background",
     "shown": true,
@@ -61177,31 +61294,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       19.05,
-       1.905,
-       19.05
+       -4.2096,
+       5.4308,
+       14.5333
       ],
       "direction": [
-       -0.7067,
-       0.0354,
-       -0.7066
+       0.4605,
+       0.5874,
+       -0.6655
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "muerta_radiant_versus_layout_x0"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      19.05,
-      1.905,
-      19.05
+      -4.2096,
+      5.4308,
+      14.5333
      ],
      "direction": [
-      -0.7067,
-      0.0354,
-      -0.7066
+      0.4605,
+      0.5874,
+      -0.6655
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "muerta_radiant_versus_layout_x0"
     },
     "usage": "background",
     "shown": true,
@@ -61365,31 +61484,33 @@
     "cameras": {
      "versus_camera": {
       "position": [
-       19.05,
-       1.905,
-       19.05
+       11.2578,
+       1.6349,
+       20.4836
       ],
       "direction": [
-       -0.7067,
-       0.0354,
-       -0.7066
+       -0.6746,
+       0.0628,
+       -0.7355
       ],
-      "fov": 50
+      "fov": 50,
+      "animated": "muerta_dire_versus_layout_x0"
      }
     },
     "camera": {
      "name": "versus_camera",
      "position": [
-      19.05,
-      1.905,
-      19.05
+      11.2578,
+      1.6349,
+      20.4836
      ],
      "direction": [
-      -0.7067,
-      0.0354,
-      -0.7066
+      -0.6746,
+      0.0628,
+      -0.7355
      ],
-     "fov": 50
+     "fov": 50,
+     "animated": "muerta_dire_versus_layout_x0"
     },
     "usage": "background",
     "shown": true,

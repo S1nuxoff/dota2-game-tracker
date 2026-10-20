@@ -23,6 +23,9 @@ const { externalRefs } = require("./resource");
 
 const temp = "./temp/scenes";
 const STATE_FILE = "scenes-state.json";
+// A batch of scenes goes up once it holds this much, or after this long
+const BATCH_BYTES = 500 * 1e6;
+const BATCH_MS = 10 * 60 * 1000;
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 
 function argValue(name) {
@@ -181,6 +184,28 @@ async function main() {
   const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_SCENES_REPO || "dota2-scenes") : null;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
   const started = Date.now();
+  // Scenes go up a batch at a time, one commit each: the Hub takes 128 commits an hour to a
+  // repository, and a run exports hundreds of scenes, many of them tiny. A scene counts as done
+  // only once its batch is up.
+  let batch = [];
+  let batchBytes = 0;
+  let batchStarted = Date.now();
+  const flush = async () => {
+    if (batch.length === 0) {
+      return;
+    }
+    if (upload) {
+      await hf.upload(repo, process.env.HF_TOKEN, batch.map(({ id, file }) => ({ path: `scenes/${id}.glb`, file })), `Scenes: ${batch.length}`);
+    }
+    for (const { id, record, file } of batch) {
+      state.scenes[id] = record;
+      fs.rmSync(file, { force: true });
+    }
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
+    batch = [];
+    batchBytes = 0;
+    batchStarted = Date.now();
+  };
 
   for (const [index, scene] of todo.entries()) {
     if ((Date.now() - started) / 60000 > maxMinutes) {
@@ -230,12 +255,11 @@ async function main() {
     await io.write(target, await io.read(glb));
     const size = fs.statSync(target).size;
 
-    if (upload) {
-      await hf.upload(repo, process.env.HF_TOKEN, [{ path: `scenes/${scene.id}.glb`, file: target }], `Scene ${scene.id}`);
+    batch.push({ id: scene.id, file: target, record: { sha: scene.sha, size, info: sceneInfo(file) } });
+    batchBytes += size;
+    if (batchBytes >= BATCH_BYTES || Date.now() - batchStarted >= BATCH_MS) {
+      await flush();
     }
-    state.scenes[scene.id] = { sha: scene.sha, size, info: sceneInfo(file) };
-    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
-    fs.rmSync(target, { force: true });
     if (packed) {
       fs.rmSync(path.join(temp, "package"), { recursive: true, force: true });
     }
@@ -246,6 +270,8 @@ async function main() {
         `about ${Math.round((minutes / (index + 1)) * (todo.length - index - 1))} min left`
     );
   }
+
+  await flush();
 
   // The list the viewer reads
   const list = Object.entries(state.scenes)

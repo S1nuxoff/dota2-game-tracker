@@ -56,16 +56,21 @@ function fingerprint(file) {
   return zlib.crc32(`${stat.size}:${stat.mtimeMs}`).toString(16);
 }
 
-// Source is Z-up, the glTF files Y-up: (x, y, z) -> (x, z, -y)
-function toGltf([x, y, z]) {
-  return [x, z, -y];
+// Source is Z-up, the glTF files Source2Viewer writes Y-up: (x, y, z) -> (y, z, x)
+function toGltfAxes([x, y, z]) {
+  return [y, z, x];
+}
+
+// A point of the game, in inches, as a point of the glTF, in metres
+function toGltf(point) {
+  return toGltfAxes(point).map((value) => Number((value * 0.0254).toFixed(4)));
 }
 
 // The way Source angles [pitch, yaw, roll] face, in glTF axes
 function forward([pitch, yaw]) {
   const p = (pitch * Math.PI) / 180;
   const y = (yaw * Math.PI) / 180;
-  return toGltf([Math.cos(p) * Math.cos(y), Math.cos(p) * Math.sin(y), -Math.sin(p)]).map((value) => Number(value.toFixed(4)));
+  return toGltfAxes([Math.cos(p) * Math.cos(y), Math.cos(p) * Math.sin(y), -Math.sin(p)]).map((value) => Number(value.toFixed(4)));
 }
 
 // What the viewer needs to light a scene and look at it the way the game does:

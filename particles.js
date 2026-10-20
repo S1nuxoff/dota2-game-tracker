@@ -15,9 +15,10 @@
 //                                            effects' own and those items put in their place
 //   models/<path>.sequences.json            an exported model or one particles draw: its sequences, whether
 //                                            each loops, its activities, the animation it plays (the glb's
-//                                            clip, where not its name) and the particle effects its
-//                                            animations start ({ name: { looping, activities, clip, effects:
-//                                            [{ at, system, config, stopOnChange, immediately, stop }] } })
+//                                            clip, where not its name), the particle effects its
+//                                            animations start and what they say ({ name: { looping, activities,
+//                                            clip, effects: [{ at, system, config, stopOnChange, immediately,
+//                                            stop }], speech: [{ at, concept, criteria }] } })
 //   particles/model-effects.json             the effects models start on their own (the pedestals'
 //                                            ground fog): { "<model>.vmdl": [{ system, config }] }
 //   particles/map-effects.json               the effects the heroes' page maps start (the god rays over
@@ -33,6 +34,7 @@ const sharp = require("sharp");
 const hf = require("./hf");
 const kv3 = require("./kv3");
 const { localSource, steamSource } = require("./source");
+const { parse } = require("./keyvalues");
 
 const temp = "./temp/particles";
 const STATE_FILE = "particles-state.json";
@@ -48,8 +50,8 @@ const BATCH = 2000;
 // What a sprite or trail (a soft white dot) and a rope draw where a layer names no texture
 const DEFAULT_TEXTURES = ["materials/particle/base_sprite.vtex", "materials/particle/base_rope.vtex"];
 // Raised when the models' sequence files change shape, to read them all again (2: the animation
-// each plays and the particle effects it starts)
-const SEQUENCE_FORMAT = 2;
+// each plays and the particle effects it starts; 3: what it says)
+const SEQUENCE_FORMAT = 3;
 // Models print their whole mesh data, so fewer at a time
 const MODEL_BATCH = 300;
 // Atlases larger than this are scaled down; the particles are small on screen
@@ -118,6 +120,23 @@ async function rootSystems() {
     }
   }
   return [...roots];
+}
+
+// The effects the heroes' pages show on the hero (npc_dota_hero_*'s RenderablePortrait Particles:
+// Broodmother's web, Void Spirit's loadout glow), which data/heroes.json gives the site
+async function portraitSystems(source) {
+  const files = new Map();
+  await source.readFiles(source.vpkDir.files.filter((file) => file.startsWith("scripts/npc/heroes/") || file === "scripts/npc/npc_heroes.txt"), files);
+  source.release();
+  const systems = new Set();
+  for (const buffer of files.values()) {
+    for (const hero of Object.values(parse(buffer).root.DOTAHeroes ?? {})) {
+      for (const system of Object.keys(hero?.RenderablePortrait?.Particles ?? {})) {
+        if (system.toLowerCase().endsWith(".vpcf")) systems.add(system.toLowerCase());
+      }
+    }
+  }
+  return [...systems];
 }
 
 // The effects models start on their own (a particle_cfg in the model's game data), for the
@@ -281,7 +300,7 @@ function readAttachments(files) {
   return found;
 }
 
-// The particle events of each animation of the models in folder (written there by readBlocks),
+// The particle and speech events of each animation of the models in folder (written there by readBlocks),
 // from their printed ANIM blocks: Map(model => { "<animation>": [event, ...] }) with each event
 // as KV3 gives it (m_sEventName, m_flCycle, m_EventData). A hero's ANIM block prints tens of
 // megabytes (every bone's bounds), so the print is read line by line, keeping only the events.
@@ -324,7 +343,7 @@ function readAnimationEvents(folder) {
         event.push("}");
         const text = event.join("\n");
         event = null;
-        if (!/PARTICLE/.test(text) || !file || !animation) return;
+        if (!/PARTICLE|AE_CL_SPEECH/.test(text) || !file || !animation) return;
         try {
           const parsed = kv3.parse(text);
           if (!found.has(file)) found.set(file, {});
@@ -367,6 +386,19 @@ function animationEffect(event) {
   return null;
 }
 
+// What a speech event of an animation says, or null for others: { at: cycle, concept, criteria:
+// { key: value } } (Void Spirit's loadout spawn: TLK_DOTA_CUSTOM, special_spawn=
+// void_spirit_loadout_spawn), which the hero's response rules turn into a line
+function animationSpeech(event) {
+  if (event.m_sEventName !== "AE_CL_SPEECH" || typeof event.m_EventData?.concept !== "string") return null;
+  const criteria = {};
+  for (const pair of String(event.m_EventData.criteria ?? "").split(",")) {
+    const [key, ...value] = pair.split("=");
+    if (key.trim()) criteria[key.trim()] = value.join("=").trim();
+  }
+  return { at: Number(event.m_flCycle) || 0, concept: event.m_EventData.concept, criteria };
+}
+
 // The sequences of models, from their sequence data block (the glb has their animations, not
 // how they play): Map(model => { game_idle: { looping: true, activities: ["ACT_DOTA_IDLE"],
 // clip: "@game_idle", effects: [...] } }). `clip` is the animation the sequence plays (the glb's
@@ -391,11 +423,13 @@ async function readSequences(files) {
           .filter(Boolean)
           .filter((effect, index, all) => all.findIndex((other) => JSON.stringify(other) === JSON.stringify(effect)) === index)
           .sort((a, b) => a.at - b.at);
+        const speech = clips.flatMap((name) => (animations[name] ?? []).map(animationSpeech)).filter(Boolean).sort((a, b) => a.at - b.at);
         sequences[sequence.m_sName] = {
           looping: Boolean(sequence.m_flags?.m_bLooping),
           ...(activities.length && { activities }),
           ...(clip && clip !== sequence.m_sName && { clip }),
           ...(effects.length && { effects }),
+          ...(speech.length && { speech }),
         };
       }
     }
@@ -619,6 +653,7 @@ async function main() {
   // references come from the state without reading it
   const reached = new Set();
   const itemRoots = await rootSystems();
+  const portraits = await portraitSystems(source);
   const effectsOfModels = await modelEffects(source);
   const effectsOfMaps = await mapEffects(source);
   const started = [...Object.values(effectsOfModels), ...Object.values(effectsOfMaps)].flatMap((effects) => effects.map((effect) => effect.system));
@@ -667,8 +702,8 @@ async function main() {
   await exportSequences([...exported, ...knownParticleModels]);
   const animated = [...new Set(Object.values(state.sequenceEffects).flat())];
 
-  const roots = [...new Set([...itemRoots, ...started, ...animated])];
-  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more started by the pedestals, the heroes' page maps and the models' animations`);
+  const roots = [...new Set([...itemRoots, ...portraits, ...started, ...animated])];
+  console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more shown on the heroes' pages, started by the pedestals, the page maps and the models' animations`);
   let frontier = roots;
   let converted = 0;
   while (frontier.length) {

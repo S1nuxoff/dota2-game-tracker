@@ -1,6 +1,9 @@
 // What Dotadex needs to play the game's sounds, from the game files:
 //   data/animsounds.json      sounds heroes' animations play: { model: { animation: [[cycle, event], ...] } }
 //   data/voices/<hero>.json   a hero's voice lines: [{ event, files }]
+//   data/portrait-speech.json what heroes say as they come onto their page: the response rules
+//                             (scripts/talker/*.vrr) whose groups need a special_spawn, which the
+//                             loadout spawn's AE_CL_SPEECH event sets: [{ when: [[key, expr]], lines }]
 //   data/audio-library.json   announcer packs and music packs with their files
 //   soundevents.json          (sounds dataset) every sound event with its files, volume and pitch
 //
@@ -16,11 +19,12 @@ const { spawnSync } = require("child_process");
 const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
+const kv3 = require("./kv3");
 
 const temp = "./temp/audio";
 const STATE_FILE = "audio-state.json";
 // Raised when what this writes changes, so the next run writes it all again without a patch
-const FORMAT = 2;
+const FORMAT = 3;
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 
 function argValue(name) {
@@ -222,6 +226,38 @@ async function main() {
   }
   console.log(`${Object.keys(library.announcers).length} announcer packs, ${Object.keys(library.music).length} music packs`);
 
+  // What a hero says coming onto its page. The loadout spawn's animation speaks (AE_CL_SPEECH,
+  // concept TLK_DOTA_CUSTOM, criteria special_spawn=<hero>_loadout_spawn); the hero's response
+  // rules pick the group whose requirements all hold (Concept, classname, special_spawn and at
+  // times customresponse, "!=" for not), and a line of it. Each group with its requirements
+  // as [key, expression] and its lines (sound events; a SCENE's lines are not read yet)
+  const talkerFiles = new Map();
+  await source.readFiles(vpkDir.files.filter((file) => /^scripts\/talker\/.+\.vrr_c$/.test(file)), talkerFiles);
+  writeLoose(talkerFiles);
+  source.release();
+  const talkerOut = path.join(temp, "talker");
+  run(["-i", path.join(looseDir, "scripts", "talker"), "--recursive", "-o", talkerOut, "-d"]);
+  const rules = [...walk(talkerOut)].filter((file) => file.endsWith(".vrr")).map((file) => kv3.parse(fs.readFileSync(file, "utf8")));
+  const sharedRequirements = {};
+  for (const rule of rules) {
+    for (const requirement of rule.m_Requirements ?? []) {
+      if (requirement?.m_notes === "SHARED") sharedRequirements[requirement.m_name] = requirement;
+    }
+  }
+  const portraitSpeech = [];
+  for (const rule of rules) {
+    const own = Object.fromEntries((rule.m_Requirements ?? []).map((requirement) => [requirement.m_name, requirement]));
+    for (const group of rule.m_ResponseGroups ?? []) {
+      const requirements = (group.m_pEmbeddedRule?.m_Requirements ?? []).map((name) => own[name] ?? sharedRequirements[name]);
+      if (!requirements.some((requirement) => requirement?.m_matchKey === "special_spawn") || requirements.some((requirement) => !requirement)) continue;
+      const lines = (group.m_responses ?? []).filter((response) => response.m_type === "SPEAK" && events[response.m_value]).map((response) => response.m_value);
+      if (lines.length) {
+        portraitSpeech.push({ when: requirements.map((requirement) => [requirement.m_matchKey, String(requirement.m_matchExpr).trim()]), lines });
+      }
+    }
+  }
+  console.log(`${portraitSpeech.length} groups of lines heroes say coming onto their page`);
+
   // Animation sounds of each hero model
   const models = new Map();
   await source.readFiles(
@@ -311,6 +347,7 @@ async function main() {
     write("data/animsound-events.json", viewerEvents),
     write("data/audio-library.json", library),
     write("data/abilitysounds.json", abilitySounds),
+    write("data/portrait-speech.json", portraitSpeech),
     ...voices,
   ];
   const soundEvents = write("soundevents.json", events);

@@ -121,6 +121,7 @@ async function exportCubeMaps({ state, source, decompiler, temp }) {
   if (state.cubeMaps?.materials === materialsHash && Array.isArray(state.cubeMaps.files)) {
     files = state.cubeMaps.files.filter((file) => source.vpkDir.tree[file]);
   } else {
+    console.log(`Cube maps: reading ${vmats.length} materials`);
     const materials = new Map();
     await source.readFiles(vmats, materials);
     const pack = path.join(work, "materials.vpk");

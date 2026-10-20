@@ -524,7 +524,7 @@ function buildIndex(items, heroes, state, personas = {}) {
 
 function loadState() {
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
-  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {}, failed: state.failed ?? {}, dynamicMaterials: state.dynamicMaterials ?? null };
+  return { manifest: state.manifest ?? null, models: state.models ?? {}, textures: state.textures ?? {}, failed: state.failed ?? {}, dynamicMaterials: state.dynamicMaterials ?? null, cubeMaps: state.cubeMaps ?? null };
 }
 
 function saveState(state) {

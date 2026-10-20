@@ -36,12 +36,14 @@ const IMAGE_FOLDERS = [
   "panorama/images/hud/reborn/icon_",
   // The mask the hero page's scene is seen through, fading its sides and floor into the dark
   "panorama/images/masks/hero_model_preview_mask_loadout_psd",
+  // The interface's vector icons (the hero page's full screen button), kept as SVG
+  "panorama/images/control_icons/24px/",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 9;
+const DATA_VERSION = 10;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -396,7 +398,7 @@ async function portraitAtlas(source) {
 
 async function exportImages(source, known) {
   const { vpkDir } = source;
-  const all = vpkDir.files.filter((file) => file.endsWith(".vtex_c") && IMAGE_FOLDERS.some((folder) => file.startsWith(folder)));
+  const all = vpkDir.files.filter((file) => /\.(vtex|vsvg)_c$/.test(file) && IMAGE_FOLDERS.some((folder) => file.startsWith(folder)));
   const crcs = Object.fromEntries(all.map((file) => [file, vpkDir.tree[file].crc]));
   const changed = all.filter((file) => known[file] !== crcs[file]);
   if (changed.length === 0) {
@@ -421,6 +423,13 @@ async function exportImages(source, known) {
 
   const images = [];
   for (const file of changed) {
+    if (file.endsWith(".vsvg_c")) {
+      const svg = path.join(out, file.replace(/\.vsvg_c$/, ".svg"));
+      if (fs.existsSync(svg)) {
+        images.push({ path: `images/${file.replace(/^panorama\/images\//, "").replace(/\.vsvg_c$/, "")}.svg`, file: svg });
+      }
+      continue;
+    }
     // Source2Viewer writes a texture made from a JPG as .jpeg, the others as .png
     const png = [".png", ".jpeg"].map((extension) => path.join(out, file.replace(/\.vtex_c$/, extension))).find((candidate) => fs.existsSync(candidate));
     if (!png) {

@@ -32,7 +32,11 @@ jobs:
       contents: write
 
     steps:
+      # A run that waited in the queue starts from main as it is now, with the state files the
+      # previous run pushed, not from the commit it was queued at
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -113,7 +117,11 @@ jobs:
       contents: write
 
     steps:
+      # A run that waited in the queue starts from main as it is now, with the state files the
+      # previous run pushed, not from the commit it was queued at
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

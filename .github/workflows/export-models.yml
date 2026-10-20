@@ -65,8 +65,8 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Particle systems of the heroes' and items' effects, their textures, their snapshots
-      # (and those items put in their place), the models' attachments and the sequences of the
-      # models particles draw; only what changed, against particles-state.json
+      # (and those items put in their place), the models' attachments, and every model's sequences
+      # with the effects its animations start; only what changed, against particles-state.json
       - name: Export particles
         if: success() || failure()
         env:

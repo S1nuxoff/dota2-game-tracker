@@ -36,6 +36,8 @@ const IMAGE_FOLDERS = [
   "panorama/images/hud/reborn/icon_",
   // The mask the hero page's scene is seen through, fading its sides and floor into the dark
   "panorama/images/masks/hero_model_preview_mask_loadout_psd",
+  // The same for the Armory's scene (#CollectionSceneBody)
+  "panorama/images/masks/hero_model_preview_mask_psd",
   // The interface's vector icons (the hero page's full screen button), kept as SVG
   "panorama/images/control_icons/24px/",
 ];

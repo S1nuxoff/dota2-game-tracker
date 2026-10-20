@@ -247,11 +247,12 @@ function readPortraits(read, files) {
   const color = (value) => vector(value).map((channel) => channel / 255);
   const result = {};
   for (const [key, entry] of Object.entries(all)) {
-    if (typeof entry !== "object" || !entry.PortraitBackgroundModel) {
+    // A hero that flies (Lina, Batrider, Phoenix…) has no pedestal, but its light and cameras all the same
+    if (typeof entry !== "object" || !(entry.PortraitBackgroundModel || entry.PortraitLightPosition)) {
       continue;
     }
     result[key] = {
-      pedestal: entry.PortraitBackgroundModel.toLowerCase().replace(/\.vmdl$/, ".glb"),
+      ...(entry.PortraitBackgroundModel ? { pedestal: entry.PortraitBackgroundModel.toLowerCase().replace(/\.vmdl$/, ".glb") } : {}),
       ...(entry.PortraitBackgroundMap ? { map: entry.PortraitBackgroundMap.toLowerCase() } : {}),
       light: {
         position: vector(entry.PortraitLightPosition),

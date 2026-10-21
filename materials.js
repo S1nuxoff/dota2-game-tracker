@@ -103,11 +103,14 @@ async function exportDynamicMaterials({ state, source, decompiler, temp }) {
 // game's axes), as cubemaps/<texture path>.png, and cubemaps/index.json maps the textures' file
 // names (as the glTF's images name them) to the strips: { "glossy_orange_cube_tga_77c22107.vtex":
 // "cubemaps/materials/models/cubemaps/glossy_orange_cube_tga_77c22107.png" }.
-// state.cubeMaps = { materials, files, hash }: a hash of the materials' CRCs, the cube maps they
+// state.cubeMaps = { materials, files, hash, version }: a hash of the materials' CRCs, the cube maps they
 // named, and a hash of those cube maps' CRCs. The materials are read again only when one of them
 // changed; otherwise the cube maps found before are checked by their CRCs alone.
 // Returns { uploads, record } (the record kept in the state as cubeMaps), or null when nothing changed.
 const CUBE_FACES = ["rt", "lf", "bk", "ft", "up", "dn"];
+// Raised when the cube maps are found another way, so the materials are read again (2: the newer
+// Source2Viewer's print of a texture parameter, missed before: 77 of 186 cube maps were found)
+const CUBE_VERSION = 2;
 const crcHash = (source, files) => zlib.crc32(files.map((file) => `${file}:${source.vpkDir.tree[file].crc}`).join("\n")).toString(16);
 async function exportCubeMaps({ state, source, decompiler, temp }) {
   const vmats = [...new Set(Object.values(state.models).flatMap((model) => (model.deps ?? []).filter((file) => file.endsWith(".vmat_c"))))]
@@ -118,7 +121,7 @@ async function exportCubeMaps({ state, source, decompiler, temp }) {
   fs.rmSync(work, { recursive: true, force: true });
   fs.mkdirSync(work, { recursive: true });
   let files;
-  if (state.cubeMaps?.materials === materialsHash && Array.isArray(state.cubeMaps.files)) {
+  if (state.cubeMaps?.materials === materialsHash && state.cubeMaps.version === CUBE_VERSION && Array.isArray(state.cubeMaps.files)) {
     files = state.cubeMaps.files.filter((file) => source.vpkDir.tree[file]);
   } else {
     console.log(`Cube maps: reading ${vmats.length} materials`);
@@ -130,14 +133,17 @@ async function exportCubeMaps({ state, source, decompiler, temp }) {
     if (printed.error) {
       throw printed.error;
     }
+    // Source2Viewer prints a texture parameter as `m_pValue = resource_name:"<vtex>" m_name =
+    // resource:"g_tCubeMap"` in older versions and `m_name = "g_tCubeMap" m_pValue = resource:"<vtex>"`
+    // in newer ones; both are read
     const cubes = new Set();
-    for (const match of printed.stdout.matchAll(/m_pValue = resource_name:"([^"]+\.vtex)"\s*m_name = resource:"g_tCubeMap"/g)) {
-      cubes.add(`${match[1].toLowerCase()}_c`);
+    for (const match of printed.stdout.matchAll(/m_pValue = resource(?:_name)?:"([^"]+\.vtex)"\s*m_name = (?:resource:)?"g_tCubeMap"|m_name = (?:resource:)?"g_tCubeMap"\s*m_pValue = resource(?:_name)?:"([^"]+\.vtex)"/g)) {
+      cubes.add(`${(match[1] ?? match[2]).toLowerCase()}_c`);
     }
     files = [...cubes].filter((file) => source.vpkDir.tree[file]).sort();
   }
   const hash = crcHash(source, files);
-  const record = { materials: materialsHash, files, hash };
+  const record = { materials: materialsHash, files, hash, version: CUBE_VERSION };
   if (state.cubeMaps?.hash === hash) {
     // The cube maps are as they were; the materials' hash and list kept up to date
     state.cubeMaps = record;

@@ -47,7 +47,7 @@ const IMAGE_FOLDERS = [
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 14;
+const DATA_VERSION = 15;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -259,7 +259,8 @@ function readPortraits(read, files) {
         angles: vector(entry.PortraitLightAngles),
         color: color(entry.PortraitLightColor),
         scale: Number(entry.PortraitLightScale ?? 1),
-        // The spot light the hero's shadow is cast from: its cone in degrees and its distance
+        // The light's cone in degrees and its distance (client.dll reads them, defaults 15 and 250;
+        // the hero page's light is not a spot, so its shadow does not use them)
         ...(entry.PortraitLightFOV ? { fov: Number(entry.PortraitLightFOV) } : {}),
         ...(entry.PortraitLightDistance ? { distance: Number(entry.PortraitLightDistance) } : {}),
       },
@@ -278,9 +279,17 @@ function readPortraits(read, files) {
       },
       ...(entry.GroundfogFXColor ? { groundfog: vector(entry.GroundfogFXColor) } : {}),
       cameras: Object.fromEntries(
+        // far: the camera's far plane (client.dll's default 1000), which bounds the sun's shadow
+        // fitted to the view; shadowFar: PortraitShadowFarZ, its own bound when given
         Object.entries(entry.cameras ?? {}).map(([name, camera]) => [
           name,
-          { position: vector(camera.PortraitPosition), angles: vector(camera.PortraitAngles), fov: Number(camera.PortraitFOV) },
+          {
+            position: vector(camera.PortraitPosition),
+            angles: vector(camera.PortraitAngles),
+            fov: Number(camera.PortraitFOV),
+            far: Number(camera.PortraitFar ?? 1000),
+            ...(Number(camera.PortraitShadowFarZ) > 0 ? { shadowFar: Number(camera.PortraitShadowFarZ) } : {}),
+          },
         ])
       ),
     };

@@ -259,8 +259,8 @@ function readPortraits(read, files) {
         angles: vector(entry.PortraitLightAngles),
         color: color(entry.PortraitLightColor),
         scale: Number(entry.PortraitLightScale ?? 1),
-        // The light's cone in degrees and its distance (client.dll reads them, defaults 15 and 250;
-        // the hero page's light is not a spot, so its shadow does not use them)
+        // The shadow's cone in degrees and its far plane (client.dll 0x181b358d0 makes the global
+        // light's perspective shadow of them; defaults 15 and 250)
         ...(entry.PortraitLightFOV ? { fov: Number(entry.PortraitLightFOV) } : {}),
         ...(entry.PortraitLightDistance ? { distance: Number(entry.PortraitLightDistance) } : {}),
       },

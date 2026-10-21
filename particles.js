@@ -25,7 +25,10 @@
 //                                            the pedestal): { "<map>.vmap": [{ system, name, origin, angles }] }
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
+//   particles/schema.json                    the engine's particle classes with their fields' defaults,
+//                                            for the fields a .vpcf leaves out (particle-schema.js)
 // and lists the models the particles draw in particle-models.json, for index.js to export.
+const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { spawn, spawnSync } = require("child_process");
@@ -35,6 +38,7 @@ const hf = require("./hf");
 const kv3 = require("./kv3");
 const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
+const { exportSchema } = require("./particle-schema");
 
 const temp = "./temp/particles";
 const STATE_FILE = "particles-state.json";
@@ -871,6 +875,18 @@ async function main() {
   fs.mkdirSync(path.dirname(coverage), { recursive: true });
   fs.writeFileSync(coverage, JSON.stringify({ systems: reached.size, classes: Object.fromEntries(Object.entries(classes).sort((a, b) => b[1] - a[1])) }));
   uploads.push({ path: "particles/coverage.json", file: coverage });
+
+  // The engine's defaults for what the files leave out, uploaded when the dump has changed
+  const schemaFile = path.join(dist, "particles/schema.json");
+  const schema = exportSchema(schemaFile, path.join(temp, "schema-dump"));
+  if (schema) {
+    const schemaKey = crypto.createHash("sha1").update(fs.readFileSync(schemaFile)).digest("hex");
+    console.log(`Particle schema: ${Object.keys(schema.classes).length} classes, build ${schema.source.build}${state.schema === schemaKey ? ", unchanged" : ""}`);
+    if (state.schema !== schemaKey) {
+      uploads.push({ path: "particles/schema.json", file: schemaFile });
+      state.schema = schemaKey;
+    }
+  }
 
   const models = [...new Set([...reached].flatMap((file) => state.systems[file]?.models ?? []))].sort();
   fs.writeFileSync(MODELS_FILE, JSON.stringify(models, null, 1));

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const zlib = require("zlib");
 const { whoAmI, repoExists, createRepo, uploadFiles, listFiles } = require("@huggingface/hub");
 
 // Keeps each commit to a reasonable size
@@ -20,8 +21,19 @@ async function prepareRepo(accessToken, name = "dota2-models") {
   return repo;
 }
 
+// The dataset's index and data files: a JSON at most one folder deep, or a translation. Each has a
+// gzipped copy next to it (<file>.json.gz), uploaded with it: Hugging Face serves files
+// uncompressed, and these are what a page loads first (about 7 MB, a tenth of that gzipped)
+const gzippedJson = (datasetPath) => /^([^/]+\/)?[^/]+\.json$|^data\/i18n\/[^/]+\.json$/.test(datasetPath);
+
 // files: [{ path: path in the dataset, file: local file }]
 async function upload(repo, accessToken, files, title) {
+  files = files.flatMap((entry) => {
+    if (!gzippedJson(entry.path)) return [entry];
+    const gz = `${entry.file}.gz`;
+    fs.writeFileSync(gz, zlib.gzipSync(fs.readFileSync(entry.file), { level: 9 }));
+    return [entry, { path: `${entry.path}.gz`, file: gz }];
+  });
   let part = [];
   let partBytes = 0;
 
@@ -89,4 +101,4 @@ async function filesIn(repo, accessToken, folder, pattern) {
   return paths;
 }
 
-module.exports = { prepareRepo, upload, soundPaths, filesIn };
+module.exports = { prepareRepo, upload, soundPaths, filesIn, gzippedJson };

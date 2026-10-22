@@ -14,6 +14,8 @@ https://huggingface.co/datasets/<user>/dota2-models/resolve/main/models/heroes/p
 
 Next to each `.glb` is a `.glb.gz` for web pages: gunzipped it is the same model as a valid `.glb`, with the animation channels that hold a bone at rest dropped, shared accessors merged and keyframes that interpolation gives back removed (`web-glb.js`). It is about a tenth of the size for heroes. `node web-glb-backfill.js` makes them for models uploaded before they existed.
 
+The index and data files (a JSON at most one folder deep, such as `exported.json` or `data/heroes.json`, and the translations in `data/i18n/`) have a gzipped copy next to them too, `<file>.json.gz`, uploaded with each (`hf.js`): Hugging Face serves files uncompressed. `node json-gz-backfill.js` makes them for files uploaded before.
+
 `index.json` in the dataset lists which models show each item and hero:
 
 ```json

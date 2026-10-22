@@ -15,6 +15,7 @@ const sharp = require("sharp");
 const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
+const { summonsOf, UNITS_FILE } = require("./summons");
 
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
@@ -47,7 +48,7 @@ const IMAGE_FOLDERS = [
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 15;
+const DATA_VERSION = 16;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -110,7 +111,7 @@ async function main() {
     write("data/treasures.json", treasures),
     ...Object.entries(i18n).map(([language, tokens]) => write(`data/i18n/${language}.json`, tokens)),
     write("data/loadout_backgrounds.json", await readBackgrounds(source)),
-    write("data/loadout_portraits.json", readPortraits(read, files)),
+    write("data/loadout_portraits.json", readPortraits(read, files, read(UNITS_FILE).root.DOTAUnits ?? {})),
     write("data/manifest.json", {
       manifest: source.manifestId,
       updated: new Date().toISOString(),
@@ -236,8 +237,9 @@ function readTexts(read, files) {
 // of the set picker and of each slot. Positions in game units, angles in degrees.
 // groundfog: the color the game puts in control point 1 of the pedestal's ground fog (and the dust
 // it raises as it turns), 0 to 1. map: the page's map, whose effects particles/map-effects.json lists.
+// summons: [{ unit, model, modelScale, position, angles, scale }], the units beside the hero.
 // { npc_dota_hero_lion: { pedestal, light: { position, angles, color, scale, fov, distance }, ambient: { color, scale, direction }, shadow, groundfog, cameras: { default: { position, angles, fov } } } }
-function readPortraits(read, files) {
+function readPortraits(read, files, units) {
   const file = "scripts/npc/portraits_full_body_loadout.txt";
   if (!files.has(file)) {
     return {};
@@ -278,6 +280,8 @@ function readPortraits(read, files) {
         ground: Number(entry.PortraitGroundShadowScale ?? 1.5),
       },
       ...(entry.GroundfogFXColor ? { groundfog: vector(entry.GroundfogFXColor) } : {}),
+      // The units on the pedestal beside the hero (summons.js)
+      ...(summonsOf(entry, units).length ? { summons: summonsOf(entry, units) } : {}),
       cameras: Object.fromEntries(
         // far: the camera's far plane (client.dll's default 1000), which bounds the sun's shadow
         // fitted to the view; shadowFar: PortraitShadowFarZ, its own bound when given

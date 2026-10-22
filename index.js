@@ -13,6 +13,8 @@ const { readCloth, writeCloth, clothList } = require("./cloth");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
 const { webGlb } = require("./web-glb");
+const { parse } = require("./keyvalues");
+const { summonsOf, UNITS_FILE } = require("./summons");
 
 // Its own folder: other exports (sounds, scenes) run in ./temp next to it
 const temp = "./temp/models";
@@ -323,15 +325,20 @@ function skinsWanted(items) {
 
 // { heroes: { npc_dota_hero_pudge: "models/heroes/pudge/pudge.vmdl", ... }, personas: { hero: [model, ...] } }
 // Personas are a hero's other bodies (the female Anti-Mage), the Model lines after the first.
-// The pedestals the heroes stand on in their pages' scenes, from the loadout portraits
+// The pedestals the heroes stand on in their pages' scenes, from the loadout portraits, and the
+// models of the units beside them there (summons.js)
 async function loadPedestals(source) {
   if (!source.vpkDir.tree[LOADOUT_PORTRAITS]) {
     return [];
   }
   const files = new Map();
-  await source.readFiles([LOADOUT_PORTRAITS], files);
+  await source.readFiles([LOADOUT_PORTRAITS, ...(source.vpkDir.tree[UNITS_FILE] ? [UNITS_FILE] : [])], files);
   const text = files.get(LOADOUT_PORTRAITS).toString("utf8");
-  return [...new Set([...text.matchAll(/"PortraitBackgroundModel"\s+"([^"]+\.vmdl)"/gi)].map((match) => match[1].toLowerCase()))];
+  const pedestals = [...text.matchAll(/"PortraitBackgroundModel"\s+"([^"]+\.vmdl)"/gi)].map((match) => match[1].toLowerCase());
+  const units = files.has(UNITS_FILE) ? parse(files.get(UNITS_FILE)).root.DOTAUnits ?? {} : {};
+  const portraits = parse(files.get(LOADOUT_PORTRAITS)).root.DOTAFullBodyLoadoutPortraitInfo ?? {};
+  const summons = Object.values(portraits).flatMap((entry) => summonsOf(entry, units).map((summon) => summon.model.replace(/\.glb$/, ".vmdl")));
+  return [...new Set([...pedestals, ...summons])];
 }
 
 // npc_heroes.txt may only #base the per-hero files in scripts/npc/heroes/

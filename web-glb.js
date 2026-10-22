@@ -1,4 +1,5 @@
 const zlib = require("zlib");
+const { Logger } = require("@gltf-transform/core");
 const { dedup, resample, prune } = require("@gltf-transform/functions");
 
 // The site's copy of a model: <model>.glb.gz next to the full <model>.glb. Gunzipped it is a valid
@@ -67,6 +68,8 @@ function dropRestChannels(document) {
 
 // io: a NodeIO with the extensions registered; returns the gzipped glb
 async function webGlb(io, document) {
+  // prune reports what it removed for every model, too much for a run over thousands
+  document.setLogger(new Logger(Logger.Verbosity.WARN));
   dropRestChannels(document);
   await document.transform(
     dedup({ propertyTypes: ["Accessor"] }),

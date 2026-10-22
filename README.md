@@ -12,6 +12,8 @@ The dataset keeps the game's paths, with `.glb` instead of `.vmdl`:
 https://huggingface.co/datasets/<user>/dota2-models/resolve/main/models/heroes/pudge/pudge.glb
 ```
 
+Next to each `.glb` is a `.glb.gz` for web pages: gunzipped it is the same model as a valid `.glb`, with the animation channels that hold a bone at rest dropped, shared accessors merged and keyframes that interpolation gives back removed (`web-glb.js`). It is about a tenth of the size for heroes. `node web-glb-backfill.js` makes them for models uploaded before they existed.
+
 `index.json` in the dataset lists which models show each item and hero:
 
 ```json

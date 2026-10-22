@@ -12,6 +12,7 @@ const { exportDynamicMaterials, exportCubeMaps } = require("./materials");
 const { readCloth, writeCloth, clothList } = require("./cloth");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
+const { webGlb } = require("./web-glb");
 
 // Its own folder: other exports (sounds, scenes) run in ./temp next to it
 const temp = "./temp/models";
@@ -146,7 +147,10 @@ async function main() {
     // Textures of material variants are shared, each is uploaded once
     const newTextures = skins.textures.filter((texture) => !state.textures[texture.path]);
     const files = [
-      ...Object.keys(exported).map((model) => ({ path: glbPath(model), file: path.join(distDir, glbPath(model)) })),
+      ...Object.keys(exported).flatMap((model) => [
+        { path: glbPath(model), file: path.join(distDir, glbPath(model)) },
+        { path: `${glbPath(model)}.gz`, file: path.join(distDir, `${glbPath(model)}.gz`) },
+      ]),
       ...skins.json,
       ...newTextures,
       ...clothFiles,
@@ -408,7 +412,10 @@ async function exportBatch(batch, source, wantedSkins) {
     // Source2Viewer writes textures as separate PNGs, put them inside the GLB
     const target = path.join(distDir, glbPath(model));
     fs.mkdirSync(path.dirname(target), { recursive: true });
-    await io.write(target, await io.read(glb));
+    const document = await io.read(glb);
+    await io.write(target, document);
+    // The site's lighter copy next to it (web-glb.js)
+    fs.writeFileSync(`${target}.gz`, await webGlb(io, document));
     exported[model] = dependencies(`${model}_c`, files);
   }
 

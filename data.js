@@ -58,6 +58,21 @@ const IMAGE_FOLDERS = [
   "panorama/images/control_icons/x_close_filled_png",
   "panorama/images/hud/icon_courier_dead_settings_png",
   "panorama/images/control_icons/arrow_dropdown_png",
+  // The Items page (dashboard_page_game_items, ability_details, ui_game_item_table,
+  // ui_game_neutral_item_table, shop_item_combines): the details panel's and the tooltip's grounds,
+  // the description's Active / Passive / Use headers, the gold, cooldown, mana, health and cast
+  // range icons, the shops' icons, the Secret Shop keeper behind the basics, the tier clock, the
+  // secret shop mark on a tile and the combines' recessed ground
+  "panorama/images/hud/reborn/bg_tooltip_no_bevel_psd",
+  "panorama/images/hud/ability_tooltip_psd",
+  "panorama/images/hud/item_tooltip_",
+  "panorama/images/hud/icon_gold_psd",
+  "panorama/images/status_icons/ability_",
+  "panorama/images/control_icons/shop_icon_",
+  "panorama/images/textures/secret_shop_psd",
+  "panorama/images/status_icons/clock_psd",
+  "panorama/images/hud/secret_psd",
+  "panorama/images/hud/reborn/bg_item_breakdown_recessed_psd",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
@@ -65,8 +80,9 @@ const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c
 // The picker cards' backgrounds per hero (.<hero> .HeroBackgroundImage)
 const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 18;
+const DATA_VERSION = 19;
 const STATE_FILE = "data-state.json";
+const SHOPS_FILE = "scripts/shops.txt";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
 
@@ -96,7 +112,7 @@ async function main() {
   }
   const files = new Map();
   const wanted = source.vpkDir.files.filter(
-    (file) => file.startsWith("scripts/npc/") || /^resource\/localization\/(abilities|dota|hero_lore)_\w+\.txt$/.test(file)
+    (file) => file.startsWith("scripts/npc/") || file === SHOPS_FILE || /^resource\/localization\/(abilities|dota|hero_lore)_\w+\.txt$/.test(file)
   );
   await source.readFiles(wanted, files);
   const read = (file) => parse(files.get(file));
@@ -105,6 +121,7 @@ async function main() {
   const abilities = { ...omit(read("scripts/npc/npc_abilities.txt").root.DOTAAbilities, ["Version"]), ...heroAbilities };
   const items = omit(read("scripts/npc/items.txt").root.DOTAAbilities, ["Version"]);
   const neutralItems = read("scripts/npc/neutral_items.txt").root;
+  const shops = readShops(files.get(SHOPS_FILE));
   const treasures = await readTreasures();
   const i18n = readTexts(read, files);
 
@@ -125,6 +142,7 @@ async function main() {
     write("data/abilities.json", abilities),
     write("data/items.json", items),
     write("data/neutral_items.json", neutralItems),
+    write("data/shops.json", shops),
     write("data/treasures.json", treasures),
     ...Object.entries(i18n).map(([language, tokens]) => write(`data/i18n/${language}.json`, tokens)),
     write("data/loadout_backgrounds.json", await readBackgrounds(source)),
@@ -151,6 +169,25 @@ async function main() {
   } else {
     console.log(`Written to ${out}`);
   }
+}
+
+// The shop's categories (scripts/shops.txt): { consumables: ["item_tpscroll", ...], ... }. Every
+// item is an "item" key of its category, which the KeyValues reader would keep only the first of.
+function readShops(buffer) {
+  const shops = {};
+  let category = null;
+  const text = buffer.toString("utf8").replace(/\/\/[^\n]*/g, "");
+  for (const [, key, value, open, close] of text.matchAll(/"([^"]*)"(?:\s*"([^"]*)")?|(\{)|(\})/g)) {
+    if (open || close) {
+      category = close ? null : category;
+    } else if (value !== undefined && category) {
+      shops[category].push(value);
+    } else if (value === undefined && key !== "dota_shops") {
+      category = key;
+      shops[category] = [];
+    }
+  }
+  return shops;
 }
 
 function omit(object, keys) {

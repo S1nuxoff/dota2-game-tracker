@@ -116,13 +116,27 @@ async function loadItemsGame() {
   return itemsGame;
 }
 
-// The particle systems items show: created alongside them, or put in place of others
+// The weather items' effects by their weather_type (client.dll's table at 0x184945790, 0 none)
+const WEATHER_SYSTEMS = [
+  "particles/rain_fx/econ_snow.vpcf",
+  "particles/rain_fx/econ_rain.vpcf",
+  "particles/rain_fx/econ_moonlight.vpcf",
+  "particles/rain_fx/econ_weather_pestilence.vpcf",
+  "particles/rain_fx/econ_weather_harvest.vpcf",
+  "particles/rain_fx/econ_weather_sirocco.vpcf",
+  "particles/rain_fx/econ_weather_spring.vpcf",
+  "particles/rain_fx/econ_weather_ash.vpcf",
+  "particles/rain_fx/econ_weather_aurora.vpcf",
+];
+
+// The particle systems items show: created alongside them, put in place of others, or named by
+// any other modifier (a kill streak's, an emblem's), and the weather's
 async function rootSystems() {
   const data = await loadItemsGame();
-  const roots = new Set();
+  const roots = new Set(WEATHER_SYSTEMS);
   for (const item of Object.values(data.items_game.items)) {
     for (const visual of Object.values(item.visuals ?? {})) {
-      if (visual && typeof visual === "object" && /particle/.test(visual.type ?? "")) {
+      if (visual && typeof visual === "object") {
         for (const key of ["modifier", "asset"]) {
           if (typeof visual[key] === "string" && visual[key].toLowerCase().endsWith(".vpcf")) {
             roots.add(visual[key].toLowerCase());

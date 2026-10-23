@@ -89,7 +89,8 @@ async function main() {
   const { vpkDir } = source;
   const maxDuration = game ? Infinity : CI_MAX_DURATION;
 
-  const { items, heroSkins } = await loadItems();
+  const { items, heroSkins, unitItems } = await loadItems();
+  await addUnitModels(source, items, unitItems);
   const { heroes, personas } = await loadHeroModels(source);
   const pedestals = await loadPedestals(source);
   // The models particle effects draw, as listed by particles.js
@@ -273,7 +274,16 @@ async function loadItems() {
 
   const items = {};
   const heroSkins = [];
+  // The units the World's items of each prefab dress (entity_clientside_model: a creep item's
+  // npc_dota_creep_goodguys_melee...), for that prefab's items that dress none (its Default one)
+  const unitsByPrefab = {};
+  const bare = {};
   for (const [id, item] of Object.entries(data.items_game.items)) {
+    for (const [key, value] of Object.entries(item.visuals ?? {})) {
+      if (key.startsWith("asset_modifier") && value?.type === "entity_clientside_model" && typeof value.asset === "string" && value.asset.startsWith("npc_dota_")) {
+        (unitsByPrefab[item.prefab] ??= new Set()).add(value.asset);
+      }
+    }
     for (const [key, value] of Object.entries(item.visuals ?? {})) {
       if (key.startsWith("asset_modifier") && value?.type === "model_skin" && Number(value.skin)) {
         heroSkins.push({ heroes: Object.keys(item.used_by_heroes ?? {}), skin: Number(value.skin) });
@@ -290,9 +300,35 @@ async function loadItems() {
         ...stylesOf(item, models),
         ...(swaps.length && { swaps }),
       };
+    } else {
+      bare[id] = item;
     }
   }
-  return { items, heroSkins };
+  // A World item with no model of its own shows its units' own models (npc_units.txt's Model)
+  const unitItems = {};
+  for (const [id, item] of Object.entries(bare)) {
+    const units = unitsByPrefab[item.prefab];
+    if (units && !item.hidden) {
+      unitItems[id] = { name: item.name, prefab: item.prefab, units: [...units] };
+    }
+  }
+  return { items, heroSkins, unitItems };
+}
+
+// The models of the units the World's Default items stand for (npc_units.txt), made their models
+async function addUnitModels(source, items, unitItems) {
+  if (!Object.keys(unitItems).length || !source.vpkDir.tree[UNITS_FILE]) {
+    return;
+  }
+  const files = new Map();
+  await source.readFiles([UNITS_FILE], files);
+  const units = parse(files.get(UNITS_FILE)).root.DOTAUnits ?? {};
+  for (const [id, item] of Object.entries(unitItems)) {
+    const models = [...new Set(item.units.map((unit) => units[unit]?.Model).filter((model) => typeof model === "string" && model.endsWith(".vmdl")).map((model) => model.toLowerCase()))];
+    if (models.length) {
+      items[id] = { name: item.name, prefab: item.prefab, heroes: [], models };
+    }
+  }
 }
 
 // model_player for most wearables; couriers, wards and some arcanas set theirs in visuals
@@ -307,6 +343,10 @@ function modelsOf(item) {
     // A "model" modifier puts its model in place of another one the hero wears (swapsOf)
     if (key.startsWith("asset_modifier") && isModel(value?.modifier) && value.type !== "model") {
       models.add(value.modifier);
+    }
+    // A pet names its model as the asset
+    if (key.startsWith("asset_modifier") && value?.type === "pet" && isModel(value.asset)) {
+      models.add(value.asset);
     }
   }
   return [...models];

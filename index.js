@@ -127,6 +127,7 @@ async function main() {
     }
   }
 
+  const skinsKey = (model) => [...(wantedSkins.get(model) ?? [])].sort().join(",");
   const state = loadState();
   // --force: the materials' dynamic parameters and cube maps again too
   if (force) {
@@ -140,8 +141,12 @@ async function main() {
       (model) =>
         force ||
         (hasChanged(state.models[model], vpkDir) && !failedBefore(model)) ||
-        // A model exported before any item asked for its skins
-        (wantedSkins.has(model) && state.models[model] && !state.models[model].skins)
+        // A model exported before an item asked for its skins (once: skinsRead keeps those read,
+        // a model without such a material group has no skins file to show for it)
+        (wantedSkins.has(model) &&
+          state.models[model] &&
+          !state.models[model].skins &&
+          state.models[model].skinsRead !== skinsKey(model))
     )
     .slice(0, limit);
 
@@ -176,6 +181,7 @@ async function main() {
 
     for (const [model, deps] of Object.entries(exported)) {
       state.models[model] = { hash: depsHash(deps, vpkDir), deps, cloth: Boolean(cloth[model]) };
+      if (wantedSkins.has(model)) state.models[model].skinsRead = skinsKey(model);
       delete state.failed[model];
     }
     for (const model of batch.filter((model) => !exported[model])) {

@@ -50,6 +50,14 @@ const IMAGE_FOLDERS = [
   "panorama/images/masks/set_thumbnail_mask_psd",
   "panorama/images/status_icons/econtooltip_equipped",
   "panorama/images/icon_treasure_button_png",
+  // The settings window (popup_settings_reborn): the navigation's rock texture, the mask its list
+  // scrolls through, the search box's clear button, the courier shown when nothing is found, and
+  // the drop-downs' arrow
+  "panorama/images/settings/settings_rock_texture_png",
+  "panorama/images/masks/soft_top_bottom_vscroll_psd",
+  "panorama/images/control_icons/x_close_filled_png",
+  "panorama/images/hud/icon_courier_dead_settings_png",
+  "panorama/images/control_icons/arrow_dropdown_png",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
@@ -57,7 +65,7 @@ const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c
 // The picker cards' backgrounds per hero (.<hero> .HeroBackgroundImage)
 const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 17;
+const DATA_VERSION = 18;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";

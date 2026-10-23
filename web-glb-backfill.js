@@ -1,7 +1,9 @@
 // The site's copies (<model>.glb.gz, web-glb.js) for the models uploaded before index.js made them:
 // every .glb in the dataset without a .glb.gz next to it is downloaded, made lighter and uploaded.
 // Safe to stop and run again, it goes on from what the dataset has.
-//   HF_TOKEN=... node web-glb-backfill.js [--limit N]
+//   HF_TOKEN=... node web-glb-backfill.js [--limit N] [--folder models] [--match <text>]
+// --folder scenes with HF_REPO=dota2-scenes makes them for the scenes (a terrain's preview map is
+// 70 MB as glb); --match keeps the files whose path holds the text
 const fs = require("fs");
 const path = require("path");
 const { NodeIO } = require("@gltf-transform/core");
@@ -25,8 +27,12 @@ async function main() {
   const repo = await hf.prepareRepo(accessToken, process.env.HF_REPO);
   const base = `https://huggingface.co/datasets/${repo.name}/resolve/main/`;
 
-  const files = new Set(await hf.filesIn(repo, accessToken, "models", /\.glb(\.gz)?$/));
-  const todo = [...files].filter((file) => file.endsWith(".glb") && !files.has(`${file}.gz`)).slice(0, limit);
+  const folderAt = process.argv.indexOf("--folder");
+  const folder = folderAt > 0 ? process.argv[folderAt + 1] : "models";
+  const matchAt = process.argv.indexOf("--match");
+  const match = matchAt > 0 ? process.argv[matchAt + 1] : "";
+  const files = new Set(await hf.filesIn(repo, accessToken, folder, /\.glb(\.gz)?$/));
+  const todo = [...files].filter((file) => file.endsWith(".glb") && !files.has(`${file}.gz`) && file.includes(match)).slice(0, limit);
   console.log(`${todo.length} models without the site's copy`);
 
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);

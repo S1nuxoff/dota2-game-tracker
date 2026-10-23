@@ -43,12 +43,21 @@ const IMAGE_FOLDERS = [
   "panorama/images/textures/miniprofile_rock_darker_psd",
   // The interface's vector icons (the hero page's full screen button), kept as SVG
   "panorama/images/control_icons/24px/",
+  // The CUSTOMIZE picker's cards (DOTAEconItemAnimated): each hero's card background
+  // (collection_shared's .HeroBackgroundImage), the mask a set's portrait fades through at the
+  // bottom, the corner of the equipped card and the "In Treasure" button's chest
+  "materials/portraits_card/portrait_backgrounds/",
+  "panorama/images/masks/set_thumbnail_mask_psd",
+  "panorama/images/status_icons/econtooltip_equipped",
+  "panorama/images/icon_treasure_button_png",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
+// The picker cards' backgrounds per hero (.<hero> .HeroBackgroundImage)
+const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 16;
+const DATA_VERSION = 17;
 const STATE_FILE = "data-state.json";
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
@@ -227,7 +236,7 @@ function readTexts(read, files) {
     }
     const [, kind, language] = match;
     const tokens = read(file).root.lang?.Tokens ?? {};
-    const keep = kind === "dota" ? Object.entries(tokens).filter(([key]) => /^npc_dota_hero_|facet|herorole/i.test(key)) : Object.entries(tokens);
+    const keep = kind === "dota" ? Object.entries(tokens).filter(([key]) => /^npc_dota_hero_|facet|herorole|^loadoutslot_/i.test(key)) : Object.entries(tokens);
     Object.assign((result[language] ??= {}), Object.fromEntries(keep));
   }
   return result;
@@ -301,20 +310,26 @@ function readPortraits(read, files, units) {
   return result;
 }
 
-// Which backdrop each hero's page has, its tint and the gradient under it, from the game's
-// stylesheet: { mask, heroes: { lion: { image, wash, from, to } } }
-async function readBackgrounds(source) {
+// A stylesheet of the game, decompiled to its CSS text
+async function readStyles(source, file, name) {
   const files = new Map();
-  await source.readFiles([BACKGROUND_STYLES], files);
+  await source.readFiles([file], files);
   const input = path.join(temp, "styles");
   fs.mkdirSync(input, { recursive: true });
-  const compiled = path.join(input, "backgrounds.vcss_c");
-  fs.writeFileSync(compiled, files.get(BACKGROUND_STYLES));
+  const compiled = path.join(input, `${name}.vcss_c`);
+  fs.writeFileSync(compiled, files.get(file));
   const result = spawnSync(DECOMPILER, ["-i", compiled, "-o", input, "-d"], { encoding: "utf8" });
   if (result.error) {
     throw result.error;
   }
-  const css = fs.readFileSync(path.join(input, "backgrounds.css"), "utf8");
+  return fs.readFileSync(path.join(input, `${name}.css`), "utf8");
+}
+
+// Which backdrop each hero's page has, its tint and the gradient under it, from the game's
+// stylesheet, and the background of the hero's cards in the CUSTOMIZE picker:
+// { mask, heroes: { lion: { image, wash, from, to } }, cards: { lion: image } }
+async function readBackgrounds(source) {
+  const css = await readStyles(source, BACKGROUND_STYLES, "backgrounds");
 
   const defines = Object.fromEntries([...css.matchAll(/@define\s+(\w+):\s*(#[0-9a-f]+);/gi)].map((match) => [match[1], match[2]]));
   const color = (value) => {
@@ -351,7 +366,17 @@ async function readBackgrounds(source) {
       }
     }
   }
-  return { mask, heroes };
+  // collection_shared: ".lion #HeroBackgroundImage, ..., .lion .HeroBackgroundImage { background-image }"
+  const cards = {};
+  const shared = await readStyles(source, CARD_STYLES, "collection_shared");
+  for (const [, selectors, body] of shared.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+    const url = body.match(/background-image:\s*url\("s2r:\/\/([^"]+)\.vtex"\)/)?.[1];
+    const hero = selectors.split(",").map((selector) => selector.trim().match(/^\.(\w+)\s+\.HeroBackgroundImage$/)?.[1]).find((name) => name && !name.startsWith("npc_"));
+    if (url && hero) {
+      cards[hero] = `images/${url.replace(/^panorama\/images\//, "")}.png`;
+    }
+  }
+  return { mask, heroes, cards };
 }
 
 // The heroes' animated portraits as they are, .webm; only those whose content changed

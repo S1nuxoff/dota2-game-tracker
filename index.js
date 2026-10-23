@@ -307,7 +307,10 @@ async function loadItems() {
   // A World item with no model of its own shows its units' own models (npc_units.txt's Model)
   const unitItems = {};
   for (const [id, item] of Object.entries(bare)) {
-    const units = unitsByPrefab[item.prefab];
+    // Only the prefabs of a global slot of their own (radiant_creeps, radiant_towers, roshan...):
+    // a bundle names Roshan too, yet is no World item
+    const slot = data.items_game.prefabs?.[item.prefab]?.item_slot;
+    const units = slot && slot !== "none" ? unitsByPrefab[item.prefab] : null;
     if (units && !item.hidden) {
       unitItems[id] = { name: item.name, prefab: item.prefab, units: [...units] };
     }

@@ -6,12 +6,15 @@
 //   HF_TOKEN=... node sounds.js --game "<...>/dota 2 beta/game/dota"
 //   HF_TOKEN=... node sounds.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads to the <user>/dota2-sounds dataset: sounds/...mp3 or .wav and soundevents.json
+// Uploads to the <user>/dota2-sounds dataset: sounds/...mp3 or .wav and soundevents.json, and the
+// voice lines' phonemes (phonemes.js). --phonemes: the phonemes of every folder again, not only
+// of the folders whose sounds changed.
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
+const { sentenceOf, ctrlSentences, phonemeClasses, writePhonemes, FOLDER_FILE, CLASSES_FILE } = require("./phonemes");
 
 const temp = "./temp/sounds";
 const STATE_FILE = "sounds-state.json";
@@ -92,12 +95,26 @@ async function main() {
   const sounds = vpkDir.files.filter((file) => file.startsWith("sounds/") && file.endsWith(".vsnd_c"));
   const todo = sounds.filter(changed);
   console.log(`${sounds.length} sounds, ${todo.length} new or changed.`);
+  const folderOf = (file) => file.slice(0, file.lastIndexOf("/"));
+  // Phonemes of the sounds read so far; folders with a changed sound that has some are written again
+  const sentences = new Map();
+  const touched = new Set(process.argv.includes("--phonemes") ? sounds.map(folderOf) : []);
+  const readSentences = (files) => {
+    const fromCtrl = ctrlSentences(files, DECOMPILER, path.join(temp, "sentences"));
+    for (const [file, buffer] of files) {
+      if (!file.endsWith(".vsnd_c")) continue;
+      const entry = file in fromCtrl ? fromCtrl[file] : sentenceOf(buffer);
+      sentences.set(file, entry);
+      if (entry) touched.add(folderOf(file));
+    }
+  };
 
   const started = Date.now();
   for (let i = 0; i < todo.length; i += BATCH) {
     const batch = todo.slice(i, i + BATCH);
     const files = new Map();
     await source.readFiles(batch, files);
+    readSentences(files);
     const out = convert(files, "sounds");
     source.release();
 
@@ -121,6 +138,41 @@ async function main() {
     const count = i + batch.length;
     const minutes = (Date.now() - started) / 60000;
     console.log(`Progress: ${count}/${todo.length} sounds, ${Math.round(minutes)} min so far, about ${Math.round((minutes / count) * (todo.length - count))} min left`);
+  }
+
+  // Phonemes, a file per folder, read again in full for each folder touched
+  if (touched.size) {
+    const rest = sounds.filter((file) => touched.has(folderOf(file)) && !sentences.has(file));
+    for (let i = 0; i < rest.length; i += BATCH) {
+      const files = new Map();
+      await source.readFiles(rest.slice(i, i + BATCH), files);
+      source.release();
+      readSentences(files);
+      console.log(`Phonemes: ${Math.min(i + BATCH, rest.length)}/${rest.length} more sounds read`);
+    }
+    const folders = {};
+    for (const [file, entry] of sentences) {
+      if (entry) (folders[folderOf(file)] ??= {})[file.slice(file.lastIndexOf("/") + 1).replace(/\.vsnd_c$/, "")] = entry;
+    }
+    const distDir = path.join(temp, "phonemes");
+    const files = writePhonemes(folders, distDir);
+    await hf.upload(repo, accessToken, files, `Phonemes of ${files.length} folders`);
+    const listed = (await hf.filesIn(repo, accessToken, "sounds", new RegExp(`/${FOLDER_FILE}$`))).map(folderOf).sort();
+    const listFile = path.join(temp, FOLDER_FILE);
+    fs.writeFileSync(listFile, JSON.stringify(listed));
+    await hf.upload(repo, accessToken, [{ path: FOLDER_FILE, file: listFile }], "Folders with phonemes");
+    console.log(`Phonemes of ${files.length} folders written, ${listed.length} folders have them`);
+  }
+
+  // How each phoneme moves the face, when the game's file changed
+  if (vpkDir.tree[CLASSES_FILE] && (changed(CLASSES_FILE) || process.argv.includes("--phonemes"))) {
+    const files = new Map();
+    await source.readFiles([CLASSES_FILE], files);
+    const file = path.join(temp, "phoneme-classes.json");
+    fs.writeFileSync(file, JSON.stringify(phonemeClasses(files.get(CLASSES_FILE).toString("utf8"))));
+    await hf.upload(repo, accessToken, [{ path: CLASSES_FILE.replace(/\.txt$/, ".json"), file }], "Phoneme classes");
+    state[CLASSES_FILE] = vpkDir.tree[CLASSES_FILE].crc;
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state));
   }
 
   // Sound events, all in one file, when any of them changed

@@ -10,6 +10,7 @@ const { steamSource, localSource } = require("./source");
 const { exportSkins } = require("./skins");
 const { exportDynamicMaterials, exportCubeMaps } = require("./materials");
 const { readCloth, writeCloth, clothList } = require("./cloth");
+const { readFlex, writeFlex, flexList } = require("./flex");
 const { externalRefs } = require("./resource");
 const { writeVpk } = require("./vpk-writer");
 const { webGlb } = require("./web-glb");
@@ -164,7 +165,7 @@ async function main() {
 
     const batch = todo.slice(i, i + BATCH_SIZE);
     console.log(`\nBatch ${i / BATCH_SIZE + 1}/${Math.ceil(todo.length / BATCH_SIZE)}: ${batch.length} models`);
-    const { exported, skins, cloth, clothFiles } = await exportBatch(batch, source, wantedSkins);
+    const { exported, skins, cloth, clothFiles, flex, flexFiles } = await exportBatch(batch, source, wantedSkins);
 
     // Textures of material variants are shared, each is uploaded once
     const newTextures = skins.textures.filter((texture) => !state.textures[texture.path]);
@@ -176,11 +177,12 @@ async function main() {
       ...skins.json,
       ...newTextures,
       ...clothFiles,
+      ...flexFiles,
     ];
     await hf.upload(repo, accessToken, files, `Export ${Object.keys(exported).length} models`);
 
     for (const [model, deps] of Object.entries(exported)) {
-      state.models[model] = { hash: depsHash(deps, vpkDir), deps, cloth: Boolean(cloth[model]) };
+      state.models[model] = { hash: depsHash(deps, vpkDir), deps, cloth: Boolean(cloth[model]), flex: Boolean(flex[model]) };
       if (wantedSkins.has(model)) state.models[model].skinsRead = skinsKey(model);
       delete state.failed[model];
     }
@@ -240,6 +242,8 @@ async function uploadIndex(repo, accessToken, items, heroes, state, personas) {
       { path: "exported.json", file: exportedFile },
       // The models whose cloth, hair and beards move (cloth.js)
       clothList(state, temp),
+      // The models whose faces move as they speak (flex.js)
+      flexList(state, temp),
     ],
     "Update index"
   );
@@ -462,13 +466,17 @@ async function exportBatch(batch, source, wantedSkins) {
   // Cloth, hair and beards the game moves, from the models' physics
   const cloth = readCloth(new Map(Object.keys(exported).map((model) => [`${model}_c`, files.get(`${model}_c`)])), DECOMPILER, `${temp}/cloth`);
   const clothFiles = writeCloth(cloth, distDir);
+  // The flex controllers and rules that move the faces' morph targets
+  const flex = readFlex(new Map(Object.keys(exported).map((model) => [`${model}_c`, files.get(`${model}_c`)])), DECOMPILER, `${temp}/flex`);
+  const flexFiles = writeFlex(flex, distDir);
 
   console.log(
     `Exported ${Object.keys(exported).length}/${batch.length}, game files: ${files.size}` +
       (wanted.size ? `, material variants for ${skins.json.length} models, ${skins.textures.length} textures` : "") +
-      (clothFiles.length ? `, cloth of ${clothFiles.length}` : "")
+      (clothFiles.length ? `, cloth of ${clothFiles.length}` : "") +
+      (flexFiles.length ? `, flex of ${flexFiles.length}` : "")
   );
-  return { exported, skins, cloth, clothFiles };
+  return { exported, skins, cloth, clothFiles, flex, flexFiles };
 }
 
 // Follows the dependencies of the models (paths without the _c of compiled files)

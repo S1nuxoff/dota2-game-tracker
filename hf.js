@@ -23,8 +23,9 @@ async function prepareRepo(accessToken, name = "dota2-models") {
 
 // The dataset's index and data files: a JSON at most one folder deep, or a translation. Each has a
 // gzipped copy next to it (<file>.json.gz), uploaded with it: Hugging Face serves files
-// uncompressed, and these are what a page loads first (about 7 MB, a tenth of that gzipped)
-const gzippedJson = (datasetPath) => /^([^/]+\/)?[^/]+\.json$|^data\/i18n\/[^/]+\.json$/.test(datasetPath);
+// uncompressed, and these are what a page loads first (about 7 MB, a tenth of that gzipped).
+// The sounds' phonemes too (phonemes.js), a few hundred KB a hero.
+const gzippedJson = (datasetPath) => /^([^/]+\/)?[^/]+\.json$|^data\/i18n\/[^/]+\.json$|\/phonemes\.json$/.test(datasetPath);
 
 // files: [{ path: path in the dataset, file: local file }]
 async function upload(repo, accessToken, files, title) {

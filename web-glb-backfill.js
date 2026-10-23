@@ -3,7 +3,8 @@
 // Safe to stop and run again, it goes on from what the dataset has.
 //   HF_TOKEN=... node web-glb-backfill.js [--limit N] [--folder models] [--match <text>]
 // --folder scenes with HF_REPO=dota2-scenes makes them for the scenes (a terrain's preview map is
-// 70 MB as glb); --match keeps the files whose path holds the text
+// 70 MB as glb, its textures are made WebP too); --match keeps the files whose path holds the
+// text; --redo makes them again where they are already
 const fs = require("fs");
 const path = require("path");
 const { NodeIO } = require("@gltf-transform/core");
@@ -32,7 +33,8 @@ async function main() {
   const matchAt = process.argv.indexOf("--match");
   const match = matchAt > 0 ? process.argv[matchAt + 1] : "";
   const files = new Set(await hf.filesIn(repo, accessToken, folder, /\.glb(\.gz)?$/));
-  const todo = [...files].filter((file) => file.endsWith(".glb") && !files.has(`${file}.gz`) && file.includes(match)).slice(0, limit);
+  const redo = process.argv.includes("--redo");
+  const todo = [...files].filter((file) => file.endsWith(".glb") && (redo || !files.has(`${file}.gz`)) && file.includes(match)).slice(0, limit);
   console.log(`${todo.length} models without the site's copy`);
 
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
@@ -78,7 +80,7 @@ async function main() {
       inBytes += glb.length;
       let gz;
       try {
-        gz = await webGlb(io, await io.readBinary(glb));
+        gz = await webGlb(io, await io.readBinary(glb), { textures: folder === "scenes" });
       } catch (error) {
         console.log(`Skipped ${model}: ${error.message}`);
         return;

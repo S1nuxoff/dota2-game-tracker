@@ -1,6 +1,6 @@
 const zlib = require("zlib");
 const { Logger } = require("@gltf-transform/core");
-const { dedup, resample, prune } = require("@gltf-transform/functions");
+const { dedup, resample, prune, textureCompress } = require("@gltf-transform/functions");
 
 // The site's copy of a model: <model>.glb.gz next to the full <model>.glb. Gunzipped it is a valid
 // glb, the same model with what changes nothing on screen taken out. The game's exports give every
@@ -66,8 +66,15 @@ function dropRestChannels(document) {
   }
 }
 
-// io: a NodeIO with the extensions registered; returns the gzipped glb
-async function webGlb(io, document) {
+// The texture slots of a scene made lossy WebP: colors at 85, normals and the rest (the masks the
+// Dota shader reads, named in the materials' extras) a little finer at 90
+const COLOR_SLOTS = /^(baseColorTexture|emissiveTexture)$/;
+const NORMAL_SLOTS = /^normalTexture$/;
+const OTHER_SLOTS = /^(?!baseColorTexture$|emissiveTexture$|normalTexture$)/;
+
+// io: a NodeIO with the extensions registered; returns the gzipped glb. textures: the pictures as
+// WebP at most 1024 wide (a scene's: a terrain's preview map is 61 MB of PNGs in its 70 MB)
+async function webGlb(io, document, { textures = false } = {}) {
   // prune reports what it removed for every model, too much for a run over thousands
   document.setLogger(new Logger(Logger.Verbosity.WARN));
   dropRestChannels(document);
@@ -77,6 +84,15 @@ async function webGlb(io, document) {
     resample({ tolerance: EPSILON }),
     prune({ propertyTypes: ["Accessor", "BufferView"], keepAttributes: true, keepIndices: true })
   );
+  if (textures) {
+    const sharp = require("sharp");
+    await document.transform(
+      textureCompress({ encoder: sharp, targetFormat: "webp", resize: [1024, 1024], slots: COLOR_SLOTS, quality: 85 }),
+      textureCompress({ encoder: sharp, targetFormat: "webp", resize: [1024, 1024], slots: NORMAL_SLOTS, quality: 90 }),
+      // The rest only: run over all it would encode the ones done again
+      textureCompress({ encoder: sharp, targetFormat: "webp", resize: [1024, 1024], slots: OTHER_SLOTS, quality: 90 })
+    );
+  }
   return zlib.gzipSync(await io.writeBinary(document), { level: 9 });
 }
 

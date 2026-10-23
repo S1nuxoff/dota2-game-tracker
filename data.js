@@ -78,6 +78,8 @@ const IMAGE_FOLDERS = [
   "panorama/images/control_icons/alt_key_png",
   // The Armory's emoticons (scripts/emoticons.txt names their pictures, strips of frames)
   "panorama/images/emoticons/",
+  // The chat wheel's sprays (data/chat-wheel.json names them, from the audio export)
+  "panorama/images/sprays/",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
@@ -85,7 +87,7 @@ const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c
 // The picker cards' backgrounds per hero (.<hero> .HeroBackgroundImage)
 const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 21;
+const DATA_VERSION = 22;
 const STATE_FILE = "data-state.json";
 const SHOPS_FILE = "scripts/shops.txt";
 // The emoticons: their ids, pictures, frame times and aliases (the Armory's Emoticons)
@@ -95,6 +97,9 @@ const EMOTICON_FILES = /^scripts\/emoticons(\.txt|\/[^/]+\.txt)$/;
 const LOADING_SCREEN_SUFFIXES = ["", "_png", "_tga", "_psd", "_jpg"];
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
+// The cursor packs (the Armory's Cursor Packs): loose BMPs of the depot, one folder a pack, with
+// each cursor's hot spot in its cursor.res
+const CURSOR_FOLDER = "resource/cursor/valve/";
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -175,6 +180,9 @@ async function main() {
   console.log(`${images.files.length} new or changed portraits and icons`);
   const videos = await exportVideos(source, state.videos ?? {});
   console.log(`${videos.files.length} new or changed hero animations`);
+  const cursors = await exportCursors(source);
+  uploads.push(...cursors);
+  console.log(`${cursors.length - 1} cursor pictures`);
 
   if (upload) {
     const repo = await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_REPO);
@@ -497,6 +505,69 @@ async function exportVideos(source, known) {
     files.push({ path: `videos/heroes/${path.basename(entry.path)}`, file });
   }
   return { files, shas };
+}
+
+// A BMP of 24 or 32 bits a pixel (the cursors) as raw RGBA for sharp; rows bottom up unless the
+// height is negative
+function readBmp(buffer) {
+  const offset = buffer.readUInt32LE(10);
+  const width = buffer.readInt32LE(18);
+  const rawHeight = buffer.readInt32LE(22);
+  const bits = buffer.readUInt16LE(28);
+  const height = Math.abs(rawHeight);
+  const bytes = bits / 8;
+  const stride = Math.ceil((width * bytes) / 4) * 4;
+  const pixels = Buffer.alloc(width * height * 4);
+  for (let y = 0; y < height; y++) {
+    const row = offset + (rawHeight > 0 ? height - 1 - y : y) * stride;
+    for (let x = 0; x < width; x++) {
+      const from = row + x * bytes;
+      const to = (y * width + x) * 4;
+      pixels[to] = buffer[from + 2];
+      pixels[to + 1] = buffer[from + 1];
+      pixels[to + 2] = buffer[from];
+      pixels[to + 3] = bytes === 4 ? buffer[from + 3] : 255;
+    }
+  }
+  return { pixels, width, height };
+}
+
+// Every cursor pack as PNGs (images/cursors/<pack>/<cursor>.png) and data/cursors.json
+// { pack: { cursor: [hot x, hot y] } }; small enough to be written whole each run
+async function exportCursors(source) {
+  const entries = source.looseFiles(CURSOR_FOLDER);
+  const packs = {};
+  const files = [];
+  const out = path.join(temp, "cursors");
+  for (const entry of entries) {
+    const [, pack, name] = entry.path.match(/^resource\/cursor\/valve\/([^/]+)\/([^/]+)\.(bmp|res)$/) ?? [];
+    if (!pack) continue;
+    packs[pack] ??= {};
+    const buffer = await source.readLoose(entry);
+    if (entry.path.endsWith(".res")) {
+      for (const [cursor, spot] of Object.entries(parse(buffer).root["resource/cursor/cursor.res"] ?? {})) {
+        packs[pack][cursor] = [Number(spot?.hotx) || 0, Number(spot?.hoty) || 0, ...(packs[pack][cursor]?.slice(2) ?? [])];
+      }
+      continue;
+    }
+    const { pixels, width, height } = readBmp(buffer);
+    const file = path.join(out, pack, `${name}.png`);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    await sharp(pixels, { raw: { width, height, channels: 4 } }).png().toFile(file);
+    files.push({ path: `images/cursors/${pack}/${name}.png`, file });
+    packs[pack][name] ??= [0, 0];
+  }
+  // Only the cursors that have a picture
+  const pictures = new Set(files.map((entry) => entry.path));
+  for (const [pack, cursors] of Object.entries(packs)) {
+    for (const cursor of Object.keys(cursors)) {
+      if (!pictures.has(`images/cursors/${pack}/${cursor}.png`)) delete cursors[cursor];
+    }
+  }
+  const json = path.join(temp, "out/data/cursors.json");
+  fs.mkdirSync(path.dirname(json), { recursive: true });
+  fs.writeFileSync(json, JSON.stringify(packs));
+  return [{ path: "data/cursors.json", file: json }, ...files];
 }
 
 // Portraits, hero icons, ability and item icons as PNGs; only those whose CRC changed

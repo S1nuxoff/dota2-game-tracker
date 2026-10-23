@@ -8,6 +8,8 @@
 //   data/ui-sounds.json       the menu's sounds whole: the interface's events and each music pack's
 //                             menu music with every field their stacks read, the stacks' defaults,
 //                             and the mixer's groups and levels
+//   data/chat-wheel.json      the chat wheel's lines by category (the Armory's Chat Wheel), each
+//                             with its English label and text and its sound's files
 //   soundevents.json          (sounds dataset) every sound event with its files, volume and pitch
 //
 //   abilitysounds.json        (data) the sounds and voice lines of each hero's abilities
@@ -27,7 +29,7 @@ const kv3 = require("./kv3");
 const temp = "./temp/audio";
 const STATE_FILE = "audio-state.json";
 // Raised when what this writes changes, so the next run writes it all again without a patch
-const FORMAT = 4;
+const FORMAT = 5;
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 
 function argValue(name) {
@@ -196,6 +198,9 @@ async function main() {
   for (const event of Object.values(events)) {
     event.files = inDataset(event.files);
   }
+
+  const chatWheel = await readChatWheel(source, events);
+  console.log(`Chat wheel: ${Object.keys(chatWheel.messages).length} lines in ${chatWheel.categories.length} categories`);
 
   const out = path.join(temp, "out");
   const write = (name, value) => {
@@ -414,6 +419,7 @@ async function main() {
     write("data/ui-sounds.json", uiSounds),
     write("data/abilitysounds.json", abilitySounds),
     write("data/portrait-speech.json", portraitSpeech),
+    write("data/chat-wheel.json", chatWheel),
     ...voices,
   ];
   const soundEvents = write("soundevents.json", events);
@@ -427,6 +433,37 @@ async function main() {
   if (upload) {
     fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: source.manifestId, format: FORMAT, missing: [...missing].sort() }));
   }
+}
+
+// The chat wheel (scripts/chat_wheel.txt, scripts/chat_wheel_categories.txt):
+// { categories: [{ id, name, description, messages: [name] }],
+//   messages: { name: { id, label, message, sound, files, ...the line's other fields } } }
+// with the English texts of their tokens; a line's files are its sound event's in the dataset
+async function readChatWheel(source, events) {
+  const files = new Map();
+  const wanted = ["scripts/chat_wheel.txt", "scripts/chat_wheel_categories.txt", "resource/localization/dota_english.txt"];
+  await source.readFiles(wanted.filter((file) => source.vpkDir.tree[file]), files);
+  const read = (file) => (files.has(file) ? parse(files.get(file)).root : {});
+  const english = read("resource/localization/dota_english.txt").lang?.Tokens ?? {};
+  const lower = new Map(Object.entries(english).map(([key, value]) => [key.toLowerCase(), value]));
+  const text = (token) => (typeof token === "string" && token.startsWith("#") ? lower.get(token.slice(1).toLowerCase()) ?? null : token ?? null);
+  const messages = {};
+  for (const [name, line] of Object.entries(read("scripts/chat_wheel.txt").chat_wheel?.messages ?? {})) {
+    if (!line || typeof line !== "object") continue;
+    const { message_id: id, label, message, sound, ...rest } = line;
+    messages[name] = { id: Number(id), label: text(label), message: text(message), ...rest };
+    if (sound) {
+      messages[name].sound = sound;
+      messages[name].files = events[sound]?.files ?? [];
+    }
+  }
+  const categories = Object.entries(read("scripts/chat_wheel_categories.txt").chat_wheel?.categories ?? {}).map(([id, category]) => ({
+    id,
+    name: text(category.name),
+    description: text(category.description),
+    messages: Object.keys(category.messages ?? {}).filter((name) => messages[name]),
+  }));
+  return { categories, messages };
 }
 
 main().then(

@@ -76,6 +76,8 @@ const IMAGE_FOLDERS = [
   // The item tooltip's ground and its "More Details" Alt key
   "panorama/images/hud/reborn/bg_tooltip_psd",
   "panorama/images/control_icons/alt_key_png",
+  // The Armory's emoticons (scripts/emoticons.txt names their pictures, strips of frames)
+  "panorama/images/emoticons/",
 ];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
@@ -83,9 +85,14 @@ const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c
 // The picker cards' backgrounds per hero (.<hero> .HeroBackgroundImage)
 const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 20;
+const DATA_VERSION = 21;
 const STATE_FILE = "data-state.json";
 const SHOPS_FILE = "scripts/shops.txt";
+// The emoticons: their ids, pictures, frame times and aliases (the Armory's Emoticons)
+const EMOTICON_FILES = /^scripts\/emoticons(\.txt|\/[^/]+\.txt)$/;
+// A loading screen item names its picture under panorama/images, the texture's name with or
+// without its source format
+const LOADING_SCREEN_SUFFIXES = ["", "_png", "_tga", "_psd", "_jpg"];
 // The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
 const VIDEO_FOLDER = "panorama/videos/heroes/";
 
@@ -115,7 +122,8 @@ async function main() {
   }
   const files = new Map();
   const wanted = source.vpkDir.files.filter(
-    (file) => file.startsWith("scripts/npc/") || file === SHOPS_FILE || /^resource\/localization\/(abilities|dota|hero_lore)_\w+\.txt$/.test(file)
+    (file) =>
+      file.startsWith("scripts/npc/") || file === SHOPS_FILE || EMOTICON_FILES.test(file) || /^resource\/localization\/(abilities|dota|hero_lore)_\w+\.txt$/.test(file)
   );
   await source.readFiles(wanted, files);
   const read = (file) => parse(files.get(file));
@@ -125,7 +133,9 @@ async function main() {
   const items = omit(read("scripts/npc/items.txt").root.DOTAAbilities, ["Version"]);
   const neutralItems = read("scripts/npc/neutral_items.txt").root;
   const shops = readShops(files.get(SHOPS_FILE));
-  const treasures = await readTreasures();
+  const itemsGame = await loadItemsGame();
+  const treasures = readTreasures(itemsGame);
+  const loadingScreens = loadingScreenFiles(itemsGame, source.vpkDir);
   const i18n = readTexts(read, files);
 
   console.log(
@@ -150,6 +160,9 @@ async function main() {
     ...Object.entries(i18n).map(([language, tokens]) => write(`data/i18n/${language}.json`, tokens)),
     write("data/loadout_backgrounds.json", await readBackgrounds(source)),
     write("data/loadout_portraits.json", readPortraits(read, files, read(UNITS_FILE).root.DOTAUnits ?? {})),
+    write("data/emoticons.json", readEmoticons(read, files)),
+    // The Armory's pictures by item: a loading screen's full picture
+    write("data/armory.json", { loadingScreens: Object.fromEntries(Object.entries(loadingScreens).map(([id, file]) => [id, pictureName(file)])) }),
     write("data/manifest.json", {
       manifest: source.manifestId,
       updated: new Date().toISOString(),
@@ -158,7 +171,7 @@ async function main() {
   ];
 
   uploads.push(...(await portraitAtlas(source)));
-  const images = await exportImages(source, state.images ?? {});
+  const images = await exportImages(source, state.images ?? {}, new Set(Object.values(loadingScreens)));
   console.log(`${images.files.length} new or changed portraits and icons`);
   const videos = await exportVideos(source, state.videos ?? {});
   console.log(`${videos.files.length} new or changed hero animations`);
@@ -222,12 +235,56 @@ function readHeroes(read, files) {
   return { heroes, heroAbilities };
 }
 
+async function loadItemsGame() {
+  const data = fs.existsSync("items_game.json") ? JSON.parse(fs.readFileSync("items_game.json", "utf8")) : await (await fetch(ITEMS_GAME_URL)).json();
+  return data.items_game;
+}
+
+// Each loading screen item's picture in the VPK: { itemId: "panorama/images/....vtex_c" }
+function loadingScreenFiles(itemsGame, vpkDir) {
+  const files = {};
+  for (const [id, item] of Object.entries(itemsGame.items)) {
+    const visual = item.prefab === "loading_screen" && Object.values(item.visuals ?? {}).find((entry) => entry?.type === "loading_screen");
+    if (!visual || typeof visual.asset !== "string") {
+      continue;
+    }
+    const name = visual.asset.toLowerCase().replace(/\.(png|tga|psd|jpg|vtex)$/, "");
+    const file = LOADING_SCREEN_SUFFIXES.map((suffix) => `panorama/images/${name}${suffix}.vtex_c`).find((candidate) => vpkDir.tree[candidate]);
+    if (file) {
+      files[id] = file;
+    }
+  }
+  return files;
+}
+
+// Where a full picture is in the dataset: images/<its path under panorama/images>.webp
+function pictureName(file) {
+  return `images/${file.replace(/^panorama\/images\//, "").replace(/\.vtex_c$/, "")}.webp`;
+}
+
+// Every emoticon by its id (scripts/emoticons.txt and the event files in scripts/emoticons/):
+// { id: { image: "images/emoticons/<name>.png", ms_per_frame, aliases: [...], ... } }
+function readEmoticons(read, files) {
+  const emoticons = {};
+  for (const file of [...files.keys()].filter((name) => EMOTICON_FILES.test(name)).sort()) {
+    for (const [id, entry] of Object.entries(read(file).root.emoticons ?? {})) {
+      if (!entry || typeof entry !== "object" || typeof entry.image_name !== "string") {
+        continue;
+      }
+      const { image_name: image, aliases, ...rest } = entry;
+      emoticons[id] = {
+        ...rest,
+        image: `images/emoticons/${image.toLowerCase().replace(/\.(png|tga|psd)$/, "")}_png.png`,
+        aliases: Object.values(aliases ?? {}),
+      };
+    }
+  }
+  return emoticons;
+}
+
 // Each chest names a loot list, which lists items by name or other lists (its tiers)
-async function readTreasures() {
-  const data = fs.existsSync("items_game.json")
-    ? JSON.parse(fs.readFileSync("items_game.json", "utf8"))
-    : await (await fetch(ITEMS_GAME_URL)).json();
-  const { items, loot_lists: lists = {} } = data.items_game;
+function readTreasures(itemsGame) {
+  const { items, loot_lists: lists = {} } = itemsGame;
   const idByName = new Map(Object.entries(items).map(([id, item]) => [item.name, id]));
 
   const itemsOf = (list, seen = new Set()) => {
@@ -496,9 +553,10 @@ async function portraitAtlas(source) {
   ];
 }
 
-async function exportImages(source, known) {
+// pictures: textures written as 1920 wide WebP (the loading screens' full pictures)
+async function exportImages(source, known, pictures) {
   const { vpkDir } = source;
-  const all = vpkDir.files.filter((file) => /\.(vtex|vsvg)_c$/.test(file) && IMAGE_FOLDERS.some((folder) => file.startsWith(folder)));
+  const all = vpkDir.files.filter((file) => (/\.(vtex|vsvg)_c$/.test(file) && IMAGE_FOLDERS.some((folder) => file.startsWith(folder))) || pictures.has(file));
   const crcs = Object.fromEntries(all.map((file) => [file, vpkDir.tree[file].crc]));
   const changed = all.filter((file) => known[file] !== crcs[file]);
   if (changed.length === 0) {
@@ -536,7 +594,11 @@ async function exportImages(source, known) {
       continue;
     }
     const name = `images/${file.replace(/^panorama\/images\//, "").replace(/\.vtex_c$/, "")}`;
-    if (file.startsWith(BACKGROUND_FOLDER) && !/mask/.test(file)) {
+    if (pictures.has(file)) {
+      const webp = png.replace(/\.(png|jpeg)$/, ".webp");
+      await sharp(png).resize({ width: 1920, withoutEnlargement: true }).webp({ quality: 80 }).toFile(webp);
+      images.push({ path: pictureName(file), file: webp });
+    } else if (file.startsWith(BACKGROUND_FOLDER) && !/mask/.test(file)) {
       const jpg = png.replace(/\.(png|jpeg)$/, ".jpg");
       await sharp(png).resize({ width: 1920, withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toFile(jpg);
       images.push({ path: `${name}.jpg`, file: jpg });

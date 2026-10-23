@@ -88,7 +88,7 @@ async function main() {
   const { vpkDir } = source;
   const maxDuration = game ? Infinity : CI_MAX_DURATION;
 
-  const items = await loadItems();
+  const { items, heroSkins } = await loadItems();
   const { heroes, personas } = await loadHeroModels(source);
   const pedestals = await loadPedestals(source);
   // The models particle effects draw, as listed by particles.js
@@ -117,6 +117,15 @@ async function main() {
   ];
   const available = all.filter((model) => vpkDir.tree[`${model}_c`]);
   const wantedSkins = skinsWanted(items);
+  // The skins items give the hero's own model (model_skin: Legion Commander's Arcana, skin 1)
+  for (const { heroes: keys, skin } of heroSkins) {
+    for (const key of keys) {
+      const model = heroes[key];
+      if (!model) continue;
+      if (!wantedSkins.has(model)) wantedSkins.set(model, new Set());
+      wantedSkins.get(model).add(skin);
+    }
+  }
 
   const state = loadState();
   // --force: the materials' dynamic parameters and cube maps again too
@@ -127,7 +136,13 @@ async function main() {
   // Models the converter failed on are tried again once their file changes
   const failedBefore = (model) => state.failed[model] === vpkDir.tree[`${model}_c`].crc;
   const todo = available
-    .filter((model) => force || (hasChanged(state.models[model], vpkDir) && !failedBefore(model)))
+    .filter(
+      (model) =>
+        force ||
+        (hasChanged(state.models[model], vpkDir) && !failedBefore(model)) ||
+        // A model exported before any item asked for its skins
+        (wantedSkins.has(model) && state.models[model] && !state.models[model].skins)
+    )
     .slice(0, limit);
 
   console.log(
@@ -229,7 +244,8 @@ function argValue(name) {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-// { id: { name, prefab, heroes, models, skin?, styles? } } for every item that has a model
+// items: { id: { name, prefab, heroes, models, skin?, styles? } } for every item that has a model;
+// heroSkins: [{ heroes, skin }] the skins items put on their hero's own model (model_skin)
 async function loadItems() {
   // An items_game.json next to the script is used instead of downloading it
   let data;
@@ -246,7 +262,13 @@ async function loadItems() {
   }
 
   const items = {};
+  const heroSkins = [];
   for (const [id, item] of Object.entries(data.items_game.items)) {
+    for (const [key, value] of Object.entries(item.visuals ?? {})) {
+      if (key.startsWith("asset_modifier") && value?.type === "model_skin" && Number(value.skin)) {
+        heroSkins.push({ heroes: Object.keys(item.used_by_heroes ?? {}), skin: Number(value.skin) });
+      }
+    }
     const models = modelsOf(item);
     if (models.length > 0) {
       items[id] = {
@@ -258,7 +280,7 @@ async function loadItems() {
       };
     }
   }
-  return items;
+  return { items, heroSkins };
 }
 
 // model_player for most wearables; couriers, wards and some arcanas set theirs in visuals

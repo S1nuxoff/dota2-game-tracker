@@ -5,6 +5,9 @@
 //                             (scripts/talker/*.vrr) whose groups need a special_spawn, which the
 //                             loadout spawn's AE_CL_SPEECH event sets: [{ when: [[key, expr]], lines }]
 //   data/audio-library.json   announcer packs and music packs with their files
+//   data/ui-sounds.json       the menu's sounds whole: the interface's events and each music pack's
+//                             menu music with every field their stacks read, the stacks' defaults,
+//                             and the mixer's groups and levels
 //   soundevents.json          (sounds dataset) every sound event with its files, volume and pitch
 //
 //   abilitysounds.json        (data) the sounds and voice lines of each hero's abilities
@@ -24,7 +27,7 @@ const kv3 = require("./kv3");
 const temp = "./temp/audio";
 const STATE_FILE = "audio-state.json";
 // Raised when what this writes changes, so the next run writes it all again without a patch
-const FORMAT = 3;
+const FORMAT = 4;
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 
 function argValue(name) {
@@ -56,7 +59,8 @@ function parseSoundEvents(text, events) {
   const pattern = /^\t([\w.\-/]+) =\s*\{([\s\S]*?)^\t\}/gm;
   const names = [];
   for (const [, name, body] of text.matchAll(pattern)) {
-    const files = [...body.matchAll(/"(sounds\/[^"]+)\.vsnd"/g)].map((match) => match[1]);
+    // (music packs write their paths with backslashes)
+    const files = [...body.matchAll(/"(sounds[\\/][^"]+)\.vsnd"/g)].map((match) => match[1].replace(/\\+/g, "/"));
     const number = (key) => {
       const value = body.match(new RegExp(`^\\t\\t${key} = ([-\\d.]+)`, "m"))?.[1];
       return value === undefined ? undefined : Number(value);
@@ -226,6 +230,67 @@ async function main() {
   }
   console.log(`${Object.keys(library.announcers).length} announcer packs, ${Object.keys(library.music).length} music packs`);
 
+  // The menu's sounds as the game plays them. Panorama's stylesheets name the interface's events
+  // (soundevents_dota_ui); the menu music is each music pack's <pack>.music.ui_* events. Each event
+  // keeps every field (block_time, soundevent_01.., weights, panner_mode, mixgroup...): its type is
+  // a sound stack, whose public fields give what an event leaves out (the volume of ui_main, the
+  // panner's curves). The mixer (scripts/soundmixers.txt) sorts a sound into a group by its path,
+  // the highest priority match, and Default_Mix gives each group's level.
+  const uiEvents = {};
+  for (const [file, names] of Object.entries(eventsByFile)) {
+    const menu = file === "soundevents/soundevents_dota_ui.vsndevts";
+    const pack = /^soundevents\/music\/[^/]+\/soundevents_music\.vsndevts$/.test(file);
+    if (!menu && !pack) continue;
+    const fields = kv3.parse(fs.readFileSync(path.join(eventsDir, file), "utf8"));
+    for (const [name, event] of Object.entries(fields)) {
+      if (!menu && !/\.music\.ui_/.test(name)) continue;
+      const { vsnd_files, vsnd_duration, ...rest } = event;
+      // file by file, so the weights stay with their files when one is not in the dataset
+      const listed = [vsnd_files ?? []].flat().map((file) => file.replace(/\\+/g, "/").replace(/\.vsnd$/, ""));
+      const found = listed.map((file) => inDataset([file])[0]);
+      const files = found.filter(Boolean);
+      if (Array.isArray(rest.weights)) rest.weights = rest.weights.filter((_, index) => found[index]);
+      uiEvents[name] = { ...rest, files };
+    }
+  }
+  const stackFiles = new Map();
+  await source.readFiles(
+    vpkDir.files.filter((file) => (file.startsWith("soundstacks/") && file.endsWith(".vsndstck_c")) || file === "scripts/soundmixers.txt"),
+    stackFiles
+  );
+  writeLoose(stackFiles);
+  const stacksDir = path.join(temp, "stacks");
+  run(["-i", path.join(looseDir, "soundstacks"), "--recursive", "-o", path.join(stacksDir, "soundstacks"), "-d", "--threads", "8"]);
+  const usedTypes = new Set(Object.values(uiEvents).map((event) => event.type));
+  const stacks = {};
+  for (const file of walk(stacksDir)) {
+    if (!file.endsWith(".vsndstck")) continue;
+    for (const [name, stack] of Object.entries(kv3.parse(fs.readFileSync(file, "utf8")))) {
+      const variables = usedTypes.has(name) && stack.operators?.find((operator) => operator.name === "public")?.operator_variables;
+      if (!variables) continue;
+      stacks[name] = {};
+      for (const [key, variable] of Object.entries(variables)) {
+        const value = variable?.value;
+        if (value === undefined || typeof value === "object" && !Array.isArray(value)) continue;
+        // numbers and curves come as text ("0.5", "[ -0.5, -1.0, ... ]")
+        const parsed = (text) => (typeof text === "string" && /^[-\d.]+f?$/.test(text.trim()) ? Number(text.replace(/f$/, "")) : text);
+        stacks[name][key] = Array.isArray(value)
+          ? value.map((entry) => (typeof entry === "string" && entry.trim().startsWith("[") ? entry.replace(/[[\]]/g, "").split(",").filter((part) => part.trim()).map(Number) : parsed(entry)))
+          : parsed(value);
+      }
+    }
+  }
+  const mixers = kv3.parse(stackFiles.get("scripts/soundmixers.txt").toString("utf8"));
+  const uiSounds = {
+    events: uiEvents,
+    stacks,
+    mix: {
+      groups: mixers.MixGroups.map((group) => ({ name: group.name, path: group.path_substring, class: group.class_substring, priority: group.priority })),
+      levels: Object.fromEntries(mixers.SoundMixers.Default_Mix.map((group) => [group.mixgroup, group.vol])),
+    },
+  };
+  console.log(`${Object.keys(uiEvents).length} menu sound events, ${Object.keys(stacks).length} of their stacks`);
+
   // What a hero says coming onto its page. The loadout spawn's animation speaks (AE_CL_SPEECH,
   // concept TLK_DOTA_CUSTOM, criteria special_spawn=<hero>_loadout_spawn); the hero's response
   // rules pick the group whose requirements all hold (Concept, classname, special_spawn and at
@@ -346,6 +411,7 @@ async function main() {
     write("data/animsounds.json", animsounds),
     write("data/animsound-events.json", viewerEvents),
     write("data/audio-library.json", library),
+    write("data/ui-sounds.json", uiSounds),
     write("data/abilitysounds.json", abilitySounds),
     write("data/portrait-speech.json", portraitSpeech),
     ...voices,

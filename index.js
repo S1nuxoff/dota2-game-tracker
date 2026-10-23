@@ -101,7 +101,7 @@ async function main() {
   const modelsWhere = (filter) =>
     Object.values(items)
       .filter((item) => forHero(item) && filter(item))
-      .flatMap((item) => [...item.models, ...(item.styles ?? []).flatMap((style) => style.models)]);
+      .flatMap((item) => [...item.models, ...(item.styles ?? []).flatMap((style) => style.models), ...(item.swaps ?? []).map(([, to]) => to)]);
   const all = [
     ...new Set([
       ...Object.entries(heroes)
@@ -280,13 +280,15 @@ async function loadItems() {
       }
     }
     const models = modelsOf(item);
-    if (models.length > 0) {
+    const swaps = swapsOf(item);
+    if (models.length > 0 || swaps.length > 0) {
       items[id] = {
         name: item.name,
         prefab: item.prefab,
         heroes: Object.keys(item.used_by_heroes ?? {}),
         models,
         ...stylesOf(item, models),
+        ...(swaps.length && { swaps }),
       };
     }
   }
@@ -302,11 +304,27 @@ function modelsOf(item) {
     models.add(item.model_player);
   }
   for (const [key, value] of Object.entries(item.visuals || {})) {
-    if (key.startsWith("asset_modifier") && isModel(value?.modifier)) {
+    // A "model" modifier puts its model in place of another one the hero wears (swapsOf)
+    if (key.startsWith("asset_modifier") && isModel(value?.modifier) && value.type !== "model") {
       models.add(value.modifier);
     }
   }
   return [...models];
+}
+
+// The models an item puts in place of others the hero wears ("model" modifiers: Blades of Voth
+// Domosh's swords for Legion Commander's weapons, an arcana's look of the hero's other items):
+// [[the model worn, the model shown instead, style?]], the style when only one of its styles does
+function swapsOf(item) {
+  const isModel = (value) => typeof value === "string" && value.endsWith(".vmdl");
+  const swaps = [];
+  for (const [key, value] of Object.entries(item.visuals || {})) {
+    if (!key.startsWith("asset_modifier") || value?.type !== "model" || !isModel(value.asset) || !isModel(value.modifier)) continue;
+    const [from, to] = [value.asset.toLowerCase(), value.modifier.toLowerCase()];
+    if (from === to) continue;
+    swaps.push(value.style !== undefined ? [from, to, Number(value.style)] : [from, to]);
+  }
+  return swaps;
 }
 
 // Styles change the material (a skin of the model) and sometimes the model itself:
@@ -567,6 +585,7 @@ function buildIndex(items, heroes, state, personas = {}) {
       models: item.models.map(glbPath),
       ...(item.skin !== undefined && { skin: item.skin }),
       ...(item.styles && { styles: item.styles.map((style) => ({ models: style.models.map(glbPath), skin: style.skin })) }),
+      ...(item.swaps && { swaps: item.swaps.map(([from, to, style]) => [glbPath(from), glbPath(to), ...(style !== undefined ? [style] : [])]) }),
     };
   }
   return index;
@@ -591,4 +610,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { modelsOf, stylesOf, skinsWanted, collect, exportBatch, dependencies, buildIndex, hasChanged };
+module.exports = { modelsOf, swapsOf, stylesOf, skinsWanted, collect, exportBatch, dependencies, buildIndex, hasChanged };

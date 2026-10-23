@@ -22,7 +22,11 @@
 //   particles/model-effects.json             the effects models start on their own (the pedestals'
 //                                            ground fog): { "<model>.vmdl": [{ system, config }] }
 //   particles/map-effects.json               the effects the heroes' page maps start (the god rays over
-//                                            the pedestal): { "<map>.vmap": [{ system, name, origin, angles }] }
+//                                            the pedestal): { "<map>.vmap": [{ system, name, origin, angles }] },
+//                                            and every effect of the UI scenes (card edges), start: false
+//                                            on those the game's code starts by name
+//   particles/map-cameras.json               the UI scenes' cameras: { "<map>.vmap": { <name>: { origin,
+//                                            angles, fov, near, far } } }
 //   particles/coverage.json                  how often each operator class is used, for the viewer to
 //                                            know what it does not draw yet
 //   particles/schema.json                    the engine's particle classes with their fields' defaults,
@@ -44,6 +48,10 @@ const temp = "./temp/particles";
 const STATE_FILE = "particles-state.json";
 const MODELS_FILE = "particle-models.json";
 const LOADOUT_PORTRAITS = "scripts/npc/portraits_full_body_loadout.txt";
+// Particle-only scenes the game's panels show, whose effects its code starts by name: the card
+// edges (ui_econ_item_animated.xml #ArcanaBackgroundEffect; client.dll starts armory_edge_set on
+// set tiles, armory_edge_icon on animated item tiles once the card's scene is loaded)
+const UI_MAPS = ["maps/scenes/armory/ui_armory_edges.vmap"];
 // Raised when the bundles change shape, to make them all again
 const BUNDLE_VERSION = 1;
 // Raised when textures are built another way, so all of them are built again (2: sheet frames at their own sizes; 3: each in its whole cell)
@@ -184,21 +192,25 @@ async function modelEffects(source) {
 // The effects the maps of the heroes' pages start themselves (PortraitBackgroundMap: their
 // info_particle_system entities, e.g. the god rays over the pedestal on dota_hud_loadout_2022),
 // read from each map's own VPK beside the game's. { "<map>.vmap": [{ system, name, origin, angles }] },
-// name the entity's (the game's code finds it by that), origin in game units, angles in degrees
+// name the entity's (the game's code finds it by that), origin in game units, angles in degrees.
+// The UI_MAPS give all their effects, those the code starts with start: false, and their
+// point_camera entities in cameras: { "<map>.vmap": { <name>: { origin, angles, fov, near, far } } }
 async function mapEffects(source) {
+  const found = {};
+  const cameras = {};
   if (!source.vpkDir.tree[LOADOUT_PORTRAITS]) {
-    return {};
+    return { found, cameras };
   }
   const portraits = new Map();
   await source.readFiles([LOADOUT_PORTRAITS], portraits);
   const text = portraits.get(LOADOUT_PORTRAITS).toString("utf8");
-  const maps = [...new Set([...text.matchAll(/"PortraitBackgroundMap"\s+"([^"]+\.vmap)"/gi)].map((match) => match[1].toLowerCase()))];
+  const pageMaps = [...new Set([...text.matchAll(/"PortraitBackgroundMap"\s+"([^"]+\.vmap)"/gi)].map((match) => match[1].toLowerCase()))];
+  const maps = [...pageMaps, ...UI_MAPS];
   const loose = source.looseFiles("maps/");
   const folder = path.join(temp, "maps");
   fs.mkdirSync(folder, { recursive: true });
   const run = (args) => spawnSync(DECOMPILER, args, { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }).stdout ?? "";
   const numbers = (value) => (typeof value === "string" ? value.trim().split(/\s+/).map(Number) : [0, 0, 0]);
-  const found = {};
   for (const map of maps) {
     const entry = loose.find((file) => file.path.toLowerCase() === map.replace(/\.vmap$/, ".vpk"));
     if (!entry) {
@@ -214,13 +226,26 @@ async function mapEffects(source) {
         for (const [, key, value] of body.matchAll(/^\s*(\w+) = (.+)$/gm)) {
           entity[key.toLowerCase()] = value.startsWith('"') ? value.slice(1, -1) : value;
         }
-        if (entity.classname === "info_particle_system" && entity.effect_name && entity.start_active !== "false") {
+        const name = (entity.targetname ?? "").replace(/^\[PR#\]/, "");
+        const ui = UI_MAPS.includes(map);
+        if (entity.classname === "info_particle_system" && entity.effect_name && (ui || entity.start_active !== "false")) {
           effects.push({
             system: entity.effect_name.toLowerCase(),
-            name: (entity.targetname ?? "").replace(/^\[PR#\]/, ""),
+            name,
             origin: numbers(entity.origin),
             angles: numbers(entity.angles),
+            ...(entity.start_active === "false" ? { start: false } : {}),
           });
+        }
+        if (ui && entity.classname === "point_camera") {
+          cameras[map] ??= {};
+          cameras[map][name] = {
+            origin: numbers(entity.origin),
+            angles: numbers(entity.angles),
+            fov: Number(entity.fov),
+            near: Number(entity.znear),
+            far: Number(entity.zfar),
+          };
         }
       }
     }
@@ -228,7 +253,7 @@ async function mapEffects(source) {
       found[map] = effects;
     }
   }
-  return found;
+  return { found, cameras };
 }
 
 // The snapshots items put in place of others (particle_snapshot: a weapon's own points for the
@@ -659,7 +684,7 @@ async function main() {
   const itemRoots = await rootSystems();
   const portraits = await portraitSystems(source);
   const effectsOfModels = await modelEffects(source);
-  const effectsOfMaps = await mapEffects(source);
+  const { found: effectsOfMaps, cameras: camerasOfMaps } = await mapEffects(source);
   const started = [...Object.values(effectsOfModels), ...Object.values(effectsOfMaps)].flatMap((effects) => effects.map((effect) => effect.system));
   const uploads = [];
 
@@ -870,6 +895,9 @@ async function main() {
   const mapEffectsFile = path.join(dist, "particles/map-effects.json");
   fs.writeFileSync(mapEffectsFile, JSON.stringify(effectsOfMaps));
   uploads.push({ path: "particles/map-effects.json", file: mapEffectsFile });
+  const mapCamerasFile = path.join(dist, "particles/map-cameras.json");
+  fs.writeFileSync(mapCamerasFile, JSON.stringify(camerasOfMaps));
+  uploads.push({ path: "particles/map-cameras.json", file: mapCamerasFile });
 
   const coverage = path.join(dist, "particles/coverage.json");
   fs.mkdirSync(path.dirname(coverage), { recursive: true });

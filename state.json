@@ -227082,6 +227082,81 @@
    ],
    "cloth": true,
    "flex": false
+  },
+  "models/heroes/snapfire/debut/assets/mesas/granny_rocks_01_k.vmdl": {
+   "hash": "9f3fb463",
+   "deps": [
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "models/heroes/snapfire/debut/assets/mesas/granny_rocks_01_k.vmdl_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/alt/rocks_01_k.vmat_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/alt/rocks_01_k_color_tga_bb2faaf7.vtex_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/rocks_01_k.vmat_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/rocks_01_k_color_tga_dfb84e33.vtex_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/rocks_01_k_detailmask_tga_cd2c6f9b.vtex_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/rocks_01_k_normal_tga_64646b5f.vtex_c",
+    "models/heroes/snapfire/debut/materials/mesas/rocks_01_k/rocks_01_k_specmask_tga_e0d2a97b.vtex_c"
+   ],
+   "cloth": false,
+   "flex": false
+  },
+  "models/props_diretide/pumpkin_head.vmdl": {
+   "hash": "39e14c42",
+   "deps": [
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/models/heroes/chaos_knight/chaos_knight_motion_fire_detail_tga_ae99d6c4.vtex_c",
+    "materials/models/heroes/juggernaut/juggernaut_fresnelwarprim_tga_b2b7ff50.vtex_c",
+    "materials/models/props_diretide/pumpkin_head.vmat_c",
+    "materials/models/props_diretide/pumpkin_head_color_psd_3fce89b4.vtex_c",
+    "materials/models/props_diretide/pumpkin_head_detailmask_psd_6a097deb.vtex_c",
+    "materials/models/props_diretide/pumpkin_head_normal_psd_f69243d5.vtex_c",
+    "materials/models/props_diretide/pumpkin_head_specmask_psd_308c4381.vtex_c",
+    "models/creeps/lane_creeps/creep_bad_melee/creepbad_cavern_diffusewarp_psd_860bb7f6.vtex_c",
+    "models/props_diretide/pumpkin_head.vmdl_c"
+   ],
+   "cloth": false,
+   "flex": false
+  },
+  "models/props_wildlife/wildlife_butterfly003.vmdl": {
+   "hash": "c7935007",
+   "deps": [
+    "materials/models/props_wildlife/wildlife001.vmat_c",
+    "materials/models/props_wildlife/wildlife001_color_psd_4b61b7d3.vtex_c",
+    "materials/models/props_wildlife/wildlife001_refl_tga_214f35b6.vtex_c",
+    "models/props_wildlife/wildlife_butterfly003.vmdl_c"
+   ],
+   "cloth": false,
+   "flex": false
+  },
+  "models/props_wildlife/wildlife_dragonfly001.vmdl": {
+   "hash": "dd12749a",
+   "deps": [
+    "materials/models/props_wildlife/wildlife001.vmat_c",
+    "materials/models/props_wildlife/wildlife001_color_psd_4b61b7d3.vtex_c",
+    "materials/models/props_wildlife/wildlife001_refl_tga_214f35b6.vtex_c",
+    "models/props_wildlife/wildlife_dragonfly001.vmdl_c"
+   ],
+   "cloth": false,
+   "flex": false
+  },
+  "models/ui/exclamation/exclamation.vmdl": {
+   "hash": "fb57c02a",
+   "deps": [
+    "materials/cubemaps/gold_day_cube_psd_803a65b6.vtex_c",
+    "materials/default/default_detail2_tga_70788555.vtex_c",
+    "materials/default/default_fresnelwarprim_tga_d9279d65.vtex_c",
+    "materials/default/default_normal_tga_7652cb.vtex_c",
+    "materials/models/ui/exclamation/exclamation_b_color_psd_d70190aa.vtex_c",
+    "materials/models/ui/exclamation/exclamation_color.vmat_c",
+    "materials/models/ui/exclamation/exclamation_color_psd_ee4b19f7.vtex_c",
+    "materials/models/ui/exclamation/exclamation_color_vmat_g_tmasks1_f5699c6a.vtex_c",
+    "materials/models/ui/exclamation/exclamation_color_vmat_g_tmasks2_2dd93386.vtex_c",
+    "materials/models/ui/exclamation/exclamation_glow_color.vmat_c",
+    "materials/models/ui/exclamation/exclamation_glow_color_vmat_g_tmasks2_2dd93386.vtex_c",
+    "materials/models/ui/exclamation/exclamation_metalnessmask_psd_a87fb9e8.vtex_c",
+    "models/ui/exclamation/exclamation.vmdl_c"
+   ],
+   "cloth": false,
+   "flex": false
   }
  },
  "textures": {
@@ -231526,9 +231601,9 @@
   "textures/materials/models/pets/armadillo/armadillo_gold_specmask_tga_f573f6cc.png": true
  },
  "failed": {},
- "dynamicMaterials": "5315e712",
+ "dynamicMaterials": "dcfa6b66",
  "cubeMaps": {
-  "materials": "5315e712",
+  "materials": "dcfa6b66",
   "files": [
    "maps/backgrounds/models/frontpage_nemestice_device/materials/metal_soft_cube_png_2a6b5c2.vtex_c",
    "maps/cavern_assets/models/crystals/bismuth_cube_psd_d6268c86.vtex_c",

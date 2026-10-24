@@ -2,7 +2,7 @@
 
 Exports every Dota 2 item and hero model from the game files to glTF (`.glb`), with materials, textures (inside the file) and animations, using [Source 2 Viewer](https://github.com/ValveResourceFormat/ValveResourceFormat), and uploads them to a Hugging Face dataset.
 
-Only the files a model needs are downloaded from Steam: the model, its meshes, materials, textures and animations, found by following each file's references. Item models come from `items_game.json` of [dota2-file-tracker](https://github.com/S1nuxoff/dota2-file-tracker), hero models from `scripts/npc/npc_heroes.txt`.
+Only the files a model needs are downloaded from Steam: the model, its meshes, materials, textures and animations, found by following each file's references. Item models come from `scripts/items/items_game.txt` (read from the game, `itemsgame.js`), hero models from `scripts/npc/npc_heroes.txt`. Which dataset holds what: [DATA.md](DATA.md).
 
 Which dataset holds what, which script writes it and what the site reads: [DATA.md](DATA.md).
 

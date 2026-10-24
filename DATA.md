@@ -36,6 +36,8 @@ changed, against `gamefiles-state.json`). No gzipped copies: pages do not load t
 | `<path>.json` for a compiled resource (`<path>_c`: `.vdata_c`, `.vrr_c`, `.herolist_c`, ...) | Source2Viewer's decompiled KV3 as JSON | |
 | `<path>` | a text file that is not KeyValues (old VGUI `.res` with `key=value`, QC templates, `.htm`, `.styles`), as UTF-8 | |
 
+Every material is `<path>.vmat.json` (from `.vmat_c`, wherever the game keeps it: `materials/`, `models/.../materials`, `maps/...`): `{ "Layer0": { shader, F_* flags, g_* parameters, the textures it names } }`; every sound event file is `soundevents/<file>.vsndevts.json` (each event's `vsnd_files`, volume, pitch, mixgroup, distance, layers).
+
 `panorama/` holds the client's interface: layouts (`.xml`), styles (`.css`) and scripts (`.js`, TypeScript ones compiled) decompiled from `.vxml_c`, `.vcss_c`, `.vjs_c`, `.vts_c`; `resource/*.otf` and `resource/*.ttf` (from `.vfont`) are Dota's own fonts. The Windows fonts in `vgui/fonts` are left out.
 
 The exporters of this repo read items_game from the game itself (`itemsgame.js`, the same shape).

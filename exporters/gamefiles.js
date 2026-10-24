@@ -12,6 +12,9 @@
 //   panorama/<path>.xml, .css, .js   the interface (panorama/ but its pictures and videos, which are in
 //                      dota2-images and dota2-videos): layouts (.vxml_c), styles (.vcss_c), scripts
 //                      (.vjs_c, and .vts_c compiled to JavaScript), decompiled by Source2Viewer
+//   <path>.vmat.json   every material (shader, its parameters, the textures it names), wherever the
+//                      game keeps it (materials/, models/.../materials, maps/...)
+//   soundevents/<path>.vsndevts.json  every sound event file: each event's files, volume, pitch, layers
 //   resource/<name>.otf, .ttf        Dota's own fonts (Radiance; .vfont_c decompiled to TrueType)
 // Other pictures and binary files are left out, and the Windows fonts in vgui/fonts (Microsoft's). The game's own
 // files win over core's, as the game reads them. Only files whose CRC changed since the last run
@@ -31,10 +34,11 @@ const temp = "./temp/gamefiles";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const DATASET = process.env.HF_DATA_REPO || "dota2-data";
 // Raised when the files written change, so a game version already exported is exported again
-const VERSION = 2;
+const VERSION = 3;
 const STATE_FILE = "state/gamefiles.json";
 
-const FOLDERS = /^(scripts|resource|panorama)\//;
+// and every material (.vmat_c, wherever it is) and sound event file (soundevents/)
+const FOLDERS = /^(scripts|resource|panorama)\/|\.vmat_c$|^soundevents\/.+\.vsndevts_c$/;
 // The interface's pictures and videos are in their own datasets (images.js, videos.js)
 const ELSEWHERE = /^panorama\/(images|videos)\//;
 // The interface's layouts, styles and scripts, decompiled to text
@@ -46,9 +50,9 @@ const KEYVALUES = /\.(txt|res|vdf|gameevents|lst|caverndef|eventactions|eventdef
 // Text kept as it is
 const TEXT = /\.(json|htm|html|styles|cfg|csv|xml|css)$/;
 // Compiled resources Source2Viewer turns into KV3 text
-const COMPILED = /\.(vdata|vrr|herolist|vcd|vrman)_c$/;
+const COMPILED = /\.(vdata|vrr|herolist|vcd|vrman|vmat|vsndevts)_c$/;
 // Not text: left out on purpose (anything else is reported, so a new kind is noticed)
-const BINARY = /\.(png|jpg|tga|psd|bmp|otf|ttf|vfont|dmx|dem|bin|vtex_c|vpcf_c|vmat_c|vsnd_c|vmdl_c)$/;
+const BINARY = /\.(png|jpg|tga|psd|bmp|otf|ttf|vfont|dmx|dem|bin|vtex_c|vpcf_c|vsnd_c|vmdl_c)$/;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -125,11 +129,20 @@ function convertCompiled(files, out) {
       continue;
     }
     const text = fs.readFileSync(written, "utf8");
+    // KV3 (most), or KeyValues as a material's source (.vmat: "Layer0" { ... }), else the text itself
     let target = `${file.replace(/_c$/, "")}.json`;
     let content;
-    try {
-      content = JSON.stringify(kv3.parse(text));
-    } catch {
+    if (text.trimStart().startsWith("<!-- kv3")) {
+      try {
+        content = JSON.stringify(kv3.parse(text));
+      } catch {
+        content = null;
+      }
+    } else {
+      const { root, skipped } = parse(text, { raw: true });
+      content = skipped === 0 && Object.keys(root).length ? JSON.stringify(root) : null;
+    }
+    if (content === null) {
       target = file.replace(/_c$/, "");
       content = text;
     }

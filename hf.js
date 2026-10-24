@@ -67,10 +67,11 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
         });
         break;
       } catch (error) {
-        // The Hub is sometimes out of reach for minutes; wait it out rather than stop. Past its
-        // limit of 128 commits an hour to a repository it says so; that waits for the hour to pass.
+        // The Hub (or the way to it) is sometimes out of reach for minutes, up to an hour; wait it out
+        // rather than stop. Past its limit of 128 commits an hour to a repository it says so; that
+        // waits for the hour to pass.
         const limited = /rate limit/i.test(error.message ?? "");
-        if (attempt >= (limited ? 20 : 10)) {
+        if (attempt >= (limited ? 20 : 30)) {
           throw error;
         }
         const wait = limited ? 5 * 60 : Math.min(attempt * 15, 120);

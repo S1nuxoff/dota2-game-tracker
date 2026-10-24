@@ -1,12 +1,14 @@
 // Game data for Dotadex: heroes with their abilities, shared abilities and talents,
 // shop and neutral items, treasure chests with what drops from them, the texts of
-// all of this in every language, and hero portraits and icons.
+// all of this in every language, and the pictures the site needs made from the game's.
 //
 //   HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
 //   HF_TOKEN=... node data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads data/*.json and data/i18n/<language>.json to dota2-data under dotadex/, and images/...png,
-// videos/heroes/...webm to the models dataset.
+// Uploads to dota2-data under dotadex/: data/*.json, data/i18n/<language>.json, and images/...: the
+// hero page backdrops (JPG), the loading screens (WebP), the card backgrounds, the hero grid's
+// atlas and the cursor packs. The game's own pictures are in dota2-images and its videos in
+// dota2-videos (images.js, videos.js).
 // Nothing is done when the game did not update since the last run (data-state.json),
 // and only new or changed images are converted again.
 const fs = require("fs");
@@ -21,74 +23,17 @@ const { loadItemsGame } = require("./itemsgame");
 
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
-const IMAGE_FOLDERS = [
-  "panorama/images/heroes/",
-  "panorama/images/spellicons/",
-  "panorama/images/items/",
-  "panorama/images/loadout_backgrounds/",
-  // The interface's own pictures the site draws after the game: the top bar, the filter and role
-  // icons, attributes, complexity, the stat icons
-  "panorama/images/topbar/",
-  "panorama/images/control_icons/filter_",
-  "panorama/images/control_icons/arrow_solid_",
-  "panorama/images/control_icons/gear_png",
-  "panorama/images/control_icons/quit_psd",
-  "panorama/images/primary_attribute_icons/",
-  "panorama/images/hero_complexity_",
-  "panorama/images/hud/reborn/icon_",
-  // The mask the hero page's scene is seen through, fading its sides and floor into the dark
-  "panorama/images/masks/hero_model_preview_mask_loadout_psd",
-  // The same for the Armory's scene (#CollectionSceneBody)
-  "panorama/images/masks/hero_model_preview_mask_psd",
-  // The rock texture of the dashboard's bottom left panel (#FriendlistBottom)
-  "panorama/images/textures/miniprofile_rock_darker_psd",
-  // The interface's vector icons (the hero page's full screen button), kept as SVG
-  "panorama/images/control_icons/24px/",
-  // The CUSTOMIZE picker's cards (DOTAEconItemAnimated): each hero's card background
-  // (collection_shared's .HeroBackgroundImage), the mask a set's portrait fades through at the
-  // bottom, the corner of the equipped card and the "In Treasure" button's chest
-  "materials/portraits_card/portrait_backgrounds/",
-  "panorama/images/masks/set_thumbnail_mask_psd",
-  "panorama/images/status_icons/econtooltip_equipped",
-  "panorama/images/icon_treasure_button_png",
-  // The settings window (popup_settings_reborn): the navigation's rock texture, the mask its list
-  // scrolls through, the search box's clear button, the courier shown when nothing is found, and
-  // the drop-downs' arrow
-  "panorama/images/settings/settings_rock_texture_png",
-  "panorama/images/masks/soft_top_bottom_vscroll_psd",
-  "panorama/images/control_icons/x_close_filled_png",
-  "panorama/images/hud/icon_courier_dead_settings_png",
-  "panorama/images/control_icons/arrow_dropdown_png",
-  // The Items page (dashboard_page_game_items, ability_details, ui_game_item_table,
-  // ui_game_neutral_item_table, shop_item_combines): the details panel's and the tooltip's grounds,
-  // the description's Active / Passive / Use headers, the gold, cooldown, mana, health and cast
-  // range icons, the shops' icons, the Secret Shop keeper behind the basics, the tier clock, the
-  // secret shop mark on a tile and the combines' recessed ground
-  "panorama/images/hud/reborn/bg_tooltip_no_bevel_psd",
-  "panorama/images/hud/ability_tooltip_psd",
-  "panorama/images/hud/item_tooltip_",
-  "panorama/images/hud/icon_gold_psd",
-  "panorama/images/status_icons/ability_",
-  "panorama/images/control_icons/shop_icon_",
-  "panorama/images/textures/secret_shop_psd",
-  "panorama/images/status_icons/clock_psd",
-  "panorama/images/hud/secret_psd",
-  "panorama/images/hud/reborn/bg_item_breakdown_recessed_psd",
-  // The item tooltip's ground and its "More Details" Alt key
-  "panorama/images/hud/reborn/bg_tooltip_psd",
-  "panorama/images/control_icons/alt_key_png",
-  // The Armory's emoticons (scripts/emoticons.txt names their pictures, strips of frames)
-  "panorama/images/emoticons/",
-  // The chat wheel's sprays (data/chat-wheel.json names them, from the audio export)
-  "panorama/images/sprays/",
-];
+// The pictures made for the site out of the game's (the game's own are all in dota2-images,
+// images.js): the hero page backdrops as 1920 wide JPGs, and the CUSTOMIZE picker's card
+// backgrounds, which are materials, not interface pictures
+const SITE_IMAGE_FOLDERS = ["panorama/images/loadout_backgrounds/", "materials/portraits_card/portrait_backgrounds/"];
 // The backdrops behind the hero page, 4K in the game, drawn blurred: kept as 1920 wide JPGs
 const BACKGROUND_FOLDER = "panorama/images/loadout_backgrounds/";
 const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c";
 // The picker cards' backgrounds per hero (.<hero> .HeroBackgroundImage)
 const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
-const DATA_VERSION = 22;
+const DATA_VERSION = 23;
 const STATE_FILE = "data-state.json";
 const SHOPS_FILE = "scripts/shops.txt";
 // The emoticons: their ids, pictures, frame times and aliases (the Armory's Emoticons)
@@ -96,8 +41,6 @@ const EMOTICON_FILES = /^scripts\/emoticons(\.txt|\/[^/]+\.txt)$/;
 // A loading screen item names its picture under panorama/images, the texture's name with or
 // without its source format
 const LOADING_SCREEN_SUFFIXES = ["", "_png", "_tga", "_psd", "_jpg"];
-// The animated portraits the hero grid plays under the pointer; loose files of the depot, not in the VPK
-const VIDEO_FOLDER = "panorama/videos/heroes/";
 // The cursor packs (the Armory's Cursor Packs): loose BMPs of the depot, one folder a pack, with
 // each cursor's hot spot in its cursor.res
 const CURSOR_FOLDER = "resource/cursor/valve/";
@@ -120,7 +63,7 @@ async function main() {
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
   const source = game ? localSource(game) : await steamSource(username, password, temp);
-  // --force: everything again, the images and videos too, as on the first run
+  // --force: everything again, the pictures too, as on the first run
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === DATA_VERSION) {
     console.log(`Game data of manifest ${source.manifestId} is already exported.`);
@@ -178,20 +121,15 @@ async function main() {
 
   uploads.push(...(await portraitAtlas(source)));
   const images = await exportImages(source, state.images ?? {}, new Set(Object.values(loadingScreens)));
-  console.log(`${images.files.length} new or changed portraits and icons`);
-  const videos = await exportVideos(source, state.videos ?? {});
-  console.log(`${videos.files.length} new or changed hero animations`);
+  console.log(`${images.files.length} new or changed pictures for the site`);
   const cursors = await exportCursors(source);
   uploads.push(...cursors);
   console.log(`${cursors.length - 1} cursor pictures`);
 
   if (upload) {
-    const repo = await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_REPO);
-    await hf.uploadSiteData(process.env.HF_TOKEN, uploads.filter((entry) => hf.isSiteData(entry.path)), "Update game data");
-    await hf.upload(repo, process.env.HF_TOKEN, uploads.filter((entry) => !hf.isSiteData(entry.path)), "Update game data pictures");
-    await hf.upload(repo, process.env.HF_TOKEN, images.files, "Update portraits and icons");
-    await hf.upload(repo, process.env.HF_TOKEN, videos.files, "Update hero animations");
-    fs.writeFileSync(STATE_FILE, JSON.stringify({ version: DATA_VERSION, manifest: source.manifestId, images: images.crcs, videos: videos.shas }));
+    await hf.uploadSiteData(process.env.HF_TOKEN, uploads, "Update game data");
+    await hf.uploadSiteData(process.env.HF_TOKEN, images.files, "Update the pictures made for the site");
+    fs.writeFileSync(STATE_FILE, JSON.stringify({ version: DATA_VERSION, manifest: source.manifestId, images: images.crcs }));
   } else {
     console.log(`Written to ${out}`);
   }
@@ -489,21 +427,6 @@ async function readBackgrounds(source) {
   return { mask, heroes, cards };
 }
 
-// The heroes' animated portraits as they are, .webm; only those whose content changed
-async function exportVideos(source, known) {
-  const all = source.looseFiles(VIDEO_FOLDER).filter((entry) => entry.path.endsWith(".webm"));
-  const shas = Object.fromEntries(all.map((entry) => [entry.path, entry.sha]));
-  const files = [];
-  const out = path.join(temp, "videos");
-  for (const entry of all.filter((entry) => known[entry.path] !== entry.sha)) {
-    const file = path.join(out, path.basename(entry.path));
-    fs.mkdirSync(out, { recursive: true });
-    fs.writeFileSync(file, await source.readLoose(entry));
-    files.push({ path: `videos/heroes/${path.basename(entry.path)}`, file });
-  }
-  return { files, shas };
-}
-
 // A BMP of 24 or 32 bits a pixel (the cursors) as raw RGBA for sharp; rows bottom up unless the
 // height is negative
 function readBmp(buffer) {
@@ -624,7 +547,9 @@ async function portraitAtlas(source) {
 // pictures: textures written as 1920 wide WebP (the loading screens' full pictures)
 async function exportImages(source, known, pictures) {
   const { vpkDir } = source;
-  const all = vpkDir.files.filter((file) => (/\.(vtex|vsvg)_c$/.test(file) && IMAGE_FOLDERS.some((folder) => file.startsWith(folder))) || pictures.has(file));
+  // The backdrops' mask is a game picture as it is (dota2-images)
+  const made = (file) => /\.vtex_c$/.test(file) && SITE_IMAGE_FOLDERS.some((folder) => file.startsWith(folder)) && !/mask/.test(file);
+  const all = vpkDir.files.filter((file) => made(file) || pictures.has(file));
   const crcs = Object.fromEntries(all.map((file) => [file, vpkDir.tree[file].crc]));
   const changed = all.filter((file) => known[file] !== crcs[file]);
   if (changed.length === 0) {

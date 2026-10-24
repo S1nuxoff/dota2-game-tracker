@@ -11,7 +11,7 @@ const path = require("path");
 const { listFiles, datasetInfo } = require("@huggingface/hub");
 const hf = require("../lib/hf");
 
-const DATASETS = ["dota2-data", "dota2-images", "dota2-videos", "dota2-models", "dota2-particles", "dota2-sounds", "dota2-maps"];
+const DATASETS = ["dota2-data", "dota2-images", "dota2-videos", "dota2-models", "dota2-textures", "dota2-particles", "dota2-sounds", "dota2-maps"];
 const STATE_FILE = "state/files.json";
 const LIST = "files.json";
 const temp = "./temp/files-list";

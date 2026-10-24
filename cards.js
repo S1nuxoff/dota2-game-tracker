@@ -6,6 +6,7 @@
 // Without names: every dataset. --no-upload writes them to temp/cards to read first.
 const fs = require("fs");
 const path = require("path");
+const sharp = require("sharp");
 const hf = require("./hf");
 
 const OWNER = "Sqls1";
@@ -19,9 +20,48 @@ const page = (dataset) => `https://huggingface.co/datasets/${OWNER}/${dataset}`;
 const picture = (file) => `${base("dota2-images")}panorama/images/${file}`;
 const site = (file) => `${base("dota2-data")}dotadex/${file}`;
 
-// A row of pictures for a card's top
-const row = (pictures, height) =>
-  `<p align="center">\n${pictures.map(([src, alt]) => `  <img src="${src}" alt="${alt}" height="${height}">`).join("\n")}\n</p>`;
+// A row of pictures for a card's top. Hugging Face shows each <img> of a card on its own line, so the
+// rows are put together into one picture, assets/banner.png in the dataset (banner()); a card
+// holds a mark for each row until then
+const row = (pictures, height) => `<!--row ${JSON.stringify({ pictures: pictures.map(([src]) => src), height })}-->`;
+const ROWS = /<!--row (.*?)-->/g;
+
+// The card's rows as one picture, at twice their size for sharp screens: [file, width to show]
+async function banner(card, dataset) {
+  const rows = [...card.matchAll(ROWS)].map(([, json]) => JSON.parse(json));
+  if (!rows.length) return null;
+  const GAP = 12;
+  const built = [];
+  for (const { pictures, height } of rows) {
+    const h = height * 2;
+    const tiles = [];
+    for (const src of pictures) {
+      const data = Buffer.from(await (await fetch(src)).arrayBuffer());
+      const { data: tile, info } = await sharp(data).resize({ height: h }).png().toBuffer({ resolveWithObject: true });
+      tiles.push({ tile, width: info.width });
+    }
+    const width = tiles.reduce((sum, tile) => sum + tile.width, 0) + GAP * (tiles.length - 1);
+    built.push({ tiles, width, height: h });
+  }
+  const width = Math.max(...built.map((line) => line.width));
+  const height = built.reduce((sum, line) => sum + line.height, 0) + GAP * 2 * (built.length - 1);
+  const composite = [];
+  let top = 0;
+  for (const line of built) {
+    let left = Math.round((width - line.width) / 2);
+    for (const { tile, width: tileWidth } of line.tiles) {
+      composite.push({ input: tile, left, top });
+      left += tileWidth + GAP;
+    }
+    top += line.height + GAP * 2;
+  }
+  const file = path.join(temp, `${dataset}-banner.png`);
+  await sharp({ create: { width, height, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite(composite)
+    .png({ compressionLevel: 9 })
+    .toFile(file);
+  return [file, Math.round(width / 2)];
+}
 const HEROES = ["pudge", "invoker", "juggernaut", "lina", "crystal_maiden", "nevermore", "phantom_assassin", "axe"];
 const PORTRAITS = row(HEROES.map((hero) => [picture(`heroes/selection/npc_dota_hero_${hero}_png.png`), hero]), 120);
 const ICONS = row(
@@ -400,12 +440,29 @@ async function main() {
   for (const dataset of names.length ? names : Object.keys(CARDS)) {
     const list = await (await fetch(`${base(dataset)}files.json`)).json();
     const s = stats(list, DEPTH[dataset], (key) => DESCRIBE[dataset]?.[key] ?? (/\/props_/.test(key) ? "map props" : /^textures\//.test(key) ? "material variants' textures" : null));
+    let card = CARDS[dataset](s);
+    const made = await banner(card, dataset);
+    const uploads = [];
+    if (made) {
+      const [bannerFile, width] = made;
+      // The first row's mark becomes the banner, the others go
+      let first = true;
+      card = card
+        .replace(ROWS, () => {
+          if (!first) return "";
+          first = false;
+          return `<p align="center"><img src="${base(dataset)}assets/banner.png" alt="Dota 2" width="${Math.min(width, 900)}"></p>`;
+        })
+        .replace(/\n{3,}/g, "\n\n");
+      uploads.push({ path: "assets/banner.png", file: bannerFile });
+    }
     const file = path.join(temp, `${dataset}.md`);
-    fs.writeFileSync(file, CARDS[dataset](s));
+    fs.writeFileSync(file, card);
+    uploads.push({ path: "README.md", file });
     console.log(`${dataset}: ${s.summary}`);
     if (upload) {
       const repo = await hf.prepareRepo(process.env.HF_TOKEN, dataset);
-      await hf.upload(repo, process.env.HF_TOKEN, [{ path: "README.md", file }], "Update the dataset card", { gzip: false });
+      await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update the dataset card", { gzip: false });
     }
   }
   if (!upload) console.log(`Written to ${temp}`);

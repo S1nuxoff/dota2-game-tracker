@@ -44,6 +44,8 @@ Also, decompiled the same way: `patchnotes/patchnotes.vdpn.json` (the in-game pa
 
 The exporters of this repo read items_game from the game itself (`itemsgame.js`, the same shape).
 
+`catalog/catalog.json` (+ `.gz`, `exporters/catalog.js`, the last step of `export.js`): the download site's catalog. Every hero (name, the tokens that name its folders and files, abilities, personas, its items) and every item of items_game with its game names (slot, type, rarity, set) and its files as path prefixes per dataset. Read by the download site (dota2-files).
+
 ### dotadex/: the files made for the site
 
 Made by this repo's exporters out of the game files, in the shape the site reads; each JSON at most
@@ -113,4 +115,4 @@ Every particle system and snapshot of the game, wherever the game keeps it (most
 
 ## State files (this repo)
 
-`state/`: what each exporter already did, so a run exports only what changed, one file each (`models.json`, `data.json`, `gamefiles.json`, `images.json`, `textures.json`, `videos.json`, `sounds.json`, `audio.json`, `particles.json` with `particle-models.json`, `scenes.json`, `names.json`, `files.json`). The workflow commits them after each run.
+`state/`: what each exporter already did, so a run exports only what changed, one file each (`models.json`, `data.json`, `gamefiles.json`, `images.json`, `textures.json`, `videos.json`, `sounds.json`, `audio.json`, `particles.json` with `particle-models.json`, `scenes.json`, `names.json`, `files.json`, `catalog.json`). The workflow commits them after each run.

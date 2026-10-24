@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const zlib = require("zlib");
 const { whoAmI, repoExists, createRepo, uploadFilesWithProgress, deleteFiles, listFiles } = require("@huggingface/hub");
 
@@ -93,6 +94,10 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
     fs.writeFileSync(gz, zlib.gzipSync(fs.readFileSync(entry.file), { level: 9 }));
     return [entry, { path: `${entry.path}.gz`, file: gz }];
   });
+  if (process.env.HF_STAGE_DIR) {
+    stage(repo, files);
+    return;
+  }
 
   // The commits, each within the size and file limits
   const parts = [];
@@ -151,6 +156,25 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
     }
   };
   await Promise.all(Array.from({ length: Math.min(parallel, parts.length) }, worker));
+}
+
+// HF_STAGE_DIR: for a big upload, files are not sent but put in <HF_STAGE_DIR>/<dataset>/<path>
+// (hard links, so at once and without taking space), and stage-upload.js sends each folder with
+// `hf upload-large-folder`: many connections and large commits, many times faster. The exporters'
+// state files then say "uploaded" before the files are: run stage-upload.js until it finishes.
+function stage(repo, files) {
+  const root = path.join(process.env.HF_STAGE_DIR, repo.name.split("/").pop());
+  for (const { path: datasetPath, file } of files) {
+    const target = path.join(root, datasetPath);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.rmSync(target, { force: true });
+    try {
+      fs.linkSync(file, target);
+    } catch {
+      fs.copyFileSync(file, target);
+    }
+  }
+  console.log(`Staged ${files.length} files for ${repo.name} in ${root}`);
 }
 
 // Removes files from the dataset, in commits of a reasonable size

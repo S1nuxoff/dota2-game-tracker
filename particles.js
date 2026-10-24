@@ -976,8 +976,10 @@ async function main() {
   uploads.push({ path: "particles/attached-models.json", file: attachedList });
 
   if (upload) {
-    await hf.upload(particlesRepo, accessToken, uploads.filter((entry) => entry.path.startsWith("particles/")), "Update particles");
-    await hf.upload(repo, accessToken, uploads.filter((entry) => !entry.path.startsWith("particles/")), "Update the models' sequences and attachments");
+    // A model's own files go next to the model, also for the models the game keeps under particles/
+    const particleFile = (entry) => entry.path.startsWith("particles/") && !/\.(sequences|attachments)\.json$/.test(entry.path);
+    await hf.upload(particlesRepo, accessToken, uploads.filter(particleFile), "Update particles");
+    await hf.upload(repo, accessToken, uploads.filter((entry) => !particleFile(entry)), "Update the models' sequences and attachments");
     fs.writeFileSync(STATE_FILE, JSON.stringify(state));
   } else {
     console.log(`${uploads.length} files written to ${dist}`);

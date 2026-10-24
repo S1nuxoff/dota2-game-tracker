@@ -18,17 +18,23 @@ const { spawn } = require("child_process");
 const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
 
-const temp = "./temp/images";
+// The folder of the run in progress (set by run())
+let temp = "./temp/images";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
-const DATASET = process.env.HF_IMAGES_REPO || "dota2-images";
 // Raised when the files written change, so a game version already exported is exported again
 const VERSION = 1;
-const STATE_FILE = "images-state.json";
 const BATCH = 2000;
 // Commits of one batch sent at once
 const PARALLEL_COMMITS = 3;
 
-const IMAGES = /^panorama\/images\/.+\.(vtex_c|vsvg_c|png)$/;
+// What this script exports; textures.js runs the same with its own
+const PICTURES = {
+  label: "pictures",
+  dataset: process.env.HF_IMAGES_REPO || "dota2-images",
+  stateFile: "images-state.json",
+  temp: "./temp/images",
+  files: /^panorama\/images\/.+\.(vtex_c|vsvg_c|png)$/,
+};
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 // VTEX_FORMAT_* that hold a JPEG or PNG file
 const JPEG_FORMATS = new Set([15, 17]);
@@ -118,10 +124,28 @@ async function convertBatch(source, files, out, name) {
     await decompile(["-i", input, "--recursive", "-o", decoded, "-d", "--threads", "8"]);
     for (const file of toDecode) {
       const base = file.replace(/\.(vtex|vsvg)_c$/, "");
-      // Source2Viewer writes a vector picture as .svg, a texture as .png (.jpeg for one from a JPEG)
-      const found = [".svg", ".png", ".jpeg"].map((extension) => path.join(decoded, base + extension)).find((candidate) => fs.existsSync(candidate));
+      // Source2Viewer writes a vector picture as .svg, a texture as .png (.jpeg for one from a JPEG,
+      // .exr for a high dynamic range one)
+      const found = [".svg", ".png", ".jpeg", ".exr"].map((extension) => path.join(decoded, base + extension)).find((candidate) => fs.existsSync(candidate));
+      // A texture of several pictures comes as one file each, all kept: a sheet of frames (the
+      // particles' animated ones) as <name>_seq<n>, or a file a frame <name>_seq<n>_<frame>, and
+      // <name>.mks (the frames' description); a cube map as its six faces <name>_bk, _dn, _ft,
+      // _lf, _rt, _up; a volume as its slices <name>_z000, _z001, ...
+      const prefix = `${path.basename(base)}_`;
+      const parts = { test: (name) => name.startsWith(prefix) && /^(seq\d+(_\d+)?|bk|dn|ft|lf|rt|up|z\d{3})\.(png|exr)$/.test(name.slice(prefix.length)) };
+      const sheet = found
+        ? []
+        : fs.existsSync(path.dirname(path.join(decoded, base)))
+          ? fs
+              .readdirSync(path.dirname(path.join(decoded, base)))
+              .filter((name) => parts.test(name) || name === `${path.basename(base)}.mks`)
+          : [];
       if (found) {
         write(file, base + (found.endsWith(".jpeg") ? ".jpg" : path.extname(found)), fs.readFileSync(found));
+      } else if (sheet.some((name) => /\.(png|exr)$/.test(name))) {
+        for (const name of sheet) {
+          write(file, `${path.dirname(base)}/${name}`, fs.readFileSync(path.join(path.dirname(path.join(decoded, base)), name)));
+        }
       } else {
         failed.push(file);
       }
@@ -132,7 +156,10 @@ async function convertBatch(source, files, out, name) {
   return { written, failed };
 }
 
-async function main() {
+// kind: { label, dataset, stateFile, temp, files (a pattern of game paths) }
+async function run(kind) {
+  temp = kind.temp;
+  const STATE_FILE = kind.stateFile;
   const game = argValue("--game");
   const limit = Number(argValue("--limit")) || Infinity;
   const [username, password] = process.argv
@@ -141,7 +168,7 @@ async function main() {
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
   if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node images.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+    console.error(`Usage: HF_TOKEN=... node ${path.basename(process.argv[1])} --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>`);
     process.exit(1);
   }
 
@@ -153,21 +180,21 @@ async function main() {
     state = { files: {} };
   }
   if (!force && source.manifestId && state.manifest === source.manifestId) {
-    console.log(`Images of manifest ${source.manifestId} are already exported.`);
+    console.log(`The ${kind.label} of manifest ${source.manifestId} are already exported.`);
     return;
   }
 
   // What the game has now, by CRC
   const now = {};
   for (const file of source.vpkDir.files) {
-    if (IMAGES.test(file)) now[file] = String(source.vpkDir.tree[file].crc);
+    if (kind.files.test(file)) now[file] = String(source.vpkDir.tree[file].crc);
   }
 
   const changed = Object.keys(now).filter((file) => state.files[file]?.hash !== now[file]).slice(0, limit);
   const removed = Object.keys(state.files).filter((file) => !(file in now));
-  console.log(`${Object.keys(now).length} pictures, ${changed.length} to export, ${removed.length} removed`);
+  console.log(`${Object.keys(now).length} ${kind.label}, ${changed.length} to export, ${removed.length} removed`);
 
-  const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, DATASET) : null;
+  const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, kind.dataset) : null;
   const save = () => fs.writeFileSync(STATE_FILE, JSON.stringify({ version: VERSION, manifest: state.manifest, files: state.files }));
   let done = 0;
   let bytes = 0;
@@ -176,18 +203,21 @@ async function main() {
   const finish = async (written, out) => {
     bytes += written.reduce((sum, entry) => sum + fs.statSync(entry.file).size, 0);
     if (upload) {
-      await hf.upload(repo, process.env.HF_TOKEN, written, "Update the game's pictures", {
+      await hf.upload(repo, process.env.HF_TOKEN, written, `Update the game's ${kind.label}`, {
         gzip: false,
         maxBytes: 200 * 1e6,
         parallel: PARALLEL_COMMITS,
       });
-      for (const entry of written) {
-        state.files[entry.game] = { hash: now[entry.game], path: entry.path };
+      // A game file written as several (a sheet's sequences) keeps every path
+      const paths = new Map();
+      for (const entry of written) paths.set(entry.game, [...(paths.get(entry.game) ?? []), entry.path]);
+      for (const [game, list] of paths) {
+        state.files[game] = { hash: now[game], path: list.length === 1 ? list[0] : list };
       }
       save();
       fs.rmSync(out, { recursive: true, force: true });
     }
-    done += written.length;
+    done += new Set(written.map((entry) => entry.game)).size;
     const elapsed = (Date.now() - started) / 1000;
     console.log(`${done} of ${changed.length} done, ${(bytes / 1e9).toFixed(2)} GB, ${(bytes / 1e6 / elapsed).toFixed(1)} MB/s on average`);
   };
@@ -217,7 +247,7 @@ async function main() {
 
   if (upload) {
     if (removed.length) {
-      await hf.remove(repo, process.env.HF_TOKEN, removed.map((file) => state.files[file].path), "Remove what the game removed");
+      await hf.remove(repo, process.env.HF_TOKEN, removed.flatMap((file) => [].concat(state.files[file].path)), "Remove what the game removed");
       for (const file of removed) delete state.files[file];
     }
     // Only a run that got through everything marks the game version done (what Source2Viewer did
@@ -231,10 +261,18 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+function main(kind) {
+  run(kind).then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}
+
+module.exports = { main };
+
+if (require.main === module) {
+  main(PICTURES);
+}

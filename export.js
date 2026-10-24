@@ -6,13 +6,13 @@
 // no download. Otherwise every exporter runs in turn; each still checks its own state and exports
 // only what changed. One that fails does not stop the others; the run fails at the end if any did.
 //
-//   HF_TOKEN=... node export.js <STEAM USERNAME> <STEAM PASSWORD> [--force]   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node export.js [--force]   (GitHub Actions)
 //   HF_TOKEN=... node export.js --game "<...>/dota 2 beta/game/dota" [--force] [--no-upload]
 //   EXPORT_STEPS=images,videos node export.js ...   only these exporters
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const { gameVersion } = require("./lib/source");
+const { gameVersion, steamLogin } = require("./lib/source");
 
 const STATE_FILE = "state/run.json";
 // In this order: the models first (the site shows new ones soonest), the files the site reads, the
@@ -38,9 +38,8 @@ function codeKey() {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
-  if (!game && !password) {
-    console.error('Usage: HF_TOKEN=... node export.js <STEAM USERNAME> <STEAM PASSWORD> | --game "<...>/dota 2 beta/game/dota" [--force] [--no-upload]');
+  if (!game && !steamLogin()) {
+    console.error('Usage: HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node export.js | --game "<...>/dota 2 beta/game/dota" [--force] [--no-upload]');
     process.exit(1);
   }
   const force = process.argv.includes("--force");
@@ -49,7 +48,7 @@ async function main() {
   const partial = only.length > 0;
   const steps = partial ? STEPS.filter((step) => only.includes(step)) : STEPS;
 
-  const version = await gameVersion(game, username, password);
+  const version = await gameVersion(game);
   const code = codeKey();
   const last = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (!force && !partial && version && last.manifest === version && last.code === code) {

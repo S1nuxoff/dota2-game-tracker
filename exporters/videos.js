@@ -7,14 +7,15 @@
 // so a stopped run goes on where it was. The pictures are in dota2-images (images.js).
 //
 //   HF_TOKEN=... node exporters/videos.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node exporters/videos.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/videos.js   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/videos";
-const DATASET = process.env.HF_VIDEOS_REPO || "dota2-videos";
+const DATASET = DATASETS.videos;
 // Raised when the files written change, so a game version already exported is exported again
 const VERSION = 1;
 const STATE_FILE = "state/videos.json";
@@ -30,17 +31,16 @@ function argValue(name) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
-  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node exporters/videos.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node exporters/videos.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment');
     process.exit(1);
   }
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   let state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (state.version !== VERSION) {
     state = { files: {} };

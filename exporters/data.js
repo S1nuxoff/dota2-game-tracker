@@ -3,7 +3,7 @@
 // all of this in every language, and the pictures the site needs made from the game's.
 //
 //   HF_TOKEN=... node exporters/data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node exporters/data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/data.js   (GitHub Actions)
 //
 // Uploads to dota2-data under dotadex/: data/*.json, data/i18n/<language>.json, and images/...: the
 // hero page backdrops (JPG), the loading screens (WebP), the card backgrounds, the hero grid's
@@ -16,7 +16,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const sharp = require("sharp");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { parse } = require("../lib/keyvalues");
 const { summonsOf, UNITS_FILE } = require("../lib/summons");
 const { loadItemsGame } = require("../lib/itemsgame");
@@ -52,17 +52,16 @@ function argValue(name) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
-  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node exporters/data.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node exporters/data.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment');
     process.exit(1);
   }
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   // --force: everything again, the pictures too, as on the first run
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === DATA_VERSION) {

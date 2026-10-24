@@ -55,7 +55,8 @@ if (-not (Test-Path -LiteralPath "vrf\Source2Viewer-CLI.exe")) {
 if (-not (Test-Path -LiteralPath "node_modules")) { npm ci }
 
 $force = @()
-if ($Mode -eq "all") { $force = @("--force") }
+# Restoring everything may also make the datasets again, if they were lost
+if ($Mode -eq "all") { $force = @("--force"); $env:HF_CREATE_DATASETS = "1" }
 Write-Host "Dota 2: $Game" -ForegroundColor Cyan
 Write-Host "Mode: $Mode" -ForegroundColor Cyan
 

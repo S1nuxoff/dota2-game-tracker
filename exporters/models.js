@@ -6,7 +6,7 @@ const { spawnSync } = require("child_process");
 const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { loadItemsGame } = require("../lib/itemsgame");
 const { exportSkins } = require("../lib/skins");
 const { exportDynamicMaterials, exportCubeMaps } = require("../lib/materials");
@@ -17,6 +17,7 @@ const { writeVpk } = require("../lib/vpk-writer");
 const { webGlb } = require("../lib/web-glb");
 const { parse } = require("../lib/keyvalues");
 const { summonsOf, UNITS_FILE } = require("../lib/summons");
+const { DATASETS } = require("../lib/datasets");
 
 // Its own folder: other exports (sounds, scenes) run in ./temp next to it
 const temp = "./temp/models";
@@ -55,7 +56,7 @@ const FOLLOW = new Set([
 ]);
 
 const USAGE = `Usage:
-  HF_TOKEN=... node exporters/models.js <STEAM USERNAME> <STEAM PASSWORD> [options]   download from Steam
+  HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/models.js [options]   download from Steam
   HF_TOKEN=... node exporters/models.js --game "<...>/dota 2 beta/game/dota" [options] read a local install
 
 Options:
@@ -64,14 +65,13 @@ Options:
   --force        export again models whose game files did not change`;
 
 async function main() {
-  const positional = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && !args[index - 1]?.match(/^--(limit|hero|game)$/));
   const game = argValue("--game");
   const limit = Number(argValue("--limit")) || Infinity;
   const onlyHero = argValue("--hero");
   const force = process.argv.includes("--force");
   const accessToken = process.env.HF_TOKEN;
 
-  if (!accessToken || (!game && positional.length < 2)) {
+  if (!accessToken || (!game && !steamLogin())) {
     console.error(USAGE);
     process.exit(1);
   }
@@ -79,12 +79,12 @@ async function main() {
     throw new Error(`${DECOMPILER} not found, put Source2Viewer-CLI in ./vrf`);
   }
 
-  const repo = await hf.prepareRepo(accessToken, process.env.HF_REPO);
+  const repo = await hf.prepareRepo(accessToken, DATASETS.models);
   console.log(`Dataset: https://huggingface.co/datasets/${repo.name}`);
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, positional[0], positional[1]);
+  const source = await openSource(game);
   const { vpkDir } = source;
   const maxDuration = game ? Infinity : CI_MAX_DURATION;
 

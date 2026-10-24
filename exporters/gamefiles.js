@@ -25,18 +25,19 @@
 // are converted and uploaded again (state/gamefiles.json); files the game removed are removed.
 //
 //   HF_TOKEN=... node exporters/gamefiles.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node exporters/gamefiles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/gamefiles.js   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("../lib/hf");
 const kv3 = require("../lib/kv3");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { parse, decode } = require("../lib/keyvalues");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/gamefiles";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
-const DATASET = process.env.HF_DATA_REPO || "dota2-data";
+const DATASET = DATASETS.data;
 // Raised when the files written change, so a game version already exported is exported again
 const VERSION = 4;
 const STATE_FILE = "state/gamefiles.json";
@@ -168,17 +169,16 @@ function convertCompiled(files, out) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
-  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node exporters/gamefiles.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node exporters/gamefiles.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment');
     process.exit(1);
   }
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { files: {} };
   // A new version of this script goes over the game again (its new kinds of files), keeping what is
   // done

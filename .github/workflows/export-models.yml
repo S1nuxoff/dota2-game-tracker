@@ -50,7 +50,10 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           EXPORT_STEPS: ${{ inputs.steps }}
-        run: node export.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+          # The Steam login only in the environment, never on the command line (lib/source.js)
+          STEAM_USERNAME: ${{ secrets.USERNAME }}
+          STEAM_PASSWORD: ${{ secrets.PASSWORD }}
+        run: node export.js
       # The state files go back to main; another run may have pushed meanwhile, so this one
       # lands on top of it
       - name: Commit & push state
@@ -114,7 +117,9 @@ jobs:
       - name: Export scenes
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/scenes.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' --max-minutes 300
+          STEAM_USERNAME: ${{ secrets.USERNAME }}
+          STEAM_PASSWORD: ${{ secrets.PASSWORD }}
+        run: node exporters/scenes.js --max-minutes 300
       # Only state/scenes.json, on top of whatever the other job pushed meanwhile
       - name: Commit & push state
         if: success() || failure()

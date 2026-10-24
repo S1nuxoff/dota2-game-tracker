@@ -12,13 +12,14 @@
 // Runs only when the game changed (state/names.json).
 //
 //   HF_TOKEN=... node exporters/names.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node exporters/names.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/names.js   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { parse } = require("../lib/keyvalues");
 const { loadItemsGame } = require("../lib/itemsgame");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/names";
 const STATE_FILE = "state/names.json";
@@ -43,15 +44,14 @@ const modelPath = (model) => model.toLowerCase().replace(/\.vmdl$/, ".glb");
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
-  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node exporters/names.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node exporters/names.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment');
     process.exit(1);
   }
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === VERSION) {
     console.log(`Names of manifest ${source.manifestId} are already made.`);
@@ -144,7 +144,7 @@ async function main() {
     fs.writeFileSync(file, JSON.stringify(Object.fromEntries(Object.entries(table).sort(([a], [b]) => (a < b ? -1 : 1)))));
     return file;
   };
-  const files = { "dota2-images": write("dota2-images", images), "dota2-models": write("dota2-models", models) };
+  const files = { [DATASETS.images]: write(DATASETS.images, images), [DATASETS.models]: write(DATASETS.models, models) };
   if (upload) {
     for (const [dataset, file] of Object.entries(files)) {
       const repo = await hf.prepareRepo(process.env.HF_TOKEN, dataset);

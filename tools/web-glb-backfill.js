@@ -11,6 +11,7 @@ const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("../lib/hf");
 const { webGlb } = require("../lib/web-glb");
+const { DATASETS } = require("../lib/datasets");
 
 const outDir = "./temp/web-glb";
 const PARALLEL = 4;
@@ -25,7 +26,7 @@ async function main() {
   }
   const limitAt = process.argv.indexOf("--limit");
   const limit = limitAt > 0 ? Number(process.argv[limitAt + 1]) : Infinity;
-  const repo = await hf.prepareRepo(accessToken, process.env.HF_REPO);
+  const repo = await hf.prepareRepo(accessToken, DATASETS.models);
   const base = `https://huggingface.co/datasets/${repo.name}/resolve/main/`;
 
   const folderAt = process.argv.indexOf("--folder");

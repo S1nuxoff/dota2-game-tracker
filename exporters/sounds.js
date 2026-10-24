@@ -4,7 +4,7 @@
 // converted and uploaded again (state/sounds.json keeps their CRCs).
 //
 //   HF_TOKEN=... node exporters/sounds.js --game "<...>/dota 2 beta/game/dota"
-//   HF_TOKEN=... node exporters/sounds.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/sounds.js   (GitHub Actions)
 //
 // Uploads to the <user>/dota2-sounds dataset: sounds/...mp3 or .wav and soundevents.json, and the
 // voice lines' phonemes (phonemes.js). --phonemes: the phonemes of every folder again, not only
@@ -13,8 +13,9 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { sentenceOf, ctrlSentences, phonemeClasses, writePhonemes, FOLDER_FILE, CLASSES_FILE } = require("../lib/phonemes");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/sounds";
 const STATE_FILE = "state/sounds.json";
@@ -75,18 +76,17 @@ function parseSoundEvents(text, events, soundPaths) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const accessToken = process.env.HF_TOKEN;
-  if ((!game && !password) || !accessToken) {
-    console.error('Usage: HF_TOKEN=... node exporters/sounds.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+  if ((!game && !steamLogin()) || !accessToken) {
+    console.error('Usage: HF_TOKEN=... node exporters/sounds.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   const { vpkDir } = source;
 
-  const repo = await hf.prepareRepo(accessToken, process.env.HF_SOUNDS_REPO || "dota2-sounds");
+  const repo = await hf.prepareRepo(accessToken, DATASETS.sounds);
   console.log(`Dataset: https://huggingface.co/datasets/${repo.name}`);
 
   // --force: everything again, as on the first run

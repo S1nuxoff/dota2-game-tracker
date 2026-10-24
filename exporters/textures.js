@@ -6,12 +6,13 @@
 // workings as images.js: only what changed (state/textures.json), batches sent as they are made.
 //
 //   HF_TOKEN=... node exporters/textures.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force] [--limit N]
-//   HF_TOKEN=... node exporters/textures.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/textures.js   (GitHub Actions)
 const { run, cli } = require("./images");
+const { DATASETS } = require("../lib/datasets");
 
 const TEXTURES = {
   label: "textures",
-  dataset: process.env.HF_TEXTURES_REPO || "dota2-textures",
+  dataset: DATASETS.textures,
   stateFile: "state/textures.json",
   temp: "./temp/textures",
   // Every texture but the interface's pictures (dota2-images)

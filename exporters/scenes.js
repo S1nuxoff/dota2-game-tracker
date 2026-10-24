@@ -4,7 +4,7 @@
 // the SHA-1 of each package).
 //
 //   HF_TOKEN=... node exporters/scenes.js --game "<...>/dota 2 beta/game/dota" [--only mvp] [--limit N] [--max-minutes N] [--no-upload] [--info]
-//   HF_TOKEN=... node exporters/scenes.js <STEAM USERNAME> <STEAM PASSWORD> [--max-minutes N]   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/scenes.js [--max-minutes N]   (GitHub Actions)
 //   --info reads the lights and cameras of the scenes already exported again and exports nothing
 //   (local install; --only limits it too)
 //   --max-minutes stops starting new scenes after that long; the rest go next time
@@ -18,10 +18,11 @@ const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const vpk = require("vpk");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { localSource, steamSource, steamLogin } = require("../lib/source");
 const { writeVpk } = require("../lib/vpk-writer");
 const { externalRefs } = require("../lib/resource");
 const kv3 = require("../lib/kv3");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/scenes";
 const STATE_FILE = "state/scenes.json";
@@ -412,17 +413,16 @@ function refsOf(buffer) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && !["--game", "--only", "--limit", "--max-minutes"].includes(args[index - 1]));
   const only = argValue("--only");
   const limit = Number(argValue("--limit")) || Infinity;
   const maxMinutes = Number(argValue("--max-minutes")) || Infinity;
   const upload = !process.argv.includes("--no-upload");
-  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node exporters/scenes.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD> [--only <folder>] [--limit N] [--max-minutes N] [--no-upload] [--info]');
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... node exporters/scenes.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment [--only <folder>] [--limit N] [--max-minutes N] [--no-upload] [--info]');
     process.exit(1);
   }
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = game ? localSource(game) : await steamSource(temp);
 
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { scenes: {} };
   // The map packages, loose files of the game (from a local install or Steam's depots), by the
@@ -465,7 +465,7 @@ async function main() {
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
   }
 
-  const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_MAPS_REPO || "dota2-maps") : null;
+  const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, DATASETS.maps) : null;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
   const started = Date.now();
   // Scenes go up a batch at a time, one commit each: the Hub takes 128 commits an hour to a

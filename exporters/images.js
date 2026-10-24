@@ -11,12 +11,13 @@
 // each, so a stopped run goes on where it was.
 //
 //   HF_TOKEN=... node exporters/images.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force] [--limit N]
-//   HF_TOKEN=... node exporters/images.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/images.js   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
+const { DATASETS } = require("../lib/datasets");
 
 // The folder of the run in progress (set by run())
 let temp = "./temp/images";
@@ -30,7 +31,7 @@ const PARALLEL_COMMITS = 3;
 // What this script exports; textures.js runs the same with its own
 const PICTURES = {
   label: "pictures",
-  dataset: process.env.HF_IMAGES_REPO || "dota2-images",
+  dataset: DATASETS.images,
   stateFile: "state/images.json",
   temp: "./temp/images",
   files: /^panorama\/images\/.+\.(vtex_c|vsvg_c|png)$/,
@@ -162,19 +163,16 @@ async function run(kind) {
   const STATE_FILE = kind.stateFile;
   const game = argValue("--game");
   const limit = Number(argValue("--limit")) || Infinity;
-  const [username, password] = process.argv
-    .slice(2)
-    .filter((arg, index, args) => !arg.startsWith("--") && !["--game", "--limit"].includes(args[index - 1]));
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
-  if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error(`Usage: HF_TOKEN=... node ${path.basename(process.argv[1])} --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>`);
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error(`Usage: HF_TOKEN=... node ${path.basename(process.argv[1])} --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment`);
     process.exit(1);
   }
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   let state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (state.version !== VERSION) {
     state = { files: {} };

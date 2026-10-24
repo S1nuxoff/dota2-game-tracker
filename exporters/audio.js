@@ -15,7 +15,7 @@
 //
 //   abilitysounds.json        (data) the sounds and voice lines of each hero's abilities
 //
-//   HF_TOKEN=... node exporters/audio.js <steam user> <password>            (in GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/audio.js            (in GitHub Actions)
 //   HF_TOKEN=... node exporters/audio.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
 //
 // Runs only when the game changed since the last run (state/audio.json).
@@ -23,9 +23,10 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("../lib/hf");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { parse } = require("../lib/keyvalues");
 const kv3 = require("../lib/kv3");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/audio";
 const STATE_FILE = "state/audio.json";
@@ -116,15 +117,14 @@ function animationSounds(text) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
-  if ((!game && !(username && password)) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node exporters/audio.js <steam user> <password> | --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]');
+  if ((!game && !steamLogin()) || (upload && !process.env.HF_TOKEN)) {
+    console.error('Usage: HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/audio.js | --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   const { vpkDir } = source;
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   // Each sound by the path it has in the sounds dataset, MP3 or WAV, so the site asks for the
@@ -427,7 +427,7 @@ async function main() {
   if (upload) {
     const token = process.env.HF_TOKEN;
     await hf.uploadSiteData(token, data, "Update voice lines and animation sounds");
-    await hf.upload(await hf.prepareRepo(token, "dota2-sounds"), token, [soundEvents], "Update sound events");
+    await hf.upload(await hf.prepareRepo(token, DATASETS.sounds), token, [soundEvents], "Update sound events");
   } else {
     console.log(`Written to ${out}`);
   }

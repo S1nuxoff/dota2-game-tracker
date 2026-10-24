@@ -4,7 +4,7 @@
 // uploaded again (state/particles.json keeps the CRCs and what each system refers to).
 //
 //   HF_TOKEN=... node exporters/particles.js --game "<...>/dota 2 beta/game/dota"
-//   HF_TOKEN=... node exporters/particles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... STEAM_USERNAME=... STEAM_PASSWORD=... node exporters/particles.js   (GitHub Actions)
 //
 // Uploads to the dota2-particles dataset (the particles/ paths) and the models dataset (models/):
 //   particles/<path>.json                    a system (particles/<path>.vpcf in the game), as KV3 gives it
@@ -40,10 +40,11 @@ const readline = require("readline");
 const sharp = require("sharp");
 const hf = require("../lib/hf");
 const kv3 = require("../lib/kv3");
-const { openSource } = require("../lib/source");
+const { openSource, steamLogin } = require("../lib/source");
 const { loadItemsGame } = require("../lib/itemsgame");
 const { parse } = require("../lib/keyvalues");
 const { exportSchema } = require("../lib/particle-schema");
+const { DATASETS } = require("../lib/datasets");
 
 const temp = "./temp/particles";
 const STATE_FILE = "state/particles.json";
@@ -666,21 +667,20 @@ async function buildTexture(out, texture, dist, cells) {
 
 async function main() {
   const game = argValue("--game");
-  const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const accessToken = process.env.HF_TOKEN;
   const upload = !process.argv.includes("--no-upload");
-  if ((!game && !password) || (upload && !accessToken)) {
-    console.error('Usage: HF_TOKEN=... node exporters/particles.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD> [--no-upload]');
+  if ((!game && !steamLogin()) || (upload && !accessToken)) {
+    console.error('Usage: HF_TOKEN=... node exporters/particles.js --game "<...>/dota 2 beta/game/dota" | STEAM_USERNAME, STEAM_PASSWORD in the environment [--no-upload]');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = await openSource(game, username, password);
+  const source = await openSource(game);
   const { vpkDir } = source;
   // The particle files to dota2-particles, what belongs to a model (sequences, attachments) next to
   // the model in the models dataset
-  const repo = upload ? await hf.prepareRepo(accessToken, process.env.HF_REPO) : null;
-  const particlesRepo = upload ? await hf.prepareRepo(accessToken, process.env.HF_PARTICLES_REPO || "dota2-particles") : null;
+  const repo = upload ? await hf.prepareRepo(accessToken, DATASETS.models) : null;
+  const particlesRepo = upload ? await hf.prepareRepo(accessToken, DATASETS.particles) : null;
   const dist = path.join(temp, "dist");
 
   // --force: everything again, as on the first run

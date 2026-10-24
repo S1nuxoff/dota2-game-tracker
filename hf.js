@@ -160,7 +160,7 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
 
 // HF_STAGE_DIR: for a big upload, files are not sent but put in <HF_STAGE_DIR>/<dataset>/<path>
 // (hard links, so at once and without taking space), and stage-upload.js sends each folder with
-// `hf upload-large-folder`: many connections and large commits, many times faster. The exporters'
+// `hf upload`: many connections and large commits, many times faster. The exporters'
 // state files then say "uploaded" before the files are: run stage-upload.js until it finishes.
 function stage(repo, files) {
   const root = path.join(process.env.HF_STAGE_DIR, repo.name.split("/").pop());

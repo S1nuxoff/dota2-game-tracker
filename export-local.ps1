@@ -72,7 +72,8 @@ $steps = @(
   @{ Name = "Particles"; Args = @("particles.js", "--game", $Game) + $force },
   @{ Name = "Voice lines and sound lists"; Args = @("audio.js", "--game", $Game) + $force },
   @{ Name = "Scenes"; Args = @("scenes.js", "--game", $Game) + $force },
-  @{ Name = "Models the particles draw"; Args = @("index.js", "--game", $Game) }
+  @{ Name = "Models the particles draw"; Args = @("index.js", "--game", $Game) },
+  @{ Name = "Lists of the datasets' files"; Args = @("files-list.js") }
 )
 $results = @()
 $started = Get-Date
@@ -87,7 +88,7 @@ foreach ($step in $steps) {
 }
 
 # The state files say what is uploaded; kept in git (pushed when you choose)
-$stateFiles = @("state.json", "data-state.json", "gamefiles-state.json", "images-state.json", "videos-state.json", "sounds-state.json", "audio-state.json", "scenes-state.json", "particles-state.json", "particle-models.json") | Where-Object { Test-Path -LiteralPath $_ }
+$stateFiles = @("state.json", "data-state.json", "gamefiles-state.json", "images-state.json", "videos-state.json", "sounds-state.json", "audio-state.json", "scenes-state.json", "particles-state.json", "particle-models.json", "files-state.json") | Where-Object { Test-Path -LiteralPath $_ }
 git add -- $stateFiles
 git diff --cached --quiet
 if ($LASTEXITCODE -ne 0) {

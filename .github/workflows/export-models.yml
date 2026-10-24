@@ -98,6 +98,13 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node audio.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # A list of every file at the root of each dataset (files.json), for pages that show a whole
+      # dataset; only for datasets that changed since their list
+      - name: List the datasets' files
+        if: success() || failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node files-list.js
       # The state files go back to main; another run may have pushed meanwhile, so this one
       # lands on top of it
       - name: Commit & push state
@@ -105,7 +112,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          files=$(ls state.json data-state.json gamefiles-state.json images-state.json videos-state.json sounds-state.json audio-state.json particles-state.json particle-models.json 2>/dev/null)
+          files=$(ls state.json data-state.json gamefiles-state.json images-state.json videos-state.json sounds-state.json audio-state.json particles-state.json particle-models.json files-state.json 2>/dev/null)
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"

@@ -234,12 +234,19 @@ async function uploadIndex(repo, accessToken, items, heroes, state, personas) {
   const exportedFile = `${temp}/exported.json`;
   fs.writeFileSync(indexFile, JSON.stringify(index));
   fs.writeFileSync(exportedFile, JSON.stringify(index.exported));
-  await hf.upload(
-    repo,
+  // In dota2-data under dotadex/
+  await hf.uploadSiteData(
     accessToken,
     [
       { path: "index.json", file: indexFile },
       { path: "exported.json", file: exportedFile },
+    ],
+    "Update index"
+  );
+  await hf.upload(
+    repo,
+    accessToken,
+    [
       // The models whose cloth, hair and beards move (cloth.js)
       clothList(state, temp),
       // The models whose faces move as they speak (flex.js)

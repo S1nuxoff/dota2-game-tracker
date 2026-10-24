@@ -5,7 +5,8 @@
 //   HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
 //   HF_TOKEN=... node data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads to the dataset: data/*.json, data/i18n/<language>.json, images/...png, videos/heroes/...webm.
+// Uploads data/*.json and data/i18n/<language>.json to dota2-data under dotadex/, and images/...png,
+// videos/heroes/...webm to the models dataset.
 // Nothing is done when the game did not update since the last run (data-state.json),
 // and only new or changed images are converted again.
 const fs = require("fs");
@@ -186,7 +187,8 @@ async function main() {
 
   if (upload) {
     const repo = await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_REPO);
-    await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update game data");
+    await hf.uploadSiteData(process.env.HF_TOKEN, uploads.filter((entry) => hf.isSiteData(entry.path)), "Update game data");
+    await hf.upload(repo, process.env.HF_TOKEN, uploads.filter((entry) => !hf.isSiteData(entry.path)), "Update game data pictures");
     await hf.upload(repo, process.env.HF_TOKEN, images.files, "Update portraits and icons");
     await hf.upload(repo, process.env.HF_TOKEN, videos.files, "Update hero animations");
     fs.writeFileSync(STATE_FILE, JSON.stringify({ version: DATA_VERSION, manifest: source.manifestId, images: images.crcs, videos: videos.shas }));

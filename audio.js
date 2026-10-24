@@ -1,4 +1,5 @@
-// What Dotadex needs to play the game's sounds, from the game files:
+// What Dotadex needs to play the game's sounds, from the game files (the data/ files to dota2-data
+// under dotadex/, soundevents.json to the sounds dataset):
 //   data/animsounds.json      sounds heroes' animations play: { model: { animation: [[cycle, event], ...] } }
 //   data/voices/<hero>.json   a hero's voice lines: [{ event, files }]
 //   data/portrait-speech.json what heroes say as they come onto their page: the response rules
@@ -425,7 +426,7 @@ async function main() {
   const soundEvents = write("soundevents.json", events);
   if (upload) {
     const token = process.env.HF_TOKEN;
-    await hf.upload(await hf.prepareRepo(token, process.env.HF_REPO), token, data, "Update voice lines and animation sounds");
+    await hf.uploadSiteData(token, data, "Update voice lines and animation sounds");
     await hf.upload(await hf.prepareRepo(token, "dota2-sounds"), token, [soundEvents], "Update sound events");
   } else {
     console.log(`Written to ${out}`);

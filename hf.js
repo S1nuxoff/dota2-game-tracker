@@ -25,7 +25,18 @@ async function prepareRepo(accessToken, name = "dota2-models") {
 // gzipped copy next to it (<file>.json.gz), uploaded with it: Hugging Face serves files
 // uncompressed, and these are what a page loads first (about 7 MB, a tenth of that gzipped).
 // The sounds' phonemes too (phonemes.js), a few hundred KB a hero.
-const gzippedJson = (datasetPath) => /^([^/]+\/)?[^/]+\.json$|^data\/i18n\/[^/]+\.json$|\/phonemes\.json$/.test(datasetPath);
+const gzippedJson = (datasetPath) => /^(dotadex\/)?([^/]+\/)?[^/]+\.json$|^(dotadex\/)?data\/i18n\/[^/]+\.json$|\/phonemes\.json$/.test(datasetPath);
+
+// The files made for Dotadex (index.json, exported.json, data/...) live in the dota2-data dataset
+// under dotadex/, next to the game's own files they are made from
+const SITE_DATA_REPO = process.env.HF_DATA_REPO || "dota2-data";
+const isSiteData = (datasetPath) => /^(data\/|index\.json$|exported\.json$)/.test(datasetPath);
+
+// Uploads files given by their path under dotadex/ (data/heroes.json, index.json)
+async function uploadSiteData(accessToken, files, title) {
+  const repo = await prepareRepo(accessToken, SITE_DATA_REPO);
+  await upload(repo, accessToken, files.map((entry) => ({ ...entry, path: `dotadex/${entry.path}` })), title);
+}
 
 // files: [{ path: path in the dataset, file: local file }]; gzip: false leaves out the gzipped
 // copies (the game's own files in dota2-data, which pages do not load). maxBytes: a smaller commit
@@ -113,4 +124,4 @@ async function filesIn(repo, accessToken, folder, pattern) {
   return paths;
 }
 
-module.exports = { prepareRepo, upload, remove, soundPaths, filesIn, gzippedJson };
+module.exports = { prepareRepo, upload, uploadSiteData, isSiteData, remove, soundPaths, filesIn, gzippedJson };

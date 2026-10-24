@@ -98,6 +98,13 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node audio.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # The names people know for the pictures and models (names.json in dota2-images and
+      # dota2-models), from the game's English texts; only after a game update
+      - name: Name the files
+        if: success() || failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node names.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # A list of every file at the root of each dataset (files.json), for pages that show a whole
       # dataset; only for datasets that changed since their list
       - name: List the datasets' files
@@ -112,7 +119,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          files=$(ls state.json data-state.json gamefiles-state.json images-state.json videos-state.json sounds-state.json audio-state.json particles-state.json particle-models.json files-state.json 2>/dev/null)
+          files=$(ls state.json data-state.json gamefiles-state.json images-state.json videos-state.json sounds-state.json audio-state.json particles-state.json particle-models.json files-state.json names-state.json 2>/dev/null)
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"

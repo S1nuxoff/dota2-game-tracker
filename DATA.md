@@ -10,8 +10,8 @@ State on 2026-10-24: four Hugging Face datasets under `Sqls1/`, the image tracke
 
 | Source | Written by | Holds |
 |---|---|---|
-| HF `dota2-data` | this repo: `gamefiles.js` | every script and localization of the game as JSON, at its game path |
-| HF `dota2-models` | this repo: `index.js`, `data.js`, `particles.js`, `audio.js` | models, game data for the site, panorama pictures the site uses, particles |
+| HF `dota2-data` | this repo: `gamefiles.js`; `index.js`, `data.js`, `audio.js` for `dotadex/` | every script and localization of the game as JSON, at its game path; under `dotadex/` the files made for the site |
+| HF `dota2-models` | this repo: `index.js`, `data.js`, `particles.js` | models, panorama pictures the site uses, particles |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
 | HF `dota2-scenes` | this repo: `scenes.js` | scenes and maps as glb |
 | GitHub `dota2-image-tracker` `static/` | dota2-image-tracker | ~20k panorama pictures as PNG |
@@ -35,12 +35,25 @@ changed, against `gamefiles-state.json`). No gzipped copies: pages do not load t
 
 The exporters of this repo read items_game from the game itself (`itemsgame.js`, the same shape).
 
+### dotadex/: the files made for the site
+
+Made by this repo's exporters out of the game files, in the shape the site reads; each JSON at most
+one folder deep under `dotadex/` (and `data/i18n/`) has a `.json.gz` copy. The site reads them
+from `DOTADEX_BASE`.
+
+| Path | Script | What it is | Read by (site) |
+|---|---|---|---|
+| `dotadex/index.json` | `index.js` | which models show each hero and item: `{ heroes: { key: glb }, items: { id: { name, models } } }` | `scripts/build-catalog.mjs`, `src/catalog.js` |
+| `dotadex/exported.json` | `index.js` | the models exported so far | `src/catalog.js` |
+| `dotadex/data/heroes.json`, `abilities.json`, `items.json`, `neutral_items.json`, `shops.json`, `treasures.json` | `data.js` | heroes, abilities, shop items, treasure chests | `src/gamedata.js`, `scripts/build-catalog.mjs` |
+| `dotadex/data/armory.json`, `emoticons.json`, `cursors.json`, `loadout_backgrounds.json`, `loadout_portraits.json`, `manifest.json` | `data.js` | the Armory's categories, emoticons, cursor packs, hero page backgrounds and portrait setups, the game version | `src/components/*`, `src/App.jsx` |
+| `dotadex/data/i18n/<language>.json` | `data.js` | every text the site shows, per language | `src/gamedata.js` |
+| `dotadex/data/animsounds.json`, `animsound-events.json`, `abilitysounds.json`, `voices/<hero>.json`, `portrait-speech.json`, `audio-library.json`, `ui-sounds.json`, `chat-wheel.json` | `audio.js` | which sounds play when: animations, abilities, voice lines, music and announcer packs, the menu, the chat wheel | `src/components/Viewer.jsx`, `Voice.jsx`, `HeroPage.jsx`, `ChatWheel*.jsx`, `ItemDetails.jsx`, `src/uiSounds.js` |
+
 ## dota2-models
 
 | Path | Script | What it is | Read by (site) |
 |---|---|---|---|
-| `index.json` | `index.js` | which models show each hero and item: `{ heroes: { key: glb }, items: { id: { name, models } } }` | `scripts/build-catalog.mjs`, `src/catalog.js`, `src/viewer/dotaMaterial.js` |
-| `exported.json` | `index.js` | the models exported so far | `src/catalog.js` |
 | `models/<path>.glb`, `.glb.gz` | `index.js`, `web-glb.js` | a model with its textures and animations; `.gz` is the site's lighter copy | `src/viewer/stage.js` |
 | `models/<path>.skins.json`, `textures/` | `skins.js` | material variants (styles, golden versions) and their textures | `src/viewer/stage.js` |
 | `models/<path>.sequences.json` | `particles.js` | a model's sequences, activities, and the effects and speech its animations start | `src/viewer/stage.js`, `src/viewer/particles/manager.js` |
@@ -48,10 +61,6 @@ The exporters of this repo read items_game from the game itself (`itemsgame.js`,
 | `models/<path>.cloth.json`, `models/cloth.json` | `cloth.js` | cloth, hair and beard simulation; the list | `src/viewer/cloth.js` |
 | `materials/dynamic.json` | `materials.js` | materials' per-frame parameters | `src/viewer/materialPrograms.js` |
 | `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `index.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
-| `data/heroes.json`, `abilities.json`, `items.json`, `neutral_items.json`, `shops.json`, `treasures.json` | `data.js` | heroes, abilities, shop items, treasure chests | `src/gamedata.js`, `scripts/build-catalog.mjs` |
-| `data/armory.json`, `emoticons.json`, `cursors.json`, `loadout_backgrounds.json`, `loadout_portraits.json`, `manifest.json` | `data.js` | the Armory's categories, emoticons, cursor packs, hero page backgrounds and portrait setups, the game version | `src/components/*`, `src/App.jsx` |
-| `data/i18n/<language>.json` | `data.js` | every text the site shows, per language | `src/gamedata.js` |
-| `data/animsounds.json`, `animsound-events.json`, `abilitysounds.json`, `voices/<hero>.json`, `portrait-speech.json`, `audio-library.json`, `ui-sounds.json`, `chat-wheel.json` | `audio.js` | which sounds play when: animations, abilities, voice lines, music and announcer packs, the menu, the chat wheel | `src/components/Viewer.jsx`, `Voice.jsx`, `HeroPage.jsx`, `ChatWheel*.jsx`, `ItemDetails.jsx`, `src/uiSounds.js` |
 | `images/...png`, `.svg`, `.webp`, `images/heroes/selection_atlas.*`, `images/cursors/` | `data.js` | panorama pictures in `IMAGE_FOLDERS`, the hero grid atlas, cursors | most components (`imageUrl` in `src/gamedata.js`) |
 | `videos/heroes/` | `data.js` | the heroes' animated portraits | `src/components/HeroGrid.jsx` |
 | `particles/<path>.json`, `particles/bundles/`, `particles/textures/`, `.vsnap.json` | `particles.js` | particle systems, effects with all they spawn, their textures, snapshots | `src/viewer/particles/` |

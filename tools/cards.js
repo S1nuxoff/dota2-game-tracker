@@ -11,7 +11,7 @@ const hf = require("../lib/hf");
 
 const OWNER = "Sqls1";
 const SITE = "https://s1nuxoff.github.io/Dotadex/";
-const TRACKER = "https://github.com/S1nuxoff/dota2-model-tracker";
+const TRACKER = "https://github.com/S1nuxoff/dota2-game-tracker";
 const S2V = "https://github.com/ValveResourceFormat/ValveResourceFormat";
 const temp = "./temp/cards";
 

@@ -20,7 +20,13 @@ async function main() {
   const accessToken = process.env.HF_TOKEN;
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
-  const names = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
+  // Datasets named on the command line only when run on its own: under export.js the arguments are
+  // the Steam login, never to become a dataset's name. Only this tracker's datasets, never a new one.
+  const names = require.main === module ? process.argv.slice(2).filter((arg) => !arg.startsWith("--")) : [];
+  const unknown = names.filter((name) => !DATASETS.includes(name));
+  if (unknown.length) {
+    throw new Error(`Not a dataset of this tracker (${unknown.length} given): ${DATASETS.join(", ")}`);
+  }
   if (!accessToken) {
     console.error("Usage: HF_TOKEN=... node exporters/files-list.js [dataset ...] [--no-upload] [--force]");
     process.exit(1);

@@ -3,7 +3,7 @@
 // sounds and effects instead of folders. Written to dota2-data as catalog/catalog.json (+ .gz):
 //   {
 //     updated,
-//     heroes: [{ id, name, model, tokens, abilities, personas: [{ id, name, model }], items: [item id] }],
+//     heroes: [{ id, name, model, look, tokens, abilities, personas: [{ id, name, model, look }], items: [item id] }],
 //     items: { id: { name, prefab, slot, type, rarity, heroes, set, icon, refs: { <dataset>: [prefix] } } },
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
@@ -198,7 +198,17 @@ async function main() {
       }
     }
     const top = [...folders.entries()].filter(([, n]) => n >= Math.max(3, own.length / 4)).map(([f]) => f);
-    const personas = Object.values(hero.Persona || {}).map((p) => ({
+    // The models the hero wears by default (its default items), and each persona's (slots <slot>_persona_<n>);
+    // summoned units are not worn
+    const lookOf = (n) =>
+      own
+        .map(([itemId]) => itemsGame.items[itemId])
+        .filter((it) => it.prefab === "default_item" && it.model_player && !(it.item_slot || "").startsWith("summon"))
+        .filter((it) => (n ? (it.item_slot || "").endsWith(`_persona_${n}`) : !/_persona_\d+$/.test(it.item_slot || "")))
+        .map((it) => glbOf(it.model_player))
+        .filter(Boolean);
+    const personas = Object.entries(hero.Persona || {}).map(([n, p]) => ({
+      look: lookOf(n),
       id: p.name,
       name: imageNames[`panorama/images/heroes/${p.name}_png.png`]?.[0] || p.name,
       folder: folderOf(p.Model),
@@ -214,7 +224,8 @@ async function main() {
       model: glbOf(hero.Model),
       tokens,
       abilities,
-      personas: personas.map(({ id: pid, name: pname, model }) => ({ id: pid, name: pname, model })),
+      look: lookOf(""),
+      personas: personas.map(({ id: pid, name: pname, model, look }) => ({ id: pid, name: pname, model, look })),
       items: own.map(([itemId]) => itemId),
     });
   }

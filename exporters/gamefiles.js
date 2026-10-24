@@ -16,6 +16,10 @@
 //                      game keeps it (materials/, models/.../materials, maps/...)
 //   soundevents/<path>.vsndevts.json  every sound event file: each event's files, volume, pitch, layers
 //   resource/<name>.otf, .ttf        Dota's own fonts (Radiance; .vfont_c decompiled to TrueType)
+//   patchnotes/patchnotes.vdpn.json  the in-game patch notes; novels/<event>.vdvn.json the events'
+//                      visual novels; scenes/<hero>/<line>.vcd.json the choreography of every voice
+//                      line (face and gestures), scenes/<hero>.vcdlist the lists; soundstacks/ and
+//                      sounds/graphs/ the sound mixer; the files at the game's root and in cfg/
 // Other pictures and binary files are left out, and the Windows fonts in vgui/fonts (Microsoft's). The game's own
 // files win over core's, as the game reads them. Only files whose CRC changed since the last run
 // are converted and uploaded again (state/gamefiles.json); files the game removed are removed.
@@ -34,11 +38,13 @@ const temp = "./temp/gamefiles";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const DATASET = process.env.HF_DATA_REPO || "dota2-data";
 // Raised when the files written change, so a game version already exported is exported again
-const VERSION = 3;
+const VERSION = 4;
 const STATE_FILE = "state/gamefiles.json";
 
-// and every material (.vmat_c, wherever it is) and sound event file (soundevents/)
-const FOLDERS = /^(scripts|resource|panorama)\/|\.vmat_c$|^soundevents\/.+\.vsndevts_c$/;
+// and every material (.vmat_c, wherever it is) and sound event file (soundevents/), the files at the
+// game's root and in cfg/, the patch notes, the events' visual novels, the choreography (scenes/: what
+// a hero's face and body do with a voice line) and the sound mixer (soundstacks/, sounds/graphs/)
+const FOLDERS = /^(scripts|resource|panorama|cfg|patchnotes|novels|scenes|soundstacks|sounds\/graphs)\/|^[^/]+$|\.vmat_c$|^soundevents\/.+\.vsndevts_c$/;
 // The interface's pictures and videos are in their own datasets (images.js, videos.js)
 const ELSEWHERE = /^panorama\/(images|videos)\//;
 // The interface's layouts, styles and scripts, decompiled to text
@@ -49,10 +55,10 @@ const FONTS = /^resource\/[^/]+\.(otf|vfont)$/;
 const KEYVALUES = /\.(txt|res|vdf|gameevents|lst|caverndef|eventactions|eventdef|eventincludes|seasondef)$/;
 // Text kept as it is
 const TEXT = /\.(json|htm|html|styles|cfg|csv|xml|css)$/;
-// Compiled resources Source2Viewer turns into KV3 text
-const COMPILED = /\.(vdata|vrr|herolist|vcd|vrman|vmat|vsndevts)_c$/;
+// Compiled resources Source2Viewer turns into KV3 text (patch notes and novels into KeyValues)
+const COMPILED = /\.(vdata|vrr|herolist|vcd|vcdlist|vrman|vmat|vsndevts|vdpn|vdvn|vsndstck|vdsp|vmix)_c$/;
 // Not text: left out on purpose (anything else is reported, so a new kind is noticed)
-const BINARY = /\.(png|jpg|tga|psd|bmp|otf|ttf|vfont|dmx|dem|bin|vtex_c|vpcf_c|vsnd_c|vmdl_c)$/;
+const BINARY = /\.(png|jpg|tga|psd|bmp|otf|ttf|vfont|dmx|dem|bin|fow|vtex_c|vpcf_c|vsnd_c|vmdl_c)$/;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -90,7 +96,9 @@ function convertText(file, buffer, out) {
   }
   const local = path.join(out, target);
   fs.mkdirSync(path.dirname(local), { recursive: true });
-  fs.writeFileSync(local, content);
+  // A file that only has a text's name (stringtokendatabase.txt is binary) is kept byte for byte
+  const binary = target === file && /[\x00-\x08\x0e-\x1f]/.test(text);
+  fs.writeFileSync(local, binary ? buffer : content);
   return { path: target, file: local };
 }
 
@@ -116,7 +124,8 @@ function convertCompiled(files, out) {
     // The interface's files and fonts come out as text or TrueType under their own extension, kept
     // as they are
     const kept = UI.test(file) || FONTS.test(file) ? datasetPath(file) : null;
-    const written = path.join(decompiled, kept ?? file.replace(/_c$/, ""));
+    // Source2Viewer writes a DSP preset (.vdsp_c) as .dat
+    const written = path.join(decompiled, kept ?? file.replace(/\.vdsp_c$/, ".dat").replace(/_c$/, ""));
     if (!fs.existsSync(written)) {
       failed.push(file);
       continue;
@@ -132,7 +141,10 @@ function convertCompiled(files, out) {
     // KV3 (most), or KeyValues as a material's source (.vmat: "Layer0" { ... }), else the text itself
     let target = `${file.replace(/_c$/, "")}.json`;
     let content;
-    if (text.trimStart().startsWith("<!-- kv3")) {
+    if (file.endsWith(".vcdlist_c")) {
+      // A list of choreography files, one a line: kept as text
+      content = null;
+    } else if (text.trimStart().startsWith("<!-- kv3")) {
       try {
         content = JSON.stringify(kv3.parse(text));
       } catch {

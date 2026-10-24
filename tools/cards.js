@@ -216,6 +216,11 @@ ${s.table}
 - **\`<path>.vmat.json\`**: every material of the game (\`materials/\`, \`models/.../materials\`, \`maps/...\`): its shader, feature flags, parameters and the textures it names (those are in [dota2-textures](${page("dota2-textures")})).
 - **\`soundevents/<file>.vsndevts.json\`**: every sound event: its sound files, volume, pitch, mix group, distance, layers (the sounds are in [dota2-sounds](${page("dota2-sounds")})).
 - **\`resource/*.otf\`, \`resource/*.ttf\`**: Dota's own fonts (Radiance, Hypatia Sans).
+- **\`patchnotes/patchnotes.vdpn.json\`**: the patch notes the game shows, every patch with its item, hero and ability changes.
+- **\`novels/<event>.vdvn.json\`**: the events' visual novels (Crownfall, Dark Carnival, ...): every act, scene and line.
+- **\`scenes/<hero>/<line>.vcd.json\`**: the choreography of every voice line: what the hero's face and gestures do while it speaks, as timed flex animations; \`scenes/<hero>.vcdlist\` lists them.
+- **\`soundstacks/\`, \`sounds/graphs/\`**: the sound mixer: operator stacks, DSP presets, mix graphs.
+- the files at the game's root and in \`cfg/\`: match modes, workshop tags, default key bindings and video settings.
 - **\`dotadex/\`**: files made from those for the [Dotadex](${SITE}) site, handy on their own: \`dotadex/data/heroes.json\`, \`abilities.json\`, \`items.json\`, \`treasures.json\` (chests and what drops from them), \`voices/<hero>.json\` (voice lines with their sound files), \`i18n/<language>.json\` (every text the site shows), and lighter pictures (\`dotadex/images/\`: loading screens and hero page backdrops at 1920 px, the hero grid in one atlas, cursor packs).
 
 Popular files:
@@ -431,7 +436,7 @@ ${footer("dota2-maps", `Converted from the game's map packages by \`scenes.js\` 
 
 // What a folder holds, for the tables
 const DESCRIBE = {
-  "dota2-data": { "scripts/": "the game's scripts", "resource/": "texts in every language, fonts", "panorama/": "the interface: layouts, styles, scripts", "dotadex/": "files made for the Dotadex site", "materials/": "materials", "models/": "models' materials", "soundevents/": "sound events", "maps/": "maps' materials" },
+  "dota2-data": { "scripts/": "the game's scripts", "resource/": "texts in every language, fonts", "panorama/": "the interface: layouts, styles, scripts", "dotadex/": "files made for the Dotadex site", "materials/": "materials", "models/": "models' materials", "soundevents/": "sound events", "maps/": "maps' materials", "scenes/": "voice lines' choreography", "patchnotes/": "patch notes", "novels/": "events' visual novels", "soundstacks/": "the sound mixer", "sounds/": "the sound mixer's graphs", "cfg/": "default settings" },
   "dota2-models": { "models/items/": "cosmetics", "models/heroes/": "heroes", "models/props_structures/": "buildings", "models/creeps/": "creeps, Roshan", "models/courier/": "couriers", "models/events/": "events", "models/particle/": "models particles draw", "models/props_gameplay/": "gameplay props", "models/props_tree/": "trees", "models/ui/": "interface models", "textures/": "material variants' textures", "materials/": "animated materials", "cubemaps/": "cube maps" },
   "dota2-images": { "panorama/images/econ/": "cosmetics' icons", "panorama/images/teamfancontent/": "team fan content", "panorama/images/events/": "events", "panorama/images/spellicons/": "ability icons", "panorama/images/emoticons/": "emoticons", "panorama/images/loadingscreens/": "loading screens", "panorama/images/heroes/": "hero portraits", "panorama/images/items/": "item icons", "panorama/images/compendium/": "compendiums", "panorama/images/hud/": "the HUD" },
   "dota2-sounds": { "sounds/vo/": "voice lines, announcers", "sounds/weapons/": "attacks, abilities", "sounds/music/": "music", "sounds/ui/": "interface", "sounds/items/": "items", "sounds/ambient/": "ambience", "sounds/teamfancontent/": "team fan content", "sounds/talentcontent/": "talent content" },

@@ -27,7 +27,7 @@ Every JSON at most one folder deep (and `data/i18n/`) has a gzipped copy `<file>
 
 ## dota2-data
 
-Every file of `scripts/` and `resource/` that is text, at its game path (`gamefiles.js`, only what
+Every file of `scripts/` and `resource/` that is text (and the kinds below), at its game path (`gamefiles.js`, only what
 changed, against `gamefiles-state.json`). No gzipped copies: pages do not load these.
 
 | Path | What it is | Read by |
@@ -37,6 +37,8 @@ changed, against `gamefiles-state.json`). No gzipped copies: pages do not load t
 | `<path>` | a text file that is not KeyValues (old VGUI `.res` with `key=value`, QC templates, `.htm`, `.styles`), as UTF-8 | |
 
 Every material is `<path>.vmat.json` (from `.vmat_c`, wherever the game keeps it: `materials/`, `models/.../materials`, `maps/...`): `{ "Layer0": { shader, F_* flags, g_* parameters, the textures it names } }`; every sound event file is `soundevents/<file>.vsndevts.json` (each event's `vsnd_files`, volume, pitch, mixgroup, distance, layers).
+
+Also, decompiled the same way: `patchnotes/patchnotes.vdpn.json` (the in-game patch notes), `novels/<event>.vdvn.json` (the events' visual novels), `scenes/<hero>/<line>.vcd.json` (each voice line's choreography: timed flex animations and gestures; `scenes/<hero>.vcdlist` the lists, as text), `soundstacks/` and `sounds/graphs/` (the sound mixer: `.vsndstck`, `.vdsp`, `.vmix`, `.vdata`), and the files at the game's root and in `cfg/` (`matchmodes.txt.json`, `cfg/dotakeys.lst`, ...; `stringtokendatabase.txt` is binary, kept byte for byte).
 
 `panorama/` holds the client's interface: layouts (`.xml`), styles (`.css`) and scripts (`.js`, TypeScript ones compiled) decompiled from `.vxml_c`, `.vcss_c`, `.vjs_c`, `.vts_c`; `resource/*.otf` and `resource/*.ttf` (from `.vfont`) are Dota's own fonts. The Windows fonts in `vgui/fonts` are left out.
 

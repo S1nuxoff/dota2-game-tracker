@@ -126,8 +126,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          # Every state file but the scenes', which the scenes job pushes
-          files=$(ls state/*.json 2>/dev/null | grep -v '^state/scenes.json$')
+          # Only the state files this run changed (or made), not the scenes' (the scenes job pushes
+          # it): a state file pushed meanwhile from elsewhere (a server, this repo's own PC) is kept
+          files=$( (git diff --name-only -- state/; git ls-files --others --exclude-standard -- state/) | grep -v '^state/scenes.json$' | sort -u)
+          if [ -z "$files" ]; then
+            echo "Nothing changed"
+            exit 0
+          fi
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"

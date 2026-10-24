@@ -44,13 +44,15 @@ async function main() {
     process.exit(1);
   }
   const force = process.argv.includes("--force");
-  const only = process.env.EXPORT_STEPS?.split(",").map((step) => step.trim()).filter(Boolean);
-  const steps = only?.length ? STEPS.filter((step) => only.includes(step)) : STEPS;
+  // Some exporters only (EXPORT_STEPS; the workflow passes it empty for all)
+  const only = (process.env.EXPORT_STEPS ?? "").split(",").map((step) => step.trim()).filter(Boolean);
+  const partial = only.length > 0;
+  const steps = partial ? STEPS.filter((step) => only.includes(step)) : STEPS;
 
   const version = await gameVersion(game, username, password);
   const code = codeKey();
   const last = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
-  if (!force && !only && version && last.manifest === version && last.code === code) {
+  if (!force && !partial && version && last.manifest === version && last.code === code) {
     console.log(`The game (manifest ${version}) and the code are as at the last full run: nothing to export.`);
     return;
   }
@@ -80,7 +82,7 @@ async function main() {
   const failed = results.filter((result) => !result.ok);
   const done = !failed.length && !results.some((result) => result.unfinished);
   // Only a full run that got through everything marks the game version and code done
-  if (done && !only) {
+  if (done && !partial) {
     fs.writeFileSync(STATE_FILE, JSON.stringify({ manifest: version, code, at: new Date().toISOString() }, null, 1));
   }
   if (failed.length) {

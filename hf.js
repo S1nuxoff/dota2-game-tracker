@@ -1,6 +1,49 @@
 const fs = require("fs");
 const zlib = require("zlib");
-const { whoAmI, repoExists, createRepo, uploadFiles, deleteFiles, listFiles } = require("@huggingface/hub");
+const { whoAmI, repoExists, createRepo, uploadFilesWithProgress, deleteFiles, listFiles } = require("@huggingface/hub");
+
+const MB = (bytes) => (bytes / 1e6).toFixed(1);
+// How often a commit's progress is printed
+const PROGRESS_EVERY_MS = 3000;
+
+// Sends one commit, printing each file as it is sent and, every few seconds, how far the commit is
+// with the speed: [#####-----]  48%  95.2 / 199.7 MB  11.3 MB/s
+async function sendCommit(params, part) {
+  const sizes = new Map(part.map(({ path, file }) => [path, fs.statSync(file).size]));
+  const total = [...sizes.values()].reduce((sum, size) => sum + size, 0);
+  const progress = new Map();
+  const reported = new Set();
+  const started = Date.now();
+  let printed = started;
+  const sent = () => [...progress].reduce((sum, [path, value]) => sum + value * sizes.get(path), 0);
+  const line = () => {
+    const bytes = sent();
+    const share = total ? bytes / total : 1;
+    const bar = "#".repeat(Math.round(share * 20)).padEnd(20, "-");
+    const speed = bytes / Math.max((Date.now() - started) / 1000, 0.001);
+    return `  [${bar}] ${String(Math.round(share * 100)).padStart(3)}%  ${MB(bytes)} / ${MB(total)} MB  ${MB(speed)} MB/s`;
+  };
+  for await (const event of uploadFilesWithProgress(params)) {
+    if (event.event !== "fileProgress") continue;
+    // Hashing comes first; only the upload counts as sent
+    if (event.state === "hashing") continue;
+    progress.set(event.path, event.progress);
+    if (event.progress >= 1 && !reported.has(event.path)) {
+      reported.add(event.path);
+      console.log(`  sent ${MB(sizes.get(event.path)).padStart(7)} MB  ${event.path}`);
+    }
+    if (Date.now() - printed >= PROGRESS_EVERY_MS) {
+      printed = Date.now();
+      console.log(line());
+    }
+  }
+  // Small text files go inside the commit itself, without progress of their own
+  for (const [path, size] of sizes) {
+    progress.set(path, 1);
+    if (!reported.has(path)) console.log(`  sent ${MB(size).padStart(7)} MB  ${path}`);
+  }
+  console.log(line());
+}
 
 // Keeps each commit to a reasonable size
 const MAX_COMMIT_BYTES = 500 * 1e6;
@@ -59,12 +102,15 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
     // Connections to the Hub drop now and then on long uploads, so retry a few times
     for (let attempt = 1; ; attempt++) {
       try {
-        await uploadFiles({
-          repo,
-          accessToken,
-          commitTitle: title,
-          files: part.map(({ path, file }) => ({ path, content: new Blob([fs.readFileSync(file)]) })),
-        });
+        await sendCommit(
+          {
+            repo,
+            accessToken,
+            commitTitle: title,
+            files: part.map(({ path, file }) => ({ path, content: new Blob([fs.readFileSync(file)]) })),
+          },
+          part
+        );
         break;
       } catch (error) {
         // The Hub (or the way to it) is sometimes out of reach for minutes, up to an hour; wait it out

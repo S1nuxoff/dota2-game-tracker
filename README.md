@@ -4,6 +4,8 @@ Exports every Dota 2 item and hero model from the game files to glTF (`.glb`), w
 
 Only the files a model needs are downloaded from Steam: the model, its meshes, materials, textures and animations, found by following each file's references. Item models come from `items_game.json` of [dota2-file-tracker](https://github.com/S1nuxoff/dota2-file-tracker), hero models from `scripts/npc/npc_heroes.txt`.
 
+Which dataset holds what, which script writes it and what the site reads: [DATA.md](DATA.md).
+
 ## Using the models
 
 The dataset keeps the game's paths, with `.glb` instead of `.vmdl`:

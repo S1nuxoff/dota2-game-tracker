@@ -145,10 +145,13 @@ function localSource(gameDir) {
   return { vpkDir, gameDir, manifestId: installedManifest(gameDir), readFiles, looseFiles, readLoose, release: () => {} };
 }
 
-// The manifest of the main depot from Steam's appmanifest_570.acf, next to steamapps/common
+// The manifest of the main depot from Steam's appmanifest_570.acf: next to steamapps/common in a
+// Steam library, or in steamapps/ of the folder steamcmd installed to (+force_install_dir)
 function installedManifest(gameDir) {
-  const acf = path.resolve(gameDir, "../../../../appmanifest_570.acf");
-  if (!fs.existsSync(acf)) {
+  const acf = ["../../../../appmanifest_570.acf", "../../steamapps/appmanifest_570.acf"]
+    .map((relative) => path.resolve(gameDir, relative))
+    .find((candidate) => fs.existsSync(candidate));
+  if (!acf) {
     return null;
   }
   const text = fs.readFileSync(acf, "utf8");

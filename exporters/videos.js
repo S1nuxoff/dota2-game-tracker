@@ -3,21 +3,21 @@
 //   panorama/videos/<path>.webm    loose in the depot (hero portraits, events, ability previews)
 //   panorama/videos/<path>.mov, .mp4, .vtt   in the VPK, with the subtitles of the videos
 // Only files whose SHA-1 (loose) or CRC (VPK) changed since the last run are uploaded again
-// (videos-state.json); files the game removed are removed. The state is saved after each batch,
+// (state/videos.json); files the game removed are removed. The state is saved after each batch,
 // so a stopped run goes on where it was. The pictures are in dota2-images (images.js).
 //
-//   HF_TOKEN=... node videos.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node videos.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/videos.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//   HF_TOKEN=... node exporters/videos.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
 
 const temp = "./temp/videos";
 const DATASET = process.env.HF_VIDEOS_REPO || "dota2-videos";
 // Raised when the files written change, so a game version already exported is exported again
 const VERSION = 1;
-const STATE_FILE = "videos-state.json";
+const STATE_FILE = "state/videos.json";
 const FOLDER = "panorama/videos";
 const VIDEOS = /^panorama\/videos\/.+\.(webm|mov|mp4|vtt)$/;
 // Some are hundreds of MB; a batch's commits are sent three at a time
@@ -34,7 +34,7 @@ async function main() {
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
   if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node videos.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+    console.error('Usage: HF_TOKEN=... node exporters/videos.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
     process.exit(1);
   }
 

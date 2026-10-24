@@ -2,12 +2,12 @@
 // inside, how to get it, how it stays current, credit. Counts and sizes come from each dataset's
 // files.json (files-list.js), so running this again after an update keeps the numbers true.
 //
-//   HF_TOKEN=... node cards.js [dataset ...] [--no-upload]
+//   HF_TOKEN=... node tools/cards.js [dataset ...] [--no-upload]
 // Without names: every dataset. --no-upload writes them to temp/cards to read first.
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
-const hf = require("./hf");
+const hf = require("../lib/hf");
 
 const OWNER = "Sqls1";
 const SITE = "https://s1nuxoff.github.io/Dotadex/";
@@ -224,7 +224,7 @@ Popular files:
 
 ${usage("dota2-data", "scripts/items/items_game.txt.json", "resource/localization")}
 
-${footer("dota2-data", "Read from the game files by `gamefiles.js` (scripts and texts) and `data.js`, `audio.js`, `index.js` (the `dotadex/` files).")}`,
+${footer("dota2-data", "Read from the game files by `gamefiles.js` (scripts and texts) and `data.js`, `audio.js`, `models.js` (the `dotadex/` files).")}`,
 
   "dota2-images": (s) => `${header({ pretty: "Dota 2 Images", tags: ["image", "icons", "png"], count: s.count })}
 # Dota 2 Images
@@ -304,7 +304,7 @@ A hero model is the bare body: arms, weapons and the rest are cosmetics worn on 
 
 ${usage("dota2-models", "models/heroes/pudge/pudge.glb", "models/heroes/pudge")}
 
-${footer("dota2-models", `Converted from the game files by \`index.js\` with [Source 2 Viewer](${S2V}) (models), \`particles.js\` (sequences, attachments), \`cloth.js\`, \`flex.js\`, \`skins.js\`, \`materials.js\`.`)}`,
+${footer("dota2-models", `Converted from the game files by \`models.js\` with [Source 2 Viewer](${S2V}) (models), \`particles.js\` (sequences, attachments), \`cloth.js\`, \`flex.js\`, \`skins.js\`, \`materials.js\`.`)}`,
 
   "dota2-textures": (s) => `${header({ pretty: "Dota 2 Textures", tags: ["image", "textures", "png", "3d"], count: s.count })}
 # Dota 2 Textures
@@ -433,7 +433,7 @@ async function main() {
   const upload = !process.argv.includes("--no-upload");
   const names = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
   if (upload && !process.env.HF_TOKEN) {
-    console.error("Usage: HF_TOKEN=... node cards.js [dataset ...] [--no-upload]");
+    console.error("Usage: HF_TOKEN=... node tools/cards.js [dataset ...] [--no-upload]");
     process.exit(1);
   }
   fs.mkdirSync(temp, { recursive: true });

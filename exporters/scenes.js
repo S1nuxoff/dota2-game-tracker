@@ -1,10 +1,10 @@
 // Scenes and maps of the game as glTF: MVP showcases, treasure openings, main menu
 // backgrounds, event and battle pass scenes, and the game's maps, each a .glb with its
-// textures inside. Only scenes whose files changed are exported again (scenes-state.json, by
+// textures inside. Only scenes whose files changed are exported again (state/scenes.json, by
 // the SHA-1 of each package).
 //
-//   HF_TOKEN=... node scenes.js --game "<...>/dota 2 beta/game/dota" [--only mvp] [--limit N] [--max-minutes N] [--no-upload] [--info]
-//   HF_TOKEN=... node scenes.js <STEAM USERNAME> <STEAM PASSWORD> [--max-minutes N]   (GitHub Actions)
+//   HF_TOKEN=... node exporters/scenes.js --game "<...>/dota 2 beta/game/dota" [--only mvp] [--limit N] [--max-minutes N] [--no-upload] [--info]
+//   HF_TOKEN=... node exporters/scenes.js <STEAM USERNAME> <STEAM PASSWORD> [--max-minutes N]   (GitHub Actions)
 //   --info reads the lights and cameras of the scenes already exported again and exports nothing
 //   (local install; --only limits it too)
 //   --max-minutes stops starting new scenes after that long; the rest go next time
@@ -17,14 +17,14 @@ const { spawnSync } = require("child_process");
 const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const vpk = require("vpk");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
-const { writeVpk } = require("./vpk-writer");
-const { externalRefs } = require("./resource");
-const kv3 = require("./kv3");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
+const { writeVpk } = require("../lib/vpk-writer");
+const { externalRefs } = require("../lib/resource");
+const kv3 = require("../lib/kv3");
 
 const temp = "./temp/scenes";
-const STATE_FILE = "scenes-state.json";
+const STATE_FILE = "state/scenes.json";
 // A batch of scenes goes up once it holds this much, or after this long
 const BATCH_BYTES = 500 * 1e6;
 const BATCH_MS = 10 * 60 * 1000;
@@ -418,7 +418,7 @@ async function main() {
   const maxMinutes = Number(argValue("--max-minutes")) || Infinity;
   const upload = !process.argv.includes("--no-upload");
   if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node scenes.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD> [--only <folder>] [--limit N] [--max-minutes N] [--no-upload] [--info]');
+    console.error('Usage: HF_TOKEN=... node exporters/scenes.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD> [--only <folder>] [--limit N] [--max-minutes N] [--no-upload] [--info]');
     process.exit(1);
   }
   fs.mkdirSync(temp, { recursive: true });

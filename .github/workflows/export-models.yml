@@ -1,4 +1,4 @@
-name: Export Models, Data, Sounds and Scenes
+name: Export
 
 on:
   schedule:
@@ -52,66 +52,73 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           LIMIT: ${{ inputs.limit }}
-        run: node index.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' ${LIMIT:+--limit "$LIMIT"} ${{ inputs.force && '--force' || '' }}
+        run: node exporters/models.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' ${LIMIT:+--limit "$LIMIT"} ${{ inputs.force && '--force' || '' }}
       # Heroes, abilities, items, treasures, texts and icons; skipped when the game did not update
       - name: Export game data
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node data.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/data.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Every script and localization of the game as JSON to the dota2-data dataset (gamefiles.js);
-      # only files whose CRC changed, against gamefiles-state.json
+      # only files whose CRC changed, against state/gamefiles.json
       - name: Export the game's scripts and texts
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node gamefiles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/gamefiles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Every picture of the game's interface to dota2-images and every video to dota2-videos, as the
-      # game keeps them; only what changed, against images-state.json and videos-state.json
+      # game keeps them; only what changed, against state/images.json and state/videos.json
       - name: Export pictures
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node images.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/images.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # Every texture outside the interface to dota2-textures (images.js's workings), only what
+      # changed, against state/textures.json
+      - name: Export textures
+        if: success() || failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node exporters/textures.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       - name: Export videos
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node videos.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # New or changed sounds only, against sounds-state.json
+        run: node exporters/videos.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # New or changed sounds only, against state/sounds.json
       - name: Export sounds
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Particle systems of the heroes' and items' effects, their textures, their snapshots
       # (and those items put in their place), the models' attachments, and every model's sequences
-      # with the effects its animations start; only what changed, against particles-state.json
+      # with the effects its animations start; only what changed, against state/particles.json
       - name: Export particles
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node particles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/particles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # Voice lines, the sounds of animations and abilities, music and announcer packs;
-      # only after a patch, against audio-state.json
+      # only after a patch, against state/audio.json
       - name: Export voice lines, animation and ability sounds
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node audio.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/audio.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # The names people know for the pictures and models (names.json in dota2-images and
       # dota2-models), from the game's English texts; only after a game update
       - name: Name the files
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node names.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+        run: node exporters/names.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # A list of every file at the root of each dataset (files.json), for pages that show a whole
       # dataset; only for datasets that changed since their list
       - name: List the datasets' files
         if: success() || failure()
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node files-list.js
+        run: node exporters/files-list.js
       # The state files go back to main; another run may have pushed meanwhile, so this one
       # lands on top of it
       - name: Commit & push state
@@ -119,7 +126,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          files=$(ls state.json data-state.json gamefiles-state.json images-state.json videos-state.json sounds-state.json audio-state.json particles-state.json particle-models.json files-state.json names-state.json 2>/dev/null)
+          # Every state file but the scenes', which the scenes job pushes
+          files=$(ls state/*.json 2>/dev/null | grep -v '^state/scenes.json$')
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"
@@ -140,7 +148,7 @@ jobs:
           exit 1
 
   # Scenes and maps (MVP showcases, treasures, event and battle pass scenes, backgrounds) to the
-  # scenes dataset: new or changed map packages only, against scenes-state.json; a run stops
+  # scenes dataset: new or changed map packages only, against state/scenes.json; a run stops
   # starting new ones after 300 minutes and the next run goes on from there
   scenes:
     runs-on: ubuntu-latest
@@ -169,14 +177,14 @@ jobs:
       - name: Export scenes
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node scenes.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' --max-minutes 300
-      # Only scenes-state.json, on top of whatever the other job pushed meanwhile
+        run: node exporters/scenes.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' --max-minutes 300
+      # Only state/scenes.json, on top of whatever the other job pushed meanwhile
       - name: Commit & push state
         if: success() || failure()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          files=scenes-state.json
+          files=state/scenes.json
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"

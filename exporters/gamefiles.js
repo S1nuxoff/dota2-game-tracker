@@ -11,24 +11,24 @@
 //   <path>             any other text file (or a .txt that is not KeyValues), as UTF-8
 // Pictures, fonts and binary files are left out (pictures go to dota2-images). The game's own
 // files win over core's, as the game reads them. Only files whose CRC changed since the last run
-// are converted and uploaded again (gamefiles-state.json); files the game removed are removed.
+// are converted and uploaded again (state/gamefiles.json); files the game removed are removed.
 //
-//   HF_TOKEN=... node gamefiles.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node gamefiles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/gamefiles.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//   HF_TOKEN=... node exporters/gamefiles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const hf = require("./hf");
-const kv3 = require("./kv3");
-const { localSource, steamSource } = require("./source");
-const { parse, decode } = require("./keyvalues");
+const hf = require("../lib/hf");
+const kv3 = require("../lib/kv3");
+const { localSource, steamSource } = require("../lib/source");
+const { parse, decode } = require("../lib/keyvalues");
 
 const temp = "./temp/gamefiles";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const DATASET = process.env.HF_DATA_REPO || "dota2-data";
 // Raised when the files written change, so a game version already exported is exported again
 const VERSION = 1;
-const STATE_FILE = "gamefiles-state.json";
+const STATE_FILE = "state/gamefiles.json";
 
 const FOLDERS = /^(scripts|resource)\//;
 // KeyValues text
@@ -124,7 +124,7 @@ async function main() {
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
   if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node gamefiles.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+    console.error('Usage: HF_TOKEN=... node exporters/gamefiles.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
     process.exit(1);
   }
 

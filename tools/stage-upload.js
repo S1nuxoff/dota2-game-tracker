@@ -2,7 +2,7 @@
 // one `hf upload` per dataset folder (it splits a big folder into commits and goes on where it
 // stopped when run again), with Xet's high performance mode (many connections at once). Needs the
 // `hf` command (pip install "huggingface_hub[hf_xet]", 2.x) and HF_TOKEN.
-//   HF_TOKEN=... node stage-upload.js <stage folder>
+//   HF_TOKEN=... node tools/stage-upload.js <stage folder>
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
@@ -11,7 +11,7 @@ const { whoAmI } = require("@huggingface/hub");
 async function main() {
   const root = process.argv[2];
   if (!root || !process.env.HF_TOKEN) {
-    console.error("Usage: HF_TOKEN=... node stage-upload.js <stage folder>");
+    console.error("Usage: HF_TOKEN=... node tools/stage-upload.js <stage folder>");
     process.exit(1);
   }
   const { name: owner } = await whoAmI({ accessToken: process.env.HF_TOKEN });

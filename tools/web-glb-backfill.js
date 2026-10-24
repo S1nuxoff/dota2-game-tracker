@@ -1,7 +1,7 @@
-// The site's copies (<model>.glb.gz, web-glb.js) for the models uploaded before index.js made them:
+// The site's copies (<model>.glb.gz, web-glb.js) for the models uploaded before models.js made them:
 // every .glb in the dataset without a .glb.gz next to it is downloaded, made lighter and uploaded.
 // Safe to stop and run again, it goes on from what the dataset has.
-//   HF_TOKEN=... node web-glb-backfill.js [--limit N] [--folder models] [--match <text>]
+//   HF_TOKEN=... node tools/web-glb-backfill.js [--limit N] [--folder models] [--match <text>]
 // --folder scenes with HF_REPO=dota2-maps makes them for the scenes (a terrain's preview map is
 // 70 MB as glb, its textures are made WebP too); --match keeps the files whose path holds the
 // text; --redo makes them again where they are already
@@ -9,8 +9,8 @@ const fs = require("fs");
 const path = require("path");
 const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
-const hf = require("./hf");
-const { webGlb } = require("./web-glb");
+const hf = require("../lib/hf");
+const { webGlb } = require("../lib/web-glb");
 
 const outDir = "./temp/web-glb";
 const PARALLEL = 4;
@@ -20,7 +20,7 @@ const PART_BYTES = 400 * 1e6;
 async function main() {
   const accessToken = process.env.HF_TOKEN;
   if (!accessToken) {
-    console.error("Usage: HF_TOKEN=... node web-glb-backfill.js [--limit N]");
+    console.error("Usage: HF_TOKEN=... node tools/web-glb-backfill.js [--limit N]");
     process.exit(1);
   }
   const limitAt = process.argv.indexOf("--limit");

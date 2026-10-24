@@ -9,19 +9,19 @@
 //               (npc_abilities.txt and each hero's AbilityDefinitions)
 //   items       items/: the shop's items, by DOTA_Tooltip_Ability_item_<name>
 //   units       scripts/npc/npc_units.txt: each unit's model, by its name
-// Runs only when the game changed (names-state.json).
+// Runs only when the game changed (state/names.json).
 //
-//   HF_TOKEN=... node names.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node names.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/names.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//   HF_TOKEN=... node exporters/names.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
-const { parse } = require("./keyvalues");
-const { loadItemsGame } = require("./itemsgame");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
+const { parse } = require("../lib/keyvalues");
+const { loadItemsGame } = require("../lib/itemsgame");
 
 const temp = "./temp/names";
-const STATE_FILE = "names-state.json";
+const STATE_FILE = "state/names.json";
 // Raised when the names written change, so a game version already done is done again
 const VERSION = 1;
 const LOCALIZATION = /^resource\/localization\/(items|dota|abilities)_english\.txt$/;
@@ -47,7 +47,7 @@ async function main() {
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
   if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node names.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+    console.error('Usage: HF_TOKEN=... node exporters/names.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
     process.exit(1);
   }
   fs.mkdirSync(temp, { recursive: true });

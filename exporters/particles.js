@@ -1,10 +1,10 @@
 // Particles for Dotadex: every particle system of the game, those the heroes and their items show
 // (their ambient effects and the cosmetics' own) first, with all the systems they spawn, as JSON, and the textures
 // they draw as atlases with their frames. Only what changed since the last run is converted and
-// uploaded again (particles-state.json keeps the CRCs and what each system refers to).
+// uploaded again (state/particles.json keeps the CRCs and what each system refers to).
 //
-//   HF_TOKEN=... node particles.js --game "<...>/dota 2 beta/game/dota"
-//   HF_TOKEN=... node particles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/particles.js --game "<...>/dota 2 beta/game/dota"
+//   HF_TOKEN=... node exporters/particles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
 // Uploads to the dota2-particles dataset (the particles/ paths) and the models dataset (models/):
 //   particles/<path>.json                    a system (particles/<path>.vpcf in the game), as KV3 gives it
@@ -31,23 +31,23 @@
 //                                            know what it does not draw yet
 //   particles/schema.json                    the engine's particle classes with their fields' defaults,
 //                                            for the fields a .vpcf leaves out (particle-schema.js)
-// and lists the models the particles draw in particle-models.json, for index.js to export.
+// and lists the models the particles draw in state/particle-models.json, for models.js to export.
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const { spawn, spawnSync } = require("child_process");
 const readline = require("readline");
 const sharp = require("sharp");
-const hf = require("./hf");
-const kv3 = require("./kv3");
-const { localSource, steamSource } = require("./source");
-const { loadItemsGame } = require("./itemsgame");
-const { parse } = require("./keyvalues");
-const { exportSchema } = require("./particle-schema");
+const hf = require("../lib/hf");
+const kv3 = require("../lib/kv3");
+const { localSource, steamSource } = require("../lib/source");
+const { loadItemsGame } = require("../lib/itemsgame");
+const { parse } = require("../lib/keyvalues");
+const { exportSchema } = require("../lib/particle-schema");
 
 const temp = "./temp/particles";
-const STATE_FILE = "particles-state.json";
-const MODELS_FILE = "particle-models.json";
+const STATE_FILE = "state/particles.json";
+const MODELS_FILE = "state/particle-models.json";
 const LOADOUT_PORTRAITS = "scripts/npc/portraits_full_body_loadout.txt";
 // Particle-only scenes the game's panels show, whose effects its code starts by name: the card
 // edges (ui_econ_item_animated.xml #ArcanaBackgroundEffect; client.dll starts armory_edge_set on
@@ -670,7 +670,7 @@ async function main() {
   const accessToken = process.env.HF_TOKEN;
   const upload = !process.argv.includes("--no-upload");
   if ((!game && !password) || (upload && !accessToken)) {
-    console.error('Usage: HF_TOKEN=... node particles.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD> [--no-upload]');
+    console.error('Usage: HF_TOKEN=... node exporters/particles.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD> [--no-upload]');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });
@@ -701,7 +701,7 @@ async function main() {
   // particle effects its animations start: Void Spirit's portal on his loadout spawn), for every
   // exported model and every model particles draw; what those animations start is shown too.
   // state.sequenceEffects keeps each model's systems, so an unchanged model is not read again.
-  const exported = fs.existsSync("state.json") ? Object.keys(JSON.parse(fs.readFileSync("state.json", "utf8")).models ?? {}) : [];
+  const exported = fs.existsSync("state/models.json") ? Object.keys(JSON.parse(fs.readFileSync("state/models.json", "utf8")).models ?? {}) : [];
   if (state.sequenceFormat !== SEQUENCE_FORMAT) {
     state.sequences = {};
     state.sequenceEffects = {};

@@ -63,18 +63,19 @@ Write-Host "Mode: $Mode" -ForegroundColor Cyan
 # the game's scripts and texts, the sounds, the particles (which list more models), the voice lines and sound lists (which
 # need the sounds uploaded), the scenes, then the models the particles listed
 $steps = @(
-  @{ Name = "Models"; Args = @("index.js", "--game", $Game) + $force },
-  @{ Name = "Game data"; Args = @("data.js", "--game", $Game) + $force },
-  @{ Name = "Scripts and texts"; Args = @("gamefiles.js", "--game", $Game) + $force },
-  @{ Name = "Pictures"; Args = @("images.js", "--game", $Game) + $force },
-  @{ Name = "Videos"; Args = @("videos.js", "--game", $Game) + $force },
-  @{ Name = "Sounds"; Args = @("sounds.js", "--game", $Game) + $force },
-  @{ Name = "Particles"; Args = @("particles.js", "--game", $Game) + $force },
-  @{ Name = "Voice lines and sound lists"; Args = @("audio.js", "--game", $Game) + $force },
-  @{ Name = "Scenes"; Args = @("scenes.js", "--game", $Game) + $force },
-  @{ Name = "Models the particles draw"; Args = @("index.js", "--game", $Game) },
-  @{ Name = "Names of the files"; Args = @("names.js", "--game", $Game) + $force },
-  @{ Name = "Lists of the datasets' files"; Args = @("files-list.js") }
+  @{ Name = "Models"; Args = @("exporters/models.js", "--game", $Game) + $force },
+  @{ Name = "Game data"; Args = @("exporters/data.js", "--game", $Game) + $force },
+  @{ Name = "Scripts and texts"; Args = @("exporters/gamefiles.js", "--game", $Game) + $force },
+  @{ Name = "Pictures"; Args = @("exporters/images.js", "--game", $Game) + $force },
+  @{ Name = "Textures"; Args = @("exporters/textures.js", "--game", $Game) + $force },
+  @{ Name = "Videos"; Args = @("exporters/videos.js", "--game", $Game) + $force },
+  @{ Name = "Sounds"; Args = @("exporters/sounds.js", "--game", $Game) + $force },
+  @{ Name = "Particles"; Args = @("exporters/particles.js", "--game", $Game) + $force },
+  @{ Name = "Voice lines and sound lists"; Args = @("exporters/audio.js", "--game", $Game) + $force },
+  @{ Name = "Scenes"; Args = @("exporters/scenes.js", "--game", $Game) + $force },
+  @{ Name = "Models the particles draw"; Args = @("exporters/models.js", "--game", $Game) },
+  @{ Name = "Names of the files"; Args = @("exporters/names.js", "--game", $Game) + $force },
+  @{ Name = "Lists of the datasets' files"; Args = @("exporters/files-list.js") }
 )
 $results = @()
 $started = Get-Date
@@ -89,7 +90,7 @@ foreach ($step in $steps) {
 }
 
 # The state files say what is uploaded; kept in git (pushed when you choose)
-$stateFiles = @("state.json", "data-state.json", "gamefiles-state.json", "images-state.json", "videos-state.json", "sounds-state.json", "audio-state.json", "scenes-state.json", "particles-state.json", "particle-models.json", "files-state.json", "names-state.json") | Where-Object { Test-Path -LiteralPath $_ }
+$stateFiles = Get-ChildItem -LiteralPath "state" -Filter *.json | ForEach-Object { "state/$($_.Name)" }
 git add -- $stateFiles
 git diff --cached --quiet
 if ($LASTEXITCODE -ne 0) {

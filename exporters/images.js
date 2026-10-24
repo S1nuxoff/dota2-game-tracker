@@ -6,17 +6,17 @@
 //                                        are decoded by Source2Viewer and written as PNG.
 //   panorama/images/<path>.svg           a vector picture (<path>.vsvg_c), from Source2Viewer
 //   panorama/images/<path>.png           a PNG the game keeps as it is
-// Only files whose CRC changed since the last run are exported again (images-state.json); files
+// Only files whose CRC changed since the last run are exported again (state/images.json); files
 // the game removed are removed. Batches are uploaded as they are made and the state saved after
 // each, so a stopped run goes on where it was.
 //
-//   HF_TOKEN=... node images.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force] [--limit N]
-//   HF_TOKEN=... node images.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/images.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force] [--limit N]
+//   HF_TOKEN=... node exporters/images.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
 
 // The folder of the run in progress (set by run())
 let temp = "./temp/images";
@@ -31,7 +31,7 @@ const PARALLEL_COMMITS = 3;
 const PICTURES = {
   label: "pictures",
   dataset: process.env.HF_IMAGES_REPO || "dota2-images",
-  stateFile: "images-state.json",
+  stateFile: "state/images.json",
   temp: "./temp/images",
   files: /^panorama\/images\/.+\.(vtex_c|vsvg_c|png)$/,
 };

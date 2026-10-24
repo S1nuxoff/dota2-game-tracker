@@ -15,20 +15,20 @@
 //
 //   abilitysounds.json        (data) the sounds and voice lines of each hero's abilities
 //
-//   HF_TOKEN=... node audio.js <steam user> <password>            (in GitHub Actions)
-//   HF_TOKEN=... node audio.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//   HF_TOKEN=... node exporters/audio.js <steam user> <password>            (in GitHub Actions)
+//   HF_TOKEN=... node exporters/audio.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
 //
-// Runs only when the game changed since the last run (audio-state.json).
+// Runs only when the game changed since the last run (state/audio.json).
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
-const { parse } = require("./keyvalues");
-const kv3 = require("./kv3");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
+const { parse } = require("../lib/keyvalues");
+const kv3 = require("../lib/kv3");
 
 const temp = "./temp/audio";
-const STATE_FILE = "audio-state.json";
+const STATE_FILE = "state/audio.json";
 // Raised when what this writes changes, so the next run writes it all again without a patch
 const FORMAT = 5;
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
@@ -119,7 +119,7 @@ async function main() {
   const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const upload = !process.argv.includes("--no-upload");
   if ((!game && !(username && password)) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node audio.js <steam user> <password> | --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]');
+    console.error('Usage: HF_TOKEN=... node exporters/audio.js <steam user> <password> | --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });

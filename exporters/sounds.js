@@ -1,10 +1,10 @@
 // Sounds for Dotadex: every sound of the game as MP3 (voice lines, abilities and attacks,
 // music packs, announcers, ...) and the sound events that tie names the game uses
 // (Hero_Pudge.Attack) to those files. Only sounds that changed since the last run are
-// converted and uploaded again (sounds-state.json keeps their CRCs).
+// converted and uploaded again (state/sounds.json keeps their CRCs).
 //
-//   HF_TOKEN=... node sounds.js --game "<...>/dota 2 beta/game/dota"
-//   HF_TOKEN=... node sounds.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/sounds.js --game "<...>/dota 2 beta/game/dota"
+//   HF_TOKEN=... node exporters/sounds.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
 // Uploads to the <user>/dota2-sounds dataset: sounds/...mp3 or .wav and soundevents.json, and the
 // voice lines' phonemes (phonemes.js). --phonemes: the phonemes of every folder again, not only
@@ -12,12 +12,12 @@
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
-const { sentenceOf, ctrlSentences, phonemeClasses, writePhonemes, FOLDER_FILE, CLASSES_FILE } = require("./phonemes");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
+const { sentenceOf, ctrlSentences, phonemeClasses, writePhonemes, FOLDER_FILE, CLASSES_FILE } = require("../lib/phonemes");
 
 const temp = "./temp/sounds";
-const STATE_FILE = "sounds-state.json";
+const STATE_FILE = "state/sounds.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const BATCH = 3000;
 
@@ -78,7 +78,7 @@ async function main() {
   const [username, password] = process.argv.slice(2).filter((arg, index, args) => !arg.startsWith("--") && args[index - 1] !== "--game");
   const accessToken = process.env.HF_TOKEN;
   if ((!game && !password) || !accessToken) {
-    console.error('Usage: HF_TOKEN=... node sounds.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+    console.error('Usage: HF_TOKEN=... node exporters/sounds.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
     process.exit(1);
   }
   fs.rmSync(temp, { recursive: true, force: true });

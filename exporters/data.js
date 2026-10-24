@@ -2,24 +2,24 @@
 // shop and neutral items, treasure chests with what drops from them, the texts of
 // all of this in every language, and the pictures the site needs made from the game's.
 //
-//   HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
-//   HF_TOKEN=... node data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
+//   HF_TOKEN=... node exporters/data.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force]
+//   HF_TOKEN=... node exporters/data.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
 // Uploads to dota2-data under dotadex/: data/*.json, data/i18n/<language>.json, and images/...: the
 // hero page backdrops (JPG), the loading screens (WebP), the card backgrounds, the hero grid's
 // atlas and the cursor packs. The game's own pictures are in dota2-images and its videos in
 // dota2-videos (images.js, videos.js).
-// Nothing is done when the game did not update since the last run (data-state.json),
+// Nothing is done when the game did not update since the last run (state/data.json),
 // and only new or changed images are converted again.
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const sharp = require("sharp");
-const hf = require("./hf");
-const { localSource, steamSource } = require("./source");
-const { parse } = require("./keyvalues");
-const { summonsOf, UNITS_FILE } = require("./summons");
-const { loadItemsGame } = require("./itemsgame");
+const hf = require("../lib/hf");
+const { localSource, steamSource } = require("../lib/source");
+const { parse } = require("../lib/keyvalues");
+const { summonsOf, UNITS_FILE } = require("../lib/summons");
+const { loadItemsGame } = require("../lib/itemsgame");
 
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
@@ -34,7 +34,7 @@ const BACKGROUND_STYLES = "panorama/styles/hero_loadout_background_images.vcss_c
 const CARD_STYLES = "panorama/styles/collection_shared.vcss_c";
 // Raised when the export gains something, so a game version already exported is exported again
 const DATA_VERSION = 23;
-const STATE_FILE = "data-state.json";
+const STATE_FILE = "state/data.json";
 const SHOPS_FILE = "scripts/shops.txt";
 // The emoticons: their ids, pictures, frame times and aliases (the Armory's Emoticons)
 const EMOTICON_FILES = /^scripts\/emoticons(\.txt|\/[^/]+\.txt)$/;
@@ -56,7 +56,7 @@ async function main() {
   const upload = !process.argv.includes("--no-upload");
   const force = process.argv.includes("--force");
   if ((!game && !password) || (upload && !process.env.HF_TOKEN)) {
-    console.error('Usage: HF_TOKEN=... node data.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
+    console.error('Usage: HF_TOKEN=... node exporters/data.js --game "<...>/dota 2 beta/game/dota" | <STEAM USERNAME> <STEAM PASSWORD>');
     process.exit(1);
   }
 

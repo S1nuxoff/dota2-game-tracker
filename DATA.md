@@ -10,10 +10,10 @@ State on 2026-10-24: seven Hugging Face datasets under `Sqls1/`, the price track
 
 | Source | Written by | Holds |
 |---|---|---|
-| HF `dota2-data` | this repo: `gamefiles.js`; `index.js`, `data.js`, `audio.js` for `dotadex/` | every script and localization of the game as JSON, at its game path; under `dotadex/` the files made for the site |
+| HF `dota2-data` | this repo: `gamefiles.js`; `models.js`, `data.js`, `audio.js` for `dotadex/` | every script and localization of the game as JSON, at its game path; under `dotadex/` the files made for the site |
 | HF `dota2-images` | this repo: `images.js` | every picture of the game's interface as the game keeps it |
 | HF `dota2-videos` | this repo: `videos.js` | every video of the game's interface as the game keeps it |
-| HF `dota2-models` | this repo: `index.js`, `particles.js` (sequences, attachments) | every model of the game with its materials and textures |
+| HF `dota2-models` | this repo: `models.js`, `particles.js` (sequences, attachments) | every model of the game with its materials and textures |
 | HF `dota2-particles` | this repo: `particles.js` | every particle system of the game, their textures, bundles, the engine's schema |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
 | HF `dota2-maps` (was dota2-scenes) | this repo: `scenes.js` | scenes and maps as glb |
@@ -45,8 +45,8 @@ from `DOTADEX_BASE`.
 
 | Path | Script | What it is | Read by (site) |
 |---|---|---|---|
-| `dotadex/index.json` | `index.js` | which models show each hero and item: `{ heroes: { key: glb }, items: { id: { name, models } } }` | `scripts/build-catalog.mjs`, `src/catalog.js` |
-| `dotadex/exported.json` | `index.js` | the models exported so far | `src/catalog.js` |
+| `dotadex/index.json` | `models.js` | which models show each hero and item: `{ heroes: { key: glb }, items: { id: { name, models } } }` | `scripts/build-catalog.mjs`, `src/catalog.js` |
+| `dotadex/exported.json` | `models.js` | the models exported so far | `src/catalog.js` |
 | `dotadex/data/heroes.json`, `abilities.json`, `items.json`, `neutral_items.json`, `shops.json`, `treasures.json` | `data.js` | heroes, abilities, shop items, treasure chests | `src/gamedata.js`, `scripts/build-catalog.mjs` |
 | `dotadex/data/armory.json`, `emoticons.json`, `cursors.json`, `loadout_backgrounds.json`, `loadout_portraits.json`, `manifest.json` | `data.js` | the Armory's categories, emoticons, cursor packs, hero page backgrounds and portrait setups, the game version | `src/components/*`, `src/App.jsx` |
 | `dotadex/data/i18n/<language>.json` | `data.js` | every text the site shows, per language | `src/gamedata.js` |
@@ -68,13 +68,13 @@ The interface's pictures and videos at their game paths, as the game keeps them 
 
 | Path | Script | What it is | Read by (site) |
 |---|---|---|---|
-| `models/<path>.glb`, `.glb.gz` | `index.js`, `web-glb.js` | a model with its textures and animations; `.gz` is the site's lighter copy | `src/viewer/stage.js` |
+| `models/<path>.glb`, `.glb.gz` | `models.js`, `web-glb.js` | a model with its textures and animations; `.gz` is the site's lighter copy | `src/viewer/stage.js` |
 | `models/<path>.skins.json`, `textures/` | `skins.js` | material variants (styles, golden versions) and their textures | `src/viewer/stage.js` |
 | `models/<path>.sequences.json` | `particles.js` | a model's sequences, activities, and the effects and speech its animations start | `src/viewer/stage.js`, `src/viewer/particles/manager.js` |
 | `models/<path>.flex.json`, `models/flex.json` | `flex.js` | face controllers and morph rules; the list of models that have them | `src/viewer/face.js` |
 | `models/<path>.cloth.json`, `models/cloth.json` | `cloth.js` | cloth, hair and beard simulation; the list | `src/viewer/cloth.js` |
 | `materials/dynamic.json` | `materials.js` | materials' per-frame parameters | `src/viewer/materialPrograms.js` |
-| `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `index.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
+| `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `models.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
 
 ## dota2-particles
 
@@ -102,6 +102,4 @@ Every particle system of the game (`particles.js`, only what changed, against `p
 
 ## State files (this repo)
 
-What each exporter already did, so a run exports only what changed: `state.json` (models),
-`data-state.json`, `gamefiles-state.json`, `sounds-state.json`, `audio-state.json`, `particles-state.json`,
-`particle-models.json`, `scenes-state.json`. The workflow commits them after each run.
+`state/`: what each exporter already did, so a run exports only what changed, one file each (`models.json`, `data.json`, `gamefiles.json`, `images.json`, `textures.json`, `videos.json`, `sounds.json`, `audio.json`, `particles.json` with `particle-models.json`, `scenes.json`, `names.json`, `files.json`). The workflow commits them after each run.

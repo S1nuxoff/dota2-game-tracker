@@ -5,18 +5,18 @@ const zlib = require("zlib");
 const { spawnSync } = require("child_process");
 const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
-const hf = require("./hf");
-const { steamSource, localSource } = require("./source");
-const { loadItemsGame } = require("./itemsgame");
-const { exportSkins } = require("./skins");
-const { exportDynamicMaterials, exportCubeMaps } = require("./materials");
-const { readCloth, writeCloth, clothList } = require("./cloth");
-const { readFlex, writeFlex, flexList } = require("./flex");
-const { externalRefs } = require("./resource");
-const { writeVpk } = require("./vpk-writer");
-const { webGlb } = require("./web-glb");
-const { parse } = require("./keyvalues");
-const { summonsOf, UNITS_FILE } = require("./summons");
+const hf = require("../lib/hf");
+const { steamSource, localSource } = require("../lib/source");
+const { loadItemsGame } = require("../lib/itemsgame");
+const { exportSkins } = require("../lib/skins");
+const { exportDynamicMaterials, exportCubeMaps } = require("../lib/materials");
+const { readCloth, writeCloth, clothList } = require("../lib/cloth");
+const { readFlex, writeFlex, flexList } = require("../lib/flex");
+const { externalRefs } = require("../lib/resource");
+const { writeVpk } = require("../lib/vpk-writer");
+const { webGlb } = require("../lib/web-glb");
+const { parse } = require("../lib/keyvalues");
+const { summonsOf, UNITS_FILE } = require("../lib/summons");
 
 // Its own folder: other exports (sounds, scenes) run in ./temp next to it
 const temp = "./temp/models";
@@ -24,7 +24,7 @@ const packPath = `${temp}/models.vpk`;
 const exportDir = `${temp}/export`;
 const distDir = `${temp}/dist`;
 // Per model: the game files it was exported from and a hash of their CRCs
-const STATE_FILE = "state.json";
+const STATE_FILE = "state/models.json";
 const HEROES_FILE = "scripts/npc/npc_heroes.txt";
 const HERO_FILES = /^scripts\/npc\/heroes\/npc_dota_hero_\w+\.txt$/;
 // What each hero stands on in its page's scene
@@ -55,8 +55,8 @@ const FOLLOW = new Set([
 ]);
 
 const USAGE = `Usage:
-  HF_TOKEN=... node index.js <STEAM USERNAME> <STEAM PASSWORD> [options]   download from Steam
-  HF_TOKEN=... node index.js --game "<...>/dota 2 beta/game/dota" [options] read a local install
+  HF_TOKEN=... node exporters/models.js <STEAM USERNAME> <STEAM PASSWORD> [options]   download from Steam
+  HF_TOKEN=... node exporters/models.js --game "<...>/dota 2 beta/game/dota" [options] read a local install
 
 Options:
   --limit N      export at most N models
@@ -93,7 +93,7 @@ async function main() {
   const { heroes, personas } = await loadHeroModels(source);
   const pedestals = await loadPedestals(source);
   // The models particle effects draw, as listed by particles.js
-  const particleModels = !onlyHero && fs.existsSync("particle-models.json") ? JSON.parse(fs.readFileSync("particle-models.json", "utf8")) : [];
+  const particleModels = !onlyHero && fs.existsSync("state/particle-models.json") ? JSON.parse(fs.readFileSync("state/particle-models.json", "utf8")) : [];
 
   // Heroes and what they wear by default first, so heroes show up complete early on
   const forHero = (item) => !onlyHero || item.heroes.includes(`npc_dota_hero_${onlyHero}`);

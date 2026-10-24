@@ -2,17 +2,17 @@
 // show and search a whole dataset from one file instead of walking the Hub's API:
 //   { dataset, commit, updated, files: [[path, size], ...] }   (sorted by path, without itself)
 // commit is the dataset's revision the list was made from. A dataset is listed again only when its
-// revision moved since the last run (files-state.json keeps the revision after the list's own commit).
+// revision moved since the last run (state/files.json keeps the revision after the list's own commit).
 //
-//   HF_TOKEN=... node files-list.js [dataset ...] [--no-upload] [--force]
+//   HF_TOKEN=... node exporters/files-list.js [dataset ...] [--no-upload] [--force]
 // Without names: every dataset the tracker writes.
 const fs = require("fs");
 const path = require("path");
 const { listFiles, datasetInfo } = require("@huggingface/hub");
-const hf = require("./hf");
+const hf = require("../lib/hf");
 
 const DATASETS = ["dota2-data", "dota2-images", "dota2-videos", "dota2-models", "dota2-particles", "dota2-sounds", "dota2-maps"];
-const STATE_FILE = "files-state.json";
+const STATE_FILE = "state/files.json";
 const LIST = "files.json";
 const temp = "./temp/files-list";
 
@@ -22,7 +22,7 @@ async function main() {
   const force = process.argv.includes("--force");
   const names = process.argv.slice(2).filter((arg) => !arg.startsWith("--"));
   if (!accessToken) {
-    console.error("Usage: HF_TOKEN=... node files-list.js [dataset ...] [--no-upload] [--force]");
+    console.error("Usage: HF_TOKEN=... node exporters/files-list.js [dataset ...] [--no-upload] [--force]");
     process.exit(1);
   }
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};

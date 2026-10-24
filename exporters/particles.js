@@ -976,8 +976,10 @@ async function main() {
   uploads.push({ path: "particles/attached-models.json", file: attachedList });
 
   if (upload) {
-    // A model's own files go next to the model, also for the models the game keeps under particles/
-    const particleFile = (entry) => entry.path.startsWith("particles/") && !/\.(sequences|attachments)\.json$/.test(entry.path);
+    // Every particle system and snapshot to dota2-particles, wherever the game keeps it (some are
+    // under models/ or maps/); a model's own files go next to the model, also for the models the
+    // game keeps under particles/
+    const particleFile = (entry) => !/\.(sequences|attachments)\.json$/.test(entry.path);
     await hf.upload(particlesRepo, accessToken, uploads.filter(particleFile), "Update particles");
     await hf.upload(repo, accessToken, uploads.filter((entry) => !particleFile(entry)), "Update the models' sequences and attachments");
     fs.writeFileSync(STATE_FILE, JSON.stringify(state));

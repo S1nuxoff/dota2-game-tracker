@@ -158,7 +158,7 @@ const { files } = await (await fetch("${base(dataset)}files.json")).json(); // [
 
 // "12,345 files, 6.9 GB", and a table of the biggest folders at a depth
 function stats(list, depth, describe) {
-  const files = list.files.filter(([file]) => !/^(files|names)\.json/.test(file) && file !== "README.md");
+  const files = list.files.filter(([file]) => !/^(files|names)\.json/.test(file) && file !== "README.md" && !file.startsWith("assets/"));
   const bytes = files.reduce((sum, [, size]) => sum + size, 0);
   const folders = new Map();
   for (const [file, size] of files) {
@@ -205,13 +205,15 @@ const CARDS = {
 
 ${PORTRAITS}
 
-**Every script and text file of Dota 2 as JSON**: all items and cosmetics (\`items_game\`), heroes, abilities, units, shops, events, emoticons, chat wheel, voice line rules, and every localization of the game in all 28 languages. Straight from the game files, updated after every patch. ${s.summary}.
+**Every script and text file of Dota 2 as JSON, and the code of its interface**: all items and cosmetics (\`items_game\`), heroes, abilities, units, shops, events, emoticons, chat wheel, voice line rules, and every localization of the game in all 28 languages. Straight from the game files, updated after every patch. ${s.summary}.
 
 ## What's inside
 
 ${s.table}
 
 - **\`scripts/\`, \`resource/\`**: the game's own files at their own paths, \`<path>.json\` for \`<path>\` in the game. KeyValues text becomes JSON objects with string values; a key a block repeats keeps every value, the next ones as \`key#2\`, \`key#3\` (items' \`visuals\` repeat \`asset_modifier\`). KeyValues3 and compiled resources (\`.vdata_c\`, response rules \`.vrr_c\`, ...) are decompiled to JSON. The few text files that are not KeyValues are kept as they are.
+- **\`panorama/\`**: the client's interface (Panorama UI), readable: every layout (\`.xml\`), style (\`.css\`) and script (\`.js\`, TypeScript ones compiled), decompiled from the game files: how every screen, tooltip and button of Dota 2 is built.
+- **\`resource/*.otf\`, \`resource/*.ttf\`**: Dota's own fonts (Radiance, Hypatia Sans).
 - **\`dotadex/\`**: files made from those for the [Dotadex](${SITE}) site, handy on their own: \`dotadex/data/heroes.json\`, \`abilities.json\`, \`items.json\`, \`treasures.json\` (chests and what drops from them), \`voices/<hero>.json\` (voice lines with their sound files), \`i18n/<language>.json\` (every text the site shows), and lighter pictures (\`dotadex/images/\`: loading screens and hero page backdrops at 1920 px, the hero grid in one atlas, cursor packs).
 
 Popular files:
@@ -427,7 +429,7 @@ ${footer("dota2-maps", `Converted from the game's map packages by \`scenes.js\` 
 
 // What a folder holds, for the tables
 const DESCRIBE = {
-  "dota2-data": { "scripts/": "the game's scripts", "resource/": "texts in every language, interface resources", "dotadex/": "files made for the Dotadex site" },
+  "dota2-data": { "scripts/": "the game's scripts", "resource/": "texts in every language, fonts", "panorama/": "the interface: layouts, styles, scripts", "dotadex/": "files made for the Dotadex site" },
   "dota2-models": { "models/items/": "cosmetics", "models/heroes/": "heroes", "models/props_structures/": "buildings", "models/creeps/": "creeps, Roshan", "models/courier/": "couriers", "models/events/": "events", "models/particle/": "models particles draw", "models/props_gameplay/": "gameplay props", "models/props_tree/": "trees", "models/ui/": "interface models", "textures/": "material variants' textures", "materials/": "animated materials", "cubemaps/": "cube maps" },
   "dota2-images": { "panorama/images/econ/": "cosmetics' icons", "panorama/images/teamfancontent/": "team fan content", "panorama/images/events/": "events", "panorama/images/spellicons/": "ability icons", "panorama/images/emoticons/": "emoticons", "panorama/images/loadingscreens/": "loading screens", "panorama/images/heroes/": "hero portraits", "panorama/images/items/": "item icons", "panorama/images/compendium/": "compendiums", "panorama/images/hud/": "the HUD" },
   "dota2-sounds": { "sounds/vo/": "voice lines, announcers", "sounds/weapons/": "attacks, abilities", "sounds/music/": "music", "sounds/ui/": "interface", "sounds/items/": "items", "sounds/ambient/": "ambience", "sounds/teamfancontent/": "team fan content", "sounds/talentcontent/": "talent content" },

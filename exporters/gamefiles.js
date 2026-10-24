@@ -9,7 +9,11 @@
 //   <path>.json        a compiled resource (<path>_c: .vdata_c, .vrr_c, ...) as Source2Viewer
 //                      decompiles it, its KV3 as JSON
 //   <path>             any other text file (or a .txt that is not KeyValues), as UTF-8
-// Pictures, fonts and binary files are left out (pictures go to dota2-images). The game's own
+//   panorama/<path>.xml, .css, .js   the interface (panorama/ but its pictures and videos, which are in
+//                      dota2-images and dota2-videos): layouts (.vxml_c), styles (.vcss_c), scripts
+//                      (.vjs_c, and .vts_c compiled to JavaScript), decompiled by Source2Viewer
+//   resource/<name>.otf, .ttf        Dota's own fonts (Radiance; .vfont_c decompiled to TrueType)
+// Other pictures and binary files are left out, and the Windows fonts in vgui/fonts (Microsoft's). The game's own
 // files win over core's, as the game reads them. Only files whose CRC changed since the last run
 // are converted and uploaded again (state/gamefiles.json); files the game removed are removed.
 //
@@ -27,18 +31,24 @@ const temp = "./temp/gamefiles";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const DATASET = process.env.HF_DATA_REPO || "dota2-data";
 // Raised when the files written change, so a game version already exported is exported again
-const VERSION = 1;
+const VERSION = 2;
 const STATE_FILE = "state/gamefiles.json";
 
-const FOLDERS = /^(scripts|resource)\//;
+const FOLDERS = /^(scripts|resource|panorama)\//;
+// The interface's pictures and videos are in their own datasets (images.js, videos.js)
+const ELSEWHERE = /^panorama\/(images|videos)\//;
+// The interface's layouts, styles and scripts, decompiled to text
+const UI = /^panorama\/.+\.(vxml|vcss|vjs|vts)_c$/;
+// Dota's own fonts (not the Windows fonts in vgui/fonts)
+const FONTS = /^resource\/[^/]+\.(otf|vfont)$/;
 // KeyValues text
 const KEYVALUES = /\.(txt|res|vdf|gameevents|lst|caverndef|eventactions|eventdef|eventincludes|seasondef)$/;
 // Text kept as it is
-const TEXT = /\.(json|htm|html|styles|cfg|csv|xml)$/;
+const TEXT = /\.(json|htm|html|styles|cfg|csv|xml|css)$/;
 // Compiled resources Source2Viewer turns into KV3 text
 const COMPILED = /\.(vdata|vrr|herolist|vcd|vrman)_c$/;
 // Not text: left out on purpose (anything else is reported, so a new kind is noticed)
-const BINARY = /\.(png|jpg|tga|psd|bmp|otf|ttf|vfont|dmx|dem|bin|vtex_c|vpcf_c|vmat_c|vsnd_c)$/;
+const BINARY = /\.(png|jpg|tga|psd|bmp|otf|ttf|vfont|dmx|dem|bin|vtex_c|vpcf_c|vmat_c|vsnd_c|vmdl_c)$/;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -47,6 +57,9 @@ function argValue(name) {
 
 // The dataset path a game file is kept at, or null when it is left out
 function datasetPath(file) {
+  if (ELSEWHERE.test(file)) return null;
+  if (UI.test(file)) return `${file.replace(/\.(vxml|vcss|vjs|vts)_c$/, (match, kind) => `.${{ vxml: "xml", vcss: "css", vjs: "js", vts: "js" }[kind]}`)}`;
+  if (FONTS.test(file)) return file.replace(/\.vfont$/, ".ttf");
   if (KEYVALUES.test(file)) return `${file}.json`;
   if (COMPILED.test(file)) return `${file.replace(/_c$/, "")}.json`;
   if (TEXT.test(file)) return file;
@@ -96,9 +109,19 @@ function convertCompiled(files, out) {
   const uploads = [];
   const failed = [];
   for (const file of files.keys()) {
-    const written = path.join(decompiled, file.replace(/_c$/, ""));
+    // The interface's files and fonts come out as text or TrueType under their own extension, kept
+    // as they are
+    const kept = UI.test(file) || FONTS.test(file) ? datasetPath(file) : null;
+    const written = path.join(decompiled, kept ?? file.replace(/_c$/, ""));
     if (!fs.existsSync(written)) {
       failed.push(file);
+      continue;
+    }
+    if (kept) {
+      const local = path.join(out, kept);
+      fs.mkdirSync(path.dirname(local), { recursive: true });
+      fs.copyFileSync(written, local);
+      uploads.push({ game: file, path: kept, file: local });
       continue;
     }
     const text = fs.readFileSync(written, "utf8");
@@ -132,9 +155,8 @@ async function main() {
   fs.mkdirSync(temp, { recursive: true });
   const source = game ? localSource(game) : await steamSource(username, password, temp);
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { files: {} };
-  if (state.version !== VERSION) {
-    state.files = {};
-  }
+  // A new version of this script goes over the game again (its new kinds of files), keeping what is
+  // done
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === VERSION) {
     console.log(`Game files of manifest ${source.manifestId} are already exported.`);
     return;
@@ -142,7 +164,7 @@ async function main() {
 
   const files = source.vpkDir.files.filter((file) => FOLDERS.test(file));
   const kept = files.filter((file) => datasetPath(file));
-  const unknown = files.filter((file) => !datasetPath(file) && !BINARY.test(file));
+  const unknown = files.filter((file) => !datasetPath(file) && !BINARY.test(file) && !ELSEWHERE.test(file));
   if (unknown.length) {
     const kinds = [...new Set(unknown.map((file) => path.extname(file)))];
     console.log(`Left out ${unknown.length} files of kinds not known yet: ${kinds.join(" ")}`);
@@ -163,8 +185,14 @@ async function main() {
     const buffers = new Map();
     await source.readFiles(changed.slice(start, start + 500), buffers);
     for (const [file, buffer] of buffers) {
-      if (COMPILED.test(file)) {
+      if (COMPILED.test(file) || UI.test(file) || file.endsWith(".vfont")) {
         compiled.set(file, buffer);
+      } else if (file.endsWith(".otf")) {
+        const local = path.join(out, file);
+        fs.mkdirSync(path.dirname(local), { recursive: true });
+        fs.writeFileSync(local, buffer);
+        uploads.push({ path: file, file: local });
+        next[file] = { crc: crcs[file], path: file };
       } else {
         const entry = convertText(file, buffer, out);
         uploads.push(entry);

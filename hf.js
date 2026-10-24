@@ -8,7 +8,7 @@ const PROGRESS_EVERY_MS = 3000;
 
 // Sends one commit, printing each file as it is sent and, every few seconds, how far the commit is
 // with the speed: [#####-----]  48%  95.2 / 199.7 MB  11.3 MB/s
-async function sendCommit(params, part) {
+async function sendCommit(params, part, label = "") {
   const sizes = new Map(part.map(({ path, file }) => [path, fs.statSync(file).size]));
   const total = [...sizes.values()].reduce((sum, size) => sum + size, 0);
   const progress = new Map();
@@ -21,7 +21,7 @@ async function sendCommit(params, part) {
     const share = total ? bytes / total : 1;
     const bar = "#".repeat(Math.round(share * 20)).padEnd(20, "-");
     const speed = bytes / Math.max((Date.now() - started) / 1000, 0.001);
-    return `  [${bar}] ${String(Math.round(share * 100)).padStart(3)}%  ${MB(bytes)} / ${MB(total)} MB  ${MB(speed)} MB/s`;
+    return `  ${label}[${bar}] ${String(Math.round(share * 100)).padStart(3)}%  ${MB(bytes)} / ${MB(total)} MB  ${MB(speed)} MB/s`;
   };
   for await (const event of uploadFilesWithProgress(params)) {
     if (event.event !== "fileProgress") continue;
@@ -85,20 +85,33 @@ async function uploadSiteData(accessToken, files, title) {
 // copies (the game's own files in dota2-data, which pages do not load). maxBytes: a smaller commit
 // for text files: the Hub keeps those (JSON among them) in the commit itself, which the library
 // builds as one string, and past a few hundred MB that is longer than a string can be.
-async function upload(repo, accessToken, files, title, { gzip = true, maxBytes = MAX_COMMIT_BYTES } = {}) {
+// parallel: how many commits are sent at once (each its own files)
+async function upload(repo, accessToken, files, title, { gzip = true, maxBytes = MAX_COMMIT_BYTES, parallel = 1 } = {}) {
   files = files.flatMap((entry) => {
     if (!gzip || !gzippedJson(entry.path)) return [entry];
     const gz = `${entry.file}.gz`;
     fs.writeFileSync(gz, zlib.gzipSync(fs.readFileSync(entry.file), { level: 9 }));
     return [entry, { path: `${entry.path}.gz`, file: gz }];
   });
+
+  // The commits, each within the size and file limits
+  const parts = [];
   let part = [];
   let partBytes = 0;
-
-  const commit = async () => {
-    if (part.length === 0) {
-      return;
+  for (const file of files) {
+    const size = fs.statSync(file.file).size;
+    if (part.length && (partBytes + size > maxBytes || part.length >= MAX_COMMIT_FILES)) {
+      parts.push({ files: part, bytes: partBytes });
+      part = [];
+      partBytes = 0;
     }
+    part.push(file);
+    partBytes += size;
+  }
+  if (part.length) parts.push({ files: part, bytes: partBytes });
+
+  const commit = async ({ files: part, bytes }, index) => {
+    const label = parts.length > 1 && parallel > 1 ? `#${index + 1} ` : "";
     // Connections to the Hub drop now and then on long uploads, so retry a few times
     for (let attempt = 1; ; attempt++) {
       try {
@@ -109,7 +122,8 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
             commitTitle: title,
             files: part.map(({ path, file }) => ({ path, content: new Blob([fs.readFileSync(file)]) })),
           },
-          part
+          part,
+          label
         );
         break;
       } catch (error) {
@@ -121,24 +135,22 @@ async function upload(repo, accessToken, files, title, { gzip = true, maxBytes =
           throw error;
         }
         const wait = limited ? 5 * 60 : Math.min(attempt * 15, 120);
-        console.log(`Upload failed (${(error.cause?.code ?? error.message).slice(0, 80)}), retrying in ${wait} s`);
+        console.log(`${label}Upload failed (${(error.cause?.code ?? error.message).slice(0, 80)}), retrying in ${wait} s`);
         await new Promise((resolve) => setTimeout(resolve, wait * 1000));
       }
     }
-    console.log(`Uploaded ${part.length} files (${(partBytes / 1e6).toFixed(1)} MB)`);
-    part = [];
-    partBytes = 0;
+    console.log(`${label}Uploaded ${part.length} files (${MB(bytes)} MB)`);
   };
 
-  for (const file of files) {
-    const size = fs.statSync(file.file).size;
-    if (partBytes + size > maxBytes || part.length >= MAX_COMMIT_FILES) {
-      await commit();
+  // Up to `parallel` commits at a time
+  let next = 0;
+  const worker = async () => {
+    while (next < parts.length) {
+      const index = next++;
+      await commit(parts[index], index);
     }
-    part.push(file);
-    partBytes += size;
-  }
-  await commit();
+  };
+  await Promise.all(Array.from({ length: Math.min(parallel, parts.length) }, worker));
 }
 
 // Removes files from the dataset, in commits of a reasonable size

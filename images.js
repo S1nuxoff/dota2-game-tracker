@@ -14,7 +14,7 @@
 //   HF_TOKEN=... node images.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 const fs = require("fs");
 const path = require("path");
-const { spawnSync } = require("child_process");
+const { spawn } = require("child_process");
 const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
 
@@ -25,6 +25,8 @@ const DATASET = process.env.HF_IMAGES_REPO || "dota2-images";
 const VERSION = 1;
 const STATE_FILE = "images-state.json";
 const BATCH = 2000;
+// Commits of one batch sent at once
+const PARALLEL_COMMITS = 3;
 
 const IMAGES = /^panorama\/images\/.+\.(vtex_c|vsvg_c|png)$/;
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
@@ -69,8 +71,18 @@ function embeddedImage(buffer) {
   return null;
 }
 
-// One batch of VPK files to local files: [{ game file, path in the dataset, local file }]
-async function convertBatch(source, files, out) {
+// Source2Viewer in the background, so a batch is sent while the next one is made
+function decompile(args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(DECOMPILER, args, { stdio: "ignore" });
+    child.on("error", reject);
+    child.on("close", resolve);
+  });
+}
+
+// One batch of VPK files to local files: [{ game file, path in the dataset, local file }], in its
+// own folders under temp
+async function convertBatch(source, files, out, name) {
   const buffers = new Map();
   await source.readFiles(files, buffers);
   const written = [];
@@ -81,8 +93,8 @@ async function convertBatch(source, files, out) {
     written.push({ game: file, path: target, file: local });
   };
   // The ones Source2Viewer decodes
-  const input = path.join(temp, "decode-in");
-  const decoded = path.join(temp, "decode-out");
+  const input = path.join(temp, `${name}-decode-in`);
+  const decoded = path.join(temp, `${name}-decode-out`);
   fs.rmSync(input, { recursive: true, force: true });
   fs.rmSync(decoded, { recursive: true, force: true });
   const toDecode = [];
@@ -103,13 +115,7 @@ async function convertBatch(source, files, out) {
   }
   const failed = [];
   if (toDecode.length) {
-    const result = spawnSync(DECOMPILER, ["-i", input, "--recursive", "-o", decoded, "-d", "--threads", "8"], {
-      encoding: "utf8",
-      maxBuffer: 512 * 1024 * 1024,
-    });
-    if (result.error) {
-      throw result.error;
-    }
+    await decompile(["-i", input, "--recursive", "-o", decoded, "-d", "--threads", "8"]);
     for (const file of toDecode) {
       const base = file.replace(/\.(vtex|vsvg)_c$/, "");
       // Source2Viewer writes a vector picture as .svg, a texture as .png (.jpeg for one from a JPEG)
@@ -121,6 +127,8 @@ async function convertBatch(source, files, out) {
       }
     }
   }
+  fs.rmSync(input, { recursive: true, force: true });
+  fs.rmSync(decoded, { recursive: true, force: true });
   return { written, failed };
 }
 
@@ -161,15 +169,18 @@ async function main() {
 
   const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, DATASET) : null;
   const save = () => fs.writeFileSync(STATE_FILE, JSON.stringify({ version: VERSION, manifest: state.manifest, files: state.files }));
-  const out = path.join(temp, "out");
   let done = 0;
   let bytes = 0;
   const allFailed = [];
 
-  const finish = async (written) => {
+  const finish = async (written, out) => {
     bytes += written.reduce((sum, entry) => sum + fs.statSync(entry.file).size, 0);
     if (upload) {
-      await hf.upload(repo, process.env.HF_TOKEN, written, "Update the game's pictures", { gzip: false, maxBytes: 200 * 1e6 });
+      await hf.upload(repo, process.env.HF_TOKEN, written, "Update the game's pictures", {
+        gzip: false,
+        maxBytes: 200 * 1e6,
+        parallel: PARALLEL_COMMITS,
+      });
       for (const entry of written) {
         state.files[entry.game] = { hash: now[entry.game], path: entry.path };
       }
@@ -177,13 +188,27 @@ async function main() {
       fs.rmSync(out, { recursive: true, force: true });
     }
     done += written.length;
-    console.log(`${done} of ${changed.length} done, ${(bytes / 1e9).toFixed(2)} GB`);
+    const elapsed = (Date.now() - started) / 1000;
+    console.log(`${done} of ${changed.length} done, ${(bytes / 1e9).toFixed(2)} GB, ${(bytes / 1e6 / elapsed).toFixed(1)} MB/s on average`);
   };
 
-  for (let start = 0; start < changed.length; start += BATCH) {
-    const { written, failed } = await convertBatch(source, changed.slice(start, start + BATCH), out);
+  // Each batch is made while the one before is sent
+  const started = Date.now();
+  const batches = [];
+  for (let start = 0; start < changed.length; start += BATCH) batches.push(changed.slice(start, start + BATCH));
+  const make = (index) => {
+    const out = path.join(temp, `out-${index}`);
+    const made = convertBatch(source, batches[index], out, `batch-${index}`).then((result) => ({ ...result, out }));
+    // Its failure is thrown where it is awaited, not while the batch before is still being sent
+    made.catch(() => {});
+    return made;
+  };
+  let ready = batches.length ? make(0) : null;
+  for (let index = 0; index < batches.length; index++) {
+    const { written, failed, out } = await ready;
+    ready = index + 1 < batches.length ? make(index + 1) : null;
     allFailed.push(...failed);
-    await finish(written);
+    await finish(written, out);
   }
   source.release();
   if (allFailed.length) {
@@ -202,7 +227,7 @@ async function main() {
     }
     save();
   } else {
-    console.log(`Written to ${out}`);
+    console.log(`Written to ${temp}`);
   }
 }
 

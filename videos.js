@@ -20,8 +20,8 @@ const VERSION = 1;
 const STATE_FILE = "videos-state.json";
 const FOLDER = "panorama/videos";
 const VIDEOS = /^panorama\/videos\/.+\.(webm|mov|mp4|vtt)$/;
-// Some are hundreds of MB
-const BATCH = 20;
+// Some are hundreds of MB; a batch's commits are sent three at a time
+const BATCH = 60;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -84,7 +84,7 @@ async function main() {
       bytes += fs.statSync(local).size;
     }
     if (upload) {
-      await hf.upload(repo, process.env.HF_TOKEN, written, "Update the game's videos", { gzip: false, maxBytes: 200 * 1e6 });
+      await hf.upload(repo, process.env.HF_TOKEN, written, "Update the game's videos", { gzip: false, maxBytes: 200 * 1e6, parallel: 3 });
       for (const file of batch) state.files[file] = now[file];
       save();
       fs.rmSync(out, { recursive: true, force: true });

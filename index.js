@@ -7,6 +7,7 @@ const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("./hf");
 const { steamSource, localSource } = require("./source");
+const { loadItemsGame } = require("./itemsgame");
 const { exportSkins } = require("./skins");
 const { exportDynamicMaterials, exportCubeMaps } = require("./materials");
 const { readCloth, writeCloth, clothList } = require("./cloth");
@@ -24,8 +25,6 @@ const exportDir = `${temp}/export`;
 const distDir = `${temp}/dist`;
 // Per model: the game files it was exported from and a hash of their CRCs
 const STATE_FILE = "state.json";
-const ITEMS_URL =
-  "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const HEROES_FILE = "scripts/npc/npc_heroes.txt";
 const HERO_FILES = /^scripts\/npc\/heroes\/npc_dota_hero_\w+\.txt$/;
 // What each hero stands on in its page's scene
@@ -89,7 +88,7 @@ async function main() {
   const { vpkDir } = source;
   const maxDuration = game ? Infinity : CI_MAX_DURATION;
 
-  const { items, heroSkins, unitItems } = await loadItems();
+  const { items, heroSkins, unitItems } = await loadItems(source);
   await addUnitModels(source, items, unitItems);
   const { heroes, personas } = await loadHeroModels(source);
   const pedestals = await loadPedestals(source);
@@ -257,20 +256,8 @@ function argValue(name) {
 
 // items: { id: { name, prefab, heroes, models, skin?, styles? } } for every item that has a model;
 // heroSkins: [{ heroes, skin }] the skins items put on their hero's own model (model_skin)
-async function loadItems() {
-  // An items_game.json next to the script is used instead of downloading it
-  let data;
-  if (fs.existsSync("items_game.json")) {
-    console.log("Reading items_game.json");
-    data = JSON.parse(fs.readFileSync("items_game.json", "utf8"));
-  } else {
-    console.log("Loading items_game.json");
-    const res = await fetch(ITEMS_URL);
-    if (!res.ok) {
-      throw new Error(`Could not load items: HTTP ${res.status}`);
-    }
-    data = await res.json();
-  }
+async function loadItems(source) {
+  const data = await loadItemsGame(source);
 
   const items = {};
   const heroSkins = [];

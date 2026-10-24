@@ -41,6 +41,7 @@ const sharp = require("sharp");
 const hf = require("./hf");
 const kv3 = require("./kv3");
 const { localSource, steamSource } = require("./source");
+const { loadItemsGame } = require("./itemsgame");
 const { parse } = require("./keyvalues");
 const { exportSchema } = require("./particle-schema");
 
@@ -56,7 +57,6 @@ const UI_MAPS = ["maps/scenes/armory/ui_armory_edges.vmap"];
 const BUNDLE_VERSION = 1;
 // Raised when textures are built another way, so all of them are built again (2: sheet frames at their own sizes; 3: each in its whole cell)
 const TEXTURE_VERSION = 3;
-const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
 const BATCH = 2000;
 // What a sprite or trail (a soft white dot) and a rope draw where a layer names no texture
@@ -108,14 +108,6 @@ function convert(files, name) {
   return out;
 }
 
-let itemsGame = null;
-async function loadItemsGame() {
-  itemsGame ??= fs.existsSync("items_game.json")
-    ? JSON.parse(fs.readFileSync("items_game.json", "utf8"))
-    : await (await fetch(ITEMS_GAME_URL)).json();
-  return itemsGame;
-}
-
 // The weather items' effects by their weather_type (client.dll's table at 0x184945790, 0 none)
 const WEATHER_SYSTEMS = [
   "particles/rain_fx/econ_snow.vpcf",
@@ -131,8 +123,8 @@ const WEATHER_SYSTEMS = [
 
 // The particle systems items show: created alongside them, put in place of others, or named by
 // any other modifier (a kill streak's, an emblem's), and the weather's
-async function rootSystems() {
-  const data = await loadItemsGame();
+async function rootSystems(source) {
+  const data = await loadItemsGame(source);
   const roots = new Set(WEATHER_SYSTEMS);
   for (const item of Object.values(data.items_game.items)) {
     for (const visual of Object.values(item.visuals ?? {})) {
@@ -272,8 +264,8 @@ async function mapEffects(source) {
 
 // The snapshots items put in place of others (particle_snapshot: a weapon's own points for the
 // default weapon's glow); no .vpcf refers to them
-async function itemSnapshots() {
-  const data = await loadItemsGame();
+async function itemSnapshots(source) {
+  const data = await loadItemsGame(source);
   const snapshots = new Set();
   for (const item of Object.values(data.items_game.items)) {
     for (const visual of Object.values(item.visuals ?? {})) {
@@ -695,7 +687,7 @@ async function main() {
   // Every system reachable from the items', converted where it changed; an unchanged one's
   // references come from the state without reading it
   const reached = new Set();
-  const itemRoots = await rootSystems();
+  const itemRoots = await rootSystems(source);
   const portraits = await portraitSystems(source);
   const effectsOfModels = await modelEffects(source);
   const { found: effectsOfMaps, cameras: camerasOfMaps } = await mapEffects(source);
@@ -867,7 +859,7 @@ async function main() {
 
   // The snapshots they place particles by: each stream's values by its name
   state.snapshots ??= {};
-  const snapshotFiles = [...new Set([...[...reached].flatMap((file) => state.systems[file]?.snapshots ?? []), ...(await itemSnapshots())])].filter((file) => crcOf(file) !== undefined);
+  const snapshotFiles = [...new Set([...[...reached].flatMap((file) => state.systems[file]?.snapshots ?? []), ...(await itemSnapshots(source))])].filter((file) => crcOf(file) !== undefined);
   const snapshotTodo = snapshotFiles.filter((file) => state.snapshots[file] !== crcOf(file));
   console.log(`${snapshotFiles.length} snapshots, ${snapshotTodo.length} new or changed`);
   for (let i = 0; i < snapshotTodo.length; i += BATCH) {

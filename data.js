@@ -16,10 +16,10 @@ const hf = require("./hf");
 const { localSource, steamSource } = require("./source");
 const { parse } = require("./keyvalues");
 const { summonsOf, UNITS_FILE } = require("./summons");
+const { loadItemsGame } = require("./itemsgame");
 
 const temp = "./temp/data";
 const DECOMPILER = path.resolve("vrf", process.platform === "win32" ? "Source2Viewer-CLI.exe" : "Source2Viewer-CLI");
-const ITEMS_GAME_URL = "https://raw.githubusercontent.com/S1nuxoff/dota2-file-tracker/main/static/items_game.json";
 const IMAGE_FOLDERS = [
   "panorama/images/heroes/",
   "panorama/images/spellicons/",
@@ -138,7 +138,7 @@ async function main() {
   const items = omit(read("scripts/npc/items.txt").root.DOTAAbilities, ["Version"]);
   const neutralItems = read("scripts/npc/neutral_items.txt").root;
   const shops = readShops(files.get(SHOPS_FILE));
-  const itemsGame = await loadItemsGame();
+  const itemsGame = (await loadItemsGame(source)).items_game;
   const treasures = readTreasures(itemsGame);
   const loadingScreens = loadingScreenFiles(itemsGame, source.vpkDir);
   const i18n = readTexts(read, files);
@@ -241,11 +241,6 @@ function readHeroes(read, files) {
     }
   }
   return { heroes, heroAbilities };
-}
-
-async function loadItemsGame() {
-  const data = fs.existsSync("items_game.json") ? JSON.parse(fs.readFileSync("items_game.json", "utf8")) : await (await fetch(ITEMS_GAME_URL)).json();
-  return data.items_game;
 }
 
 // Each loading screen item's picture in the VPK: { itemId: "panorama/images/....vtex_c" }

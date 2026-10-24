@@ -4,7 +4,7 @@ Where every file Dotadex reads lives, which script writes it, and which part of 
 Kept current with every step of the plan in Dotadex's `TASKS.md` (section "Data: the whole game
 in datasets"); the site names every source once in `src/datasets.js`.
 
-State on 2026-10-24: seven Hugging Face datasets under `Sqls1/`, the price tracker on GitHub, and Steam's CDN for one kind of picture.
+State on 2026-10-24: eight Hugging Face datasets under `Sqls1/`, the price tracker on GitHub, and Steam's CDN for one kind of picture.
 
 ## Sources
 
@@ -14,6 +14,7 @@ State on 2026-10-24: seven Hugging Face datasets under `Sqls1/`, the price track
 | HF `dota2-images` | this repo: `images.js` | every picture of the game's interface as the game keeps it |
 | HF `dota2-videos` | this repo: `videos.js` | every video of the game's interface as the game keeps it |
 | HF `dota2-models` | this repo: `models.js`, `particles.js` (sequences, attachments) | every model of the game with its materials and textures |
+| HF `dota2-textures` | this repo: `exporters/textures.js` | every texture outside the interface, on its own, as PNG |
 | HF `dota2-particles` | this repo: `particles.js` | every particle system of the game, their textures, bundles, the engine's schema |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
 | HF `dota2-maps` (was dota2-scenes) | this repo: `scenes.js` | scenes and maps as glb |
@@ -63,6 +64,10 @@ The interface's pictures and videos at their game paths, as the game keeps them 
 | dota2-images `panorama/images/<path>.png` or `.jpg` | a texture (`<path>.vtex_c`): the PNG or JPEG it holds, byte for byte, or for the other formats its pixels decoded to PNG. A name ending in `_jpg` is a `.jpg`, every other a `.png` | `panoramaImage(name)` and `dataImage(image)` in `src/datasets.js`, used all over the site |
 | dota2-images `panorama/images/<path>.svg` | a vector picture (`.vsvg_c`) | `panoramaFile(file)` |
 | dota2-videos `panorama/videos/<path>` | `.webm` (loose in the depot), `.mov`, `.mp4`, `.vtt` subtitles (in the VPK) | `VIDEOS_BASE`: the hero grid's animated portraits |
+
+## dota2-textures
+
+Every texture of the game outside `panorama/` (`materials/`, `models/`, `maps/`, ...), at its game path as `<name>.png` for `<name>.vtex_c` (EXR for high dynamic range ones), the pixels the game draws at full size. A texture of several pictures is several files: a sheet's `<name>_seq<n>.png` (or `_seq<n>_<frame>`) with `<name>.mks`, a cube map's six faces `_bk _dn _ft _lf _rt _up`, a volume's slices `_z000...` (`exporters/textures.js`, run by `images.js`'s code, against `state/textures.json`). The site does not read it; the models carry their own textures.
 
 ## dota2-models
 

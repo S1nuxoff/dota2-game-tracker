@@ -6,7 +6,7 @@
 //   HF_TOKEN=... node particles.js --game "<...>/dota 2 beta/game/dota"
 //   HF_TOKEN=... node particles.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
 //
-// Uploads to the models dataset:
+// Uploads to the dota2-particles dataset (the particles/ paths) and the models dataset (models/):
 //   particles/<path>.json                    a system (particles/<path>.vpcf in the game), as KV3 gives it
 //   particles/textures/<path>.png, .json     a texture (<path>.vtex) and its sheet: sequences of frames
 //   particles/bundles/<path>.json            an effect items show with every system it spawns, in one file
@@ -677,7 +677,10 @@ async function main() {
   fs.mkdirSync(temp, { recursive: true });
   const source = game ? localSource(game) : await steamSource(username, password, temp);
   const { vpkDir } = source;
+  // The particle files to dota2-particles, what belongs to a model (sequences, attachments) next to
+  // the model in the models dataset
   const repo = upload ? await hf.prepareRepo(accessToken, process.env.HF_REPO) : null;
+  const particlesRepo = upload ? await hf.prepareRepo(accessToken, process.env.HF_PARTICLES_REPO || "dota2-particles") : null;
   const dist = path.join(temp, "dist");
 
   // --force: everything again, as on the first run
@@ -969,7 +972,8 @@ async function main() {
   uploads.push({ path: "particles/attached-models.json", file: attachedList });
 
   if (upload) {
-    await hf.upload(repo, accessToken, uploads, "Update particles");
+    await hf.upload(particlesRepo, accessToken, uploads.filter((entry) => entry.path.startsWith("particles/")), "Update particles");
+    await hf.upload(repo, accessToken, uploads.filter((entry) => !entry.path.startsWith("particles/")), "Update the models' sequences and attachments");
     fs.writeFileSync(STATE_FILE, JSON.stringify(state));
   } else {
     console.log(`${uploads.length} files written to ${dist}`);

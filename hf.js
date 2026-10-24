@@ -28,8 +28,10 @@ async function prepareRepo(accessToken, name = "dota2-models") {
 const gzippedJson = (datasetPath) => /^([^/]+\/)?[^/]+\.json$|^data\/i18n\/[^/]+\.json$|\/phonemes\.json$/.test(datasetPath);
 
 // files: [{ path: path in the dataset, file: local file }]; gzip: false leaves out the gzipped
-// copies (the game's own files in dota2-data, which pages do not load)
-async function upload(repo, accessToken, files, title, { gzip = true } = {}) {
+// copies (the game's own files in dota2-data, which pages do not load). maxBytes: a smaller commit
+// for text files: the Hub keeps those (JSON among them) in the commit itself, which the library
+// builds as one string, and past a few hundred MB that is longer than a string can be.
+async function upload(repo, accessToken, files, title, { gzip = true, maxBytes = MAX_COMMIT_BYTES } = {}) {
   files = files.flatMap((entry) => {
     if (!gzip || !gzippedJson(entry.path)) return [entry];
     const gz = `${entry.file}.gz`;
@@ -72,7 +74,7 @@ async function upload(repo, accessToken, files, title, { gzip = true } = {}) {
 
   for (const file of files) {
     const size = fs.statSync(file.file).size;
-    if (partBytes + size > MAX_COMMIT_BYTES || part.length >= MAX_COMMIT_FILES) {
+    if (partBytes + size > maxBytes || part.length >= MAX_COMMIT_FILES) {
       await commit();
     }
     part.push(file);

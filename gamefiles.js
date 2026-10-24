@@ -193,7 +193,7 @@ async function main() {
 
   if (upload) {
     const repo = await hf.prepareRepo(process.env.HF_TOKEN, DATASET);
-    await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update the game's scripts and texts", { gzip: false });
+    await hf.upload(repo, process.env.HF_TOKEN, uploads, "Update the game's scripts and texts", { gzip: false, maxBytes: 50 * 1e6 });
     if (removed.length) {
       await hf.remove(repo, process.env.HF_TOKEN, removed, "Remove what the game removed");
     }

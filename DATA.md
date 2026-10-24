@@ -4,19 +4,20 @@ Where every file Dotadex reads lives, which script writes it, and which part of 
 Kept current with every step of the plan in Dotadex's `TASKS.md` (section "Data: the whole game
 in datasets"); the site names every source once in `src/datasets.js`.
 
-State on 2026-10-24: four Hugging Face datasets under `Sqls1/`, the image tracker on GitHub, Steam's CDN.
+State on 2026-10-24: six Hugging Face datasets under `Sqls1/`, the price tracker on GitHub, and Steam's CDN for one kind of picture.
 
 ## Sources
 
 | Source | Written by | Holds |
 |---|---|---|
 | HF `dota2-data` | this repo: `gamefiles.js`; `index.js`, `data.js`, `audio.js` for `dotadex/` | every script and localization of the game as JSON, at its game path; under `dotadex/` the files made for the site |
-| HF `dota2-models` | this repo: `index.js`, `data.js`, `particles.js` | models, panorama pictures the site uses, particles |
+| HF `dota2-images` | this repo: `images.js` | every picture of the game's interface as the game keeps it |
+| HF `dota2-videos` | this repo: `videos.js` | every video of the game's interface as the game keeps it |
+| HF `dota2-models` | this repo: `index.js`, `particles.js` | models with their materials and textures, particles |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
 | HF `dota2-scenes` | this repo: `scenes.js` | scenes and maps as glb |
-| GitHub `dota2-image-tracker` `static/` | dota2-image-tracker | ~20k panorama pictures as PNG |
 | GitHub `dota2-price-tacker` `static/prices/latest.json` | dota2-price-tacker, every 20 minutes | market prices (not from the game) |
-| Steam CDN `cdn.steamstatic.com/apps/dota2/images/dota_react/` | Valve | hero portraits and crops, attribute icons |
+| Steam CDN `cdn.steamstatic.com/apps/dota2/images/dota_react/` | Valve | the heroes' square crops (the Wardrobe), which the game has no copy of |
 
 Every JSON at most one folder deep (and `data/i18n/`) has a gzipped copy `<file>.json.gz` next to it
 (`hf.js`); the site asks for that first (`src/fetchData.js`). Every model has `<model>.glb.gz`
@@ -48,7 +49,19 @@ from `DOTADEX_BASE`.
 | `dotadex/data/heroes.json`, `abilities.json`, `items.json`, `neutral_items.json`, `shops.json`, `treasures.json` | `data.js` | heroes, abilities, shop items, treasure chests | `src/gamedata.js`, `scripts/build-catalog.mjs` |
 | `dotadex/data/armory.json`, `emoticons.json`, `cursors.json`, `loadout_backgrounds.json`, `loadout_portraits.json`, `manifest.json` | `data.js` | the Armory's categories, emoticons, cursor packs, hero page backgrounds and portrait setups, the game version | `src/components/*`, `src/App.jsx` |
 | `dotadex/data/i18n/<language>.json` | `data.js` | every text the site shows, per language | `src/gamedata.js` |
+| `dotadex/images/...`: `loadout_backgrounds/*.jpg`, `loadingscreens/**/*.webp`, `materials/portraits_card/...png`, `heroes/selection_atlas.webp` + `.json`, `cursors/<pack>/*.png` | `data.js` | pictures made from the game's for the site: the hero page backdrops at 1920 wide, the loading screens at 1920 wide, the CUSTOMIZE cards' backgrounds (materials, not interface pictures), every hero grid portrait in one atlas, the cursor packs (BMPs in the game) | `HeroPage.jsx`, `ItemDetails.jsx`, `CosmeticPicker.jsx`, `HeroGrid.jsx` |
 | `dotadex/data/animsounds.json`, `animsound-events.json`, `abilitysounds.json`, `voices/<hero>.json`, `portrait-speech.json`, `audio-library.json`, `ui-sounds.json`, `chat-wheel.json` | `audio.js` | which sounds play when: animations, abilities, voice lines, music and announcer packs, the menu, the chat wheel | `src/components/Viewer.jsx`, `Voice.jsx`, `HeroPage.jsx`, `ChatWheel*.jsx`, `ItemDetails.jsx`, `src/uiSounds.js` |
+
+## dota2-images and dota2-videos
+
+The interface's pictures and videos at their game paths, as the game keeps them (`images.js`,
+`videos.js`, only what changed, against `images-state.json` and `videos-state.json`).
+
+| Path | What it is | Read by (site) |
+|---|---|---|
+| dota2-images `panorama/images/<path>.png` or `.jpg` | a texture (`<path>.vtex_c`): the PNG or JPEG it holds, byte for byte, or for the other formats its pixels decoded to PNG. A name ending in `_jpg` is a `.jpg`, every other a `.png` | `panoramaImage(name)` and `dataImage(image)` in `src/datasets.js`, used all over the site |
+| dota2-images `panorama/images/<path>.svg` | a vector picture (`.vsvg_c`) | `panoramaFile(file)` |
+| dota2-videos `panorama/videos/<path>` | `.webm` (loose in the depot), `.mov`, `.mp4`, `.vtt` subtitles (in the VPK) | `VIDEOS_BASE`: the hero grid's animated portraits |
 
 ## dota2-models
 
@@ -61,8 +74,6 @@ from `DOTADEX_BASE`.
 | `models/<path>.cloth.json`, `models/cloth.json` | `cloth.js` | cloth, hair and beard simulation; the list | `src/viewer/cloth.js` |
 | `materials/dynamic.json` | `materials.js` | materials' per-frame parameters | `src/viewer/materialPrograms.js` |
 | `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `index.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
-| `images/...png`, `.svg`, `.webp`, `images/heroes/selection_atlas.*`, `images/cursors/` | `data.js` | panorama pictures in `IMAGE_FOLDERS`, the hero grid atlas, cursors | most components (`imageUrl` in `src/gamedata.js`) |
-| `videos/heroes/` | `data.js` | the heroes' animated portraits | `src/components/HeroGrid.jsx` |
 | `particles/<path>.json`, `particles/bundles/`, `particles/textures/`, `.vsnap.json` | `particles.js` | particle systems, effects with all they spawn, their textures, snapshots | `src/viewer/particles/` |
 | `particles/model-effects.json`, `map-effects.json`, `map-cameras.json`, `attached-models.json`, `schema.json`, `coverage.json` | `particles.js` | effects models and maps start on their own, the hero page cameras, models effects attach, the engine's defaults | `src/viewer/stage.js`, `src/viewer/cardEdges.js`, `src/viewer/particles/` |
 

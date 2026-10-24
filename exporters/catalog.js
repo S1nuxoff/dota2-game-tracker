@@ -3,7 +3,7 @@
 // sounds and effects instead of folders. Written to dota2-data as catalog/catalog.json (+ .gz):
 //   {
 //     updated,
-//     heroes: [{ id, name, tokens, abilities, personas: [{ id, name }], items: [item id] }],
+//     heroes: [{ id, name, model, tokens, abilities, personas: [{ id, name, model }], items: [item id] }],
 //     items: { id: { name, prefab, slot, type, rarity, heroes, set, icon, refs: { <dataset>: [prefix] } } },
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
@@ -176,6 +176,11 @@ async function main() {
     for (const id of ids) items[id].set ??= key;
   }
 
+  // The hero's model in dota2-models (.vmdl -> .glb), when it was exported
+  const glbOf = (model) => {
+    const glb = model ? `${stripExt(model.toLowerCase())}.glb` : "";
+    return sets.models.has(glb) ? glb : "";
+  };
   const folderOf = (model) => (model ? model.toLowerCase().split("/")[2] : undefined);
   const heroes = [];
   for (const [id, hero] of Object.entries(heroesData)) {
@@ -197,6 +202,7 @@ async function main() {
       id: p.name,
       name: imageNames[`panorama/images/heroes/${p.name}_png.png`]?.[0] || p.name,
       folder: folderOf(p.Model),
+      model: glbOf(p.Model),
     }));
     const tokens = [...new Set([key, folderOf(hero.Model), ...personas.map((p) => p.folder), ...top].filter(Boolean))];
     const abilities = Object.entries(hero)
@@ -205,9 +211,10 @@ async function main() {
     heroes.push({
       id,
       name,
+      model: glbOf(hero.Model),
       tokens,
       abilities,
-      personas: personas.map(({ id: pid, name: pname }) => ({ id: pid, name: pname })),
+      personas: personas.map(({ id: pid, name: pname, model }) => ({ id: pid, name: pname, model })),
       items: own.map(([itemId]) => itemId),
     });
   }

@@ -29,7 +29,8 @@ function codeKey() {
   const hash = crypto.createHash("sha1");
   for (const folder of ["exporters", "lib"]) {
     for (const name of fs.readdirSync(folder).filter((file) => file.endsWith(".js")).sort()) {
-      hash.update(name).update(fs.readFileSync(path.join(folder, name)));
+      // Line ends as git keeps them, so a copy on Windows gives the same key
+      hash.update(name).update(fs.readFileSync(path.join(folder, name), "utf8").replace(/\r\n/g, "\n"));
     }
   }
   return hash.digest("hex");

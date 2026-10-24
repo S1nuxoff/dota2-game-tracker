@@ -23,7 +23,8 @@ const site = (file) => `${base("dota2-data")}dotadex/${file}`;
 // A row of pictures for a card's top. Hugging Face shows each <img> of a card on its own line, so the
 // rows are put together into one picture, assets/banner.png in the dataset (banner()); a card
 // holds a mark for each row until then
-const row = (pictures, height) => `<!--row ${JSON.stringify({ pictures: pictures.map(([src]) => src), height })}-->`;
+// opaque: drop the pictures' alpha (textures keep masks there)
+const row = (pictures, height, opaque = false) => `<!--row ${JSON.stringify({ pictures: pictures.map(([src]) => src), height, opaque })}-->`;
 const ROWS = /<!--row (.*?)-->/g;
 
 // The card's rows as one picture, at twice their size for sharp screens: [file, width to show]
@@ -32,12 +33,13 @@ async function banner(card, dataset) {
   if (!rows.length) return null;
   const GAP = 12;
   const built = [];
-  for (const { pictures, height } of rows) {
+  for (const { pictures, height, opaque } of rows) {
     const h = height * 2;
     const tiles = [];
     for (const src of pictures) {
       const data = Buffer.from(await (await fetch(src)).arrayBuffer());
-      const { data: tile, info } = await sharp(data).resize({ height: h }).png().toBuffer({ resolveWithObject: true });
+      const image = sharp(data).resize({ height: h });
+      const { data: tile, info } = await (opaque ? image.removeAlpha() : image).png().toBuffer({ resolveWithObject: true });
       tiles.push({ tile, width: info.width });
     }
     const width = tiles.reduce((sum, tile) => sum + tile.width, 0) + GAP * (tiles.length - 1);
@@ -309,7 +311,18 @@ ${footer("dota2-models", `Converted from the game files by \`models.js\` with [S
   "dota2-textures": (s) => `${header({ pretty: "Dota 2 Textures", tags: ["image", "textures", "png", "3d"], count: s.count })}
 # Dota 2 Textures
 
-${PORTRAITS}
+${row(
+    [
+      "models/heroes/pudge/pudge2_body_color_psd_e676b3c.png",
+      "models/heroes/axe/axe_bare_color_psd_f3eac904.png",
+      "models/heroes/lina/lina2_color_psd_ad5b14a1.png",
+      "models/heroes/nevermore/nevermore_color_psd_a53f1f33.png",
+      "models/heroes/juggernaut/juggernaut_fur_color_psd_d9300f6c.png",
+      "models/heroes/invoker/invoker_bracer_color_psd_e68dac0b.png",
+    ].map((file) => [`${base("dota2-textures")}materials/${file}`, "texture"]),
+    130,
+    true
+  )}
 
 **Every texture of Dota 2's 3D world on its own**: the colour maps, normal maps and masks of every hero, cosmetic, unit, building, prop and map, the particles' textures, skyboxes. ${s.summary}, as PNG with the pixels the game draws (decoded from the GPU's block compression; full size), high dynamic range ones as EXR. The 3D models in [dota2-models](${page("dota2-models")}) already hold theirs inside; here each is a file for your own renders, mods and art.
 
@@ -321,7 +334,7 @@ At the game's paths: \`<name>.vtex_c\` in the game is \`<name>.png\` here. A tex
 
 Dota's hero textures come in sets: \`_color\` (colour, alpha often a mask), \`_normal\`, \`_masks1\` / \`_masks2\` (detail, metalness, self-illumination, specular, rim, tint by channel), \`_specexp\`, \`_rimmask\`.
 
-${usage("dota2-textures", "materials/models/heroes/pudge/pudge_color_psd_8ab92ab8.png", "materials/models/heroes/pudge")}
+${usage("dota2-textures", "materials/models/heroes/pudge/pudge2_body_color_psd_e676b3c.png", "materials/models/heroes/pudge")}
 
 ${footer("dota2-textures", "Exported from the game files by `textures.js`.")}`,
 
@@ -427,6 +440,8 @@ Object.assign(DESCRIBE["dota2-sounds"], { "sounds/misc/": "misc", "sounds/physic
 DESCRIBE["dota2-videos"] = { "panorama/videos/heroes/": "animated hero portraits", "panorama/videos/events/": "events", "panorama/videos/healthbar_deaths/": "healthbar deaths", "panorama/videos/seasonal/": "seasonal", "panorama/videos/tutorial_video/": "the tutorial, with subtitles", "panorama/videos/promo/": "promos", "panorama/videos/onstage/": "on stage", "panorama/videos/international2022/": "TI 2022" };
 for (const event of ["crownfall", "diretide2020", "continuum_conundrum", "spring2021", "aghanims_labyrinth", "dark_carnival"]) DESCRIBE["dota2-videos"][`panorama/videos/${event}/`] = "event trailer, subtitles";
 
+DESCRIBE["dota2-textures"] = { "materials/models/items/": "cosmetics", "materials/models/heroes/": "heroes", "materials/vgui/hud/": "the HUD", "materials/particle/sprays/": "sprays", "materials/models/props_structures/": "buildings", "materials/models/creeps/": "creeps, Roshan", "materials/models/courier/": "couriers", "materials/models/props_gameplay/": "gameplay props", "materials/models/events/": "events", "materials/skybox/": "skyboxes" };
+
 const DEPTH = { "dota2-data": 1, "dota2-images": 3, "dota2-videos": 3, "dota2-models": 2, "dota2-textures": 3, "dota2-particles": 2, "dota2-sounds": 2, "dota2-maps": 2 };
 
 async function main() {
@@ -439,7 +454,7 @@ async function main() {
   fs.mkdirSync(temp, { recursive: true });
   for (const dataset of names.length ? names : Object.keys(CARDS)) {
     const list = await (await fetch(`${base(dataset)}files.json`)).json();
-    const s = stats(list, DEPTH[dataset], (key) => DESCRIBE[dataset]?.[key] ?? (/\/props_/.test(key) ? "map props" : /^textures\//.test(key) ? "material variants' textures" : null));
+    const s = stats(list, DEPTH[dataset], (key) => DESCRIBE[dataset]?.[key] ?? (/\/stickers\//.test(key) ? "stickers" : /\/props_/.test(key) ? "map props" : /^textures\//.test(key) ? "material variants' textures" : null));
     let card = CARDS[dataset](s);
     const made = await banner(card, dataset);
     const uploads = [];

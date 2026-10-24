@@ -2,7 +2,7 @@
 // every .glb in the dataset without a .glb.gz next to it is downloaded, made lighter and uploaded.
 // Safe to stop and run again, it goes on from what the dataset has.
 //   HF_TOKEN=... node web-glb-backfill.js [--limit N] [--folder models] [--match <text>]
-// --folder scenes with HF_REPO=dota2-scenes makes them for the scenes (a terrain's preview map is
+// --folder scenes with HF_REPO=dota2-maps makes them for the scenes (a terrain's preview map is
 // 70 MB as glb, its textures are made WebP too); --match keeps the files whose path holds the
 // text; --redo makes them again where they are already
 const fs = require("fs");

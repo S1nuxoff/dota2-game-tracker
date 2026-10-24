@@ -16,7 +16,7 @@ State on 2026-10-24: seven Hugging Face datasets under `Sqls1/`, the price track
 | HF `dota2-models` | this repo: `index.js`, `particles.js` (sequences, attachments) | every model of the game with its materials and textures |
 | HF `dota2-particles` | this repo: `particles.js` | every particle system of the game, their textures, bundles, the engine's schema |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
-| HF `dota2-scenes` | this repo: `scenes.js` | scenes and maps as glb |
+| HF `dota2-maps` (was dota2-scenes) | this repo: `scenes.js` | scenes and maps as glb |
 | GitHub `dota2-price-tacker` `static/prices/latest.json` | dota2-price-tacker, every 20 minutes | market prices (not from the game) |
 | Steam CDN `cdn.steamstatic.com/apps/dota2/images/dota_react/` | Valve | the heroes' square crops (the Wardrobe), which the game has no copy of |
 
@@ -93,7 +93,7 @@ Every particle system of the game (`particles.js`, only what changed, against `p
 | `soundevents.json` | `audio.js` | every sound event with its files, volume and pitch | `src/uiSounds.js` |
 | `sounds/<folder>/phonemes.json`, `phonemes.json`, `expressions/heroes/phonemes.json` | `phonemes.js` | voice lines' phonemes for lip sync | `src/viewer/face.js`, `stage.js`, `src/components/Viewer.jsx` |
 
-## dota2-scenes
+## dota2-maps
 
 | Path | Script | What it is | Read by (site) |
 |---|---|---|---|

@@ -9,7 +9,7 @@
 //   (local install; --only limits it too)
 //   --max-minutes stops starting new scenes after that long; the rest go next time
 //
-// Uploads to the <user>/dota2-scenes dataset: scenes/<path>.glb and scenes.json
+// Uploads to the <user>/dota2-maps dataset: scenes/<path>.glb and scenes.json
 const fs = require("fs");
 const path = require("path");
 const zlib = require("zlib");
@@ -465,7 +465,7 @@ async function main() {
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
   }
 
-  const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_SCENES_REPO || "dota2-scenes") : null;
+  const repo = upload ? await hf.prepareRepo(process.env.HF_TOKEN, process.env.HF_MAPS_REPO || "dota2-maps") : null;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
   const started = Date.now();
   // Scenes go up a batch at a time, one commit each: the Hub takes 128 commits an hour to a

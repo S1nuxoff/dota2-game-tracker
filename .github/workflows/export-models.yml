@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       steps:
-        description: "Only these exporters, comma separated (models, data, gamefiles, images, textures, videos, sounds, particles, audio, names, files-list, catalog); empty for all"
+        description: "Only these exporters, comma separated (models, data, gamefiles, images, textures, videos, sounds, particles, audio, names, previews, files-list, catalog); empty for all"
         required: false
         default: ""
 

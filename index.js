@@ -114,6 +114,9 @@ async function main() {
       ...particleModels,
       ...modelsWhere((item) => item.prefab === "default_item"),
       ...modelsWhere((item) => item.prefab !== "default_item"),
+      // Then every other model of the game (units, buildings, props, map assets, ...), so the
+      // dataset holds them all
+      ...(onlyHero ? [] : vpkDir.files.filter((file) => file.endsWith(".vmdl_c")).map((file) => file.slice(0, -2))),
     ]),
   ];
   const available = all.filter((model) => vpkDir.tree[`${model}_c`]);
@@ -137,6 +140,8 @@ async function main() {
   }
   // Models the converter failed on are tried again once their file changes
   const failedBefore = (model) => state.failed[model] === vpkDir.tree[`${model}_c`].crc;
+  const shardMatch = process.env.MODEL_SHARD?.match(/^(\d+)\/(\d+)$/);
+  const shard = shardMatch ? { index: Number(shardMatch[1]), count: Number(shardMatch[2]) } : null;
   const todo = available
     .filter(
       (model) =>
@@ -149,7 +154,11 @@ async function main() {
           !state.models[model].skins &&
           state.models[model].skinsRead !== skinsKey(model))
     )
-    .slice(0, limit);
+    .slice(0, limit)
+    // MODEL_SHARD=k/n: only every n-th model, from the k-th, so n runs (each in its own copy of this
+    // folder, from the same state) share a big export; their states are merged after, and a last
+    // run without it makes the shared files (dynamic materials, cube maps, the index)
+    .filter((model, index) => !shard || index % shard.count === shard.index);
 
   console.log(
     `${Object.keys(heroes).length} heroes, ${Object.keys(items).length} items, ` +
@@ -207,6 +216,11 @@ async function main() {
       `Progress: ${done}/${todo.length} models (${Math.round((done / todo.length) * 100)}%), ` +
         `${Math.round(minutes)} min so far, about ${left >= 60 ? `${(left / 60).toFixed(1)} h` : `${Math.round(left)} min`} left`
     );
+  }
+
+  if (shard) {
+    saveState(state);
+    return;
   }
 
   // The parameters of the models' materials that change as the game runs

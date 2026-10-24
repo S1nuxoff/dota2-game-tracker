@@ -1,5 +1,5 @@
-// Particles for Dotadex: every particle system the heroes and their items show (their ambient
-// effects and the cosmetics' own), with all the systems they spawn, as JSON, and the textures
+// Particles for Dotadex: every particle system of the game, those the heroes and their items show
+// (their ambient effects and the cosmetics' own) first, with all the systems they spawn, as JSON, and the textures
 // they draw as atlases with their frames. Only what changed since the last run is converted and
 // uploaded again (particles-state.json keeps the CRCs and what each system refers to).
 //
@@ -742,7 +742,11 @@ async function main() {
 
   const roots = [...new Set([...itemRoots, ...portraits, ...started, ...animated])];
   console.log(`${itemRoots.length} particle systems shown by items, ${roots.length - itemRoots.length} more shown on the heroes' pages, started by the pedestals, the page maps and the models' animations`);
-  let frontier = roots;
+  // Then every other particle system of the game (abilities, units, buildings, maps, the interface,
+  // events), so the dataset holds them all; bundles stay for the effects above, which the site
+  // starts whole
+  const everySystem = vpkDir.files.filter((file) => file.endsWith(".vpcf_c")).map((file) => file.slice(0, -2));
+  let frontier = [...roots, ...everySystem];
   let converted = 0;
   while (frontier.length) {
     const next = new Set();

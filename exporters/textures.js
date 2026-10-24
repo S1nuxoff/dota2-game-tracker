@@ -7,13 +7,19 @@
 //
 //   HF_TOKEN=... node exporters/textures.js --game "<...>/dota 2 beta/game/dota" [--no-upload] [--force] [--limit N]
 //   HF_TOKEN=... node exporters/textures.js <STEAM USERNAME> <STEAM PASSWORD>   (GitHub Actions)
-const { main } = require("./images");
+const { run, cli } = require("./images");
 
-main({
+const TEXTURES = {
   label: "textures",
   dataset: process.env.HF_TEXTURES_REPO || "dota2-textures",
   stateFile: "state/textures.json",
   temp: "./temp/textures",
   // Every texture but the interface's pictures (dota2-images)
   files: /^(?!panorama\/).+\.vtex_c$/,
-});
+};
+
+module.exports = { main: () => run(TEXTURES) };
+
+if (require.main === module) {
+  cli(TEXTURES);
+}

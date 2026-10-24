@@ -13,7 +13,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { sentenceOf, ctrlSentences, phonemeClasses, writePhonemes, FOLDER_FILE, CLASSES_FILE } = require("../lib/phonemes");
 
 const temp = "./temp/sounds";
@@ -83,7 +83,7 @@ async function main() {
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   const { vpkDir } = source;
 
   const repo = await hf.prepareRepo(accessToken, process.env.HF_SOUNDS_REPO || "dota2-sounds");
@@ -199,10 +199,14 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+module.exports = { ...module.exports, main };
+
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}

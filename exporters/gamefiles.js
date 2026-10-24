@@ -27,7 +27,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("../lib/hf");
 const kv3 = require("../lib/kv3");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { parse, decode } = require("../lib/keyvalues");
 
 const temp = "./temp/gamefiles";
@@ -166,7 +166,7 @@ async function main() {
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { files: {} };
   // A new version of this script goes over the game again (its new kinds of files), keeping what is
   // done
@@ -244,10 +244,14 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+module.exports = { main };
+
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}

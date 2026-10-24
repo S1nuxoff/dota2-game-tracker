@@ -11,7 +11,7 @@
 const fs = require("fs");
 const path = require("path");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 
 const temp = "./temp/videos";
 const DATASET = process.env.HF_VIDEOS_REPO || "dota2-videos";
@@ -40,7 +40,7 @@ async function main() {
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   let state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (state.version !== VERSION) {
     state = { files: {} };
@@ -106,10 +106,14 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+module.exports = { ...module.exports, main };
+
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}

@@ -16,7 +16,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 
 // The folder of the run in progress (set by run())
 let temp = "./temp/images";
@@ -174,7 +174,7 @@ async function run(kind) {
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   let state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (state.version !== VERSION) {
     state = { files: {} };
@@ -261,7 +261,8 @@ async function run(kind) {
   }
 }
 
-function main(kind) {
+// Run on its own: the exit code says how it went
+function cli(kind) {
   run(kind).then(
     () => process.exit(0),
     (error) => {
@@ -271,8 +272,8 @@ function main(kind) {
   );
 }
 
-module.exports = { main };
+module.exports = { run, cli, main: () => run(PICTURES) };
 
 if (require.main === module) {
-  main(PICTURES);
+  cli(PICTURES);
 }

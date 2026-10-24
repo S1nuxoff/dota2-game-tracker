@@ -16,7 +16,7 @@
 const fs = require("fs");
 const path = require("path");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { parse } = require("../lib/keyvalues");
 const { loadItemsGame } = require("../lib/itemsgame");
 
@@ -51,7 +51,7 @@ async function main() {
     process.exit(1);
   }
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === VERSION) {
     console.log(`Names of manifest ${source.manifestId} are already made.`);
@@ -156,10 +156,14 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+module.exports = { ...module.exports, main };
+
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}

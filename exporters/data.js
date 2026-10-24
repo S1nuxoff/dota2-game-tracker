@@ -16,7 +16,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const sharp = require("sharp");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { parse } = require("../lib/keyvalues");
 const { summonsOf, UNITS_FILE } = require("../lib/summons");
 const { loadItemsGame } = require("../lib/itemsgame");
@@ -62,7 +62,7 @@ async function main() {
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   // --force: everything again, the pictures too, as on the first run
   const state = fs.existsSync(STATE_FILE) && !force ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : { images: {} };
   if (!force && source.manifestId && state.manifest === source.manifestId && state.version === DATA_VERSION) {
@@ -602,10 +602,14 @@ async function exportImages(source, known, pictures) {
   return { files: images, crcs };
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+module.exports = { ...module.exports, main };
+
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}

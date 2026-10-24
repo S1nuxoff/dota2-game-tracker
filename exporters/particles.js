@@ -40,7 +40,7 @@ const readline = require("readline");
 const sharp = require("sharp");
 const hf = require("../lib/hf");
 const kv3 = require("../lib/kv3");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { loadItemsGame } = require("../lib/itemsgame");
 const { parse } = require("../lib/keyvalues");
 const { exportSchema } = require("../lib/particle-schema");
@@ -675,7 +675,7 @@ async function main() {
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   const { vpkDir } = source;
   // The particle files to dota2-particles, what belongs to a model (sequences, attachments) next to
   // the model in the models dataset
@@ -996,4 +996,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { buildTexture, readSheetCells, readSequences };
+module.exports = { buildTexture, readSheetCells, readSequences, main };

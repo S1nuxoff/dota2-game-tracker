@@ -6,15 +6,10 @@ on:
     - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
-      limit:
-        description: "Export at most this many models (empty for all)"
+      steps:
+        description: "Only these exporters, comma separated (models, data, gamefiles, images, textures, videos, sounds, particles, audio, names, files-list); empty for all"
         required: false
         default: ""
-      force:
-        description: "Export again models that did not change"
-        required: false
-        default: false
-        type: boolean
 
 concurrency:
   group: ${{ github.workflow }}
@@ -48,77 +43,14 @@ jobs:
           unzip -q vrf.zip -d vrf
           chmod +x vrf/Source2Viewer-CLI
           rm vrf.zip
-      - name: Export models
+      # Every exporter in one process (export.js): one Steam login, the game opened once. When
+      # neither the game (its manifest) nor the code changed since the last full run, it stops at
+      # once; otherwise each exporter exports what changed against its state file in state/
+      - name: Export
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          LIMIT: ${{ inputs.limit }}
-        run: node exporters/models.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}' ${LIMIT:+--limit "$LIMIT"} ${{ inputs.force && '--force' || '' }}
-      # Heroes, abilities, items, treasures, texts and icons; skipped when the game did not update
-      - name: Export game data
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/data.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # Every script and localization of the game as JSON to the dota2-data dataset (gamefiles.js);
-      # only files whose CRC changed, against state/gamefiles.json
-      - name: Export the game's scripts and texts
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/gamefiles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # Every picture of the game's interface to dota2-images and every video to dota2-videos, as the
-      # game keeps them; only what changed, against state/images.json and state/videos.json
-      - name: Export pictures
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/images.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # Every texture outside the interface to dota2-textures (images.js's workings), only what
-      # changed, against state/textures.json
-      - name: Export textures
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/textures.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      - name: Export videos
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/videos.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # New or changed sounds only, against state/sounds.json
-      - name: Export sounds
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/sounds.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # Particle systems of the heroes' and items' effects, their textures, their snapshots
-      # (and those items put in their place), the models' attachments, and every model's sequences
-      # with the effects its animations start; only what changed, against state/particles.json
-      - name: Export particles
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/particles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # Voice lines, the sounds of animations and abilities, music and announcer packs;
-      # only after a patch, against state/audio.json
-      - name: Export voice lines, animation and ability sounds
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/audio.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # The names people know for the pictures and models (names.json in dota2-images and
-      # dota2-models), from the game's English texts; only after a game update
-      - name: Name the files
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/names.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
-      # A list of every file at the root of each dataset (files.json), for pages that show a whole
-      # dataset; only for datasets that changed since their list
-      - name: List the datasets' files
-        if: success() || failure()
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: node exporters/files-list.js
+          EXPORT_STEPS: ${{ inputs.steps }}
+        run: node export.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # The state files go back to main; another run may have pushed meanwhile, so this one
       # lands on top of it
       - name: Commit & push state
@@ -138,7 +70,7 @@ jobs:
             echo "Nothing changed"
             exit 0
           fi
-          git commit -m "Exported models"
+          git commit -m "Export state"
           exported=$(git rev-parse HEAD)
           for attempt in 1 2 3; do
             git push origin HEAD:main && exit 0
@@ -148,7 +80,7 @@ jobs:
             git reset -q --hard origin/main
             git checkout "$exported" -- $files
             git diff --cached --quiet && exit 0
-            git commit -m "Exported models"
+            git commit -m "Export state"
           done
           exit 1
 

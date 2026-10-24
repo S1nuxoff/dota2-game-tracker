@@ -6,7 +6,7 @@ const { spawnSync } = require("child_process");
 const { NodeIO } = require("@gltf-transform/core");
 const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("../lib/hf");
-const { steamSource, localSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { loadItemsGame } = require("../lib/itemsgame");
 const { exportSkins } = require("../lib/skins");
 const { exportDynamicMaterials, exportCubeMaps } = require("../lib/materials");
@@ -84,7 +84,7 @@ async function main() {
 
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(positional[0], positional[1], temp);
+  const source = await openSource(game, positional[0], positional[1]);
   const { vpkDir } = source;
   const maxDuration = game ? Infinity : CI_MAX_DURATION;
 
@@ -166,9 +166,12 @@ async function main() {
       `${todo.length} to export in this run.`
   );
 
+  // Set when the time ran out: export.js then does not take this game version as done
+  let unfinished = false;
   for (let i = 0; i < todo.length; i += BATCH_SIZE) {
     if (Date.now() - START_TIME >= maxDuration) {
       console.log("Max duration reached, the rest is left for the next run.");
+      unfinished = true;
       break;
     }
 
@@ -239,6 +242,7 @@ async function main() {
   state.manifest = source.manifestId ?? state.manifest;
   saveState(state);
   await uploadIndex(repo, accessToken, items, heroes, state, personas);
+  return { unfinished };
 }
 
 async function uploadIndex(repo, accessToken, items, heroes, state, personas) {
@@ -661,4 +665,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { modelsOf, swapsOf, stylesOf, skinsWanted, collect, exportBatch, dependencies, buildIndex, hasChanged };
+module.exports = { main, modelsOf, swapsOf, stylesOf, skinsWanted, collect, exportBatch, dependencies, buildIndex, hasChanged };

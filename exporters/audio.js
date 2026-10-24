@@ -23,7 +23,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const hf = require("../lib/hf");
-const { localSource, steamSource } = require("../lib/source");
+const { openSource } = require("../lib/source");
 const { parse } = require("../lib/keyvalues");
 const kv3 = require("../lib/kv3");
 
@@ -124,7 +124,7 @@ async function main() {
   }
   fs.rmSync(temp, { recursive: true, force: true });
   fs.mkdirSync(temp, { recursive: true });
-  const source = game ? localSource(game) : await steamSource(username, password, temp);
+  const source = await openSource(game, username, password);
   const { vpkDir } = source;
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   // Each sound by the path it has in the sounds dataset, MP3 or WAV, so the site asks for the
@@ -467,10 +467,14 @@ async function readChatWheel(source, events) {
   return { categories, messages };
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error(error);
-    process.exit(1);
-  }
-);
+module.exports = { ...module.exports, main };
+
+if (require.main === module) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error(error);
+      process.exit(1);
+    }
+  );
+}

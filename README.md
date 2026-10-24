@@ -18,7 +18,8 @@ Exports the whole of Dota 2 from the game files to public Hugging Face datasets,
 ## Layout
 
 ```
-exporters/   one script per kind of data, each run on its own:
+export.js    the whole export in one process (what the workflow runs)
+exporters/   one script per kind of data, each can also run on its own:
              models.js, data.js, gamefiles.js, images.js, textures.js, videos.js, sounds.js,
              audio.js, particles.js, scenes.js, names.js, files-list.js
 lib/         what they share: reading the game (source.js, steam.js), Valve's formats
@@ -37,7 +38,7 @@ Every script runs from the repository's root: `node exporters/<name>.js ...`.
 
 The **Export** workflow runs every six hours with two jobs side by side:
 
-- **export**: models, game data, scripts and texts, pictures, textures, videos, sounds, particles, voice lines, names, the lists of files. Each step first checks the game's version against its state file and stops at once when nothing changed; after an update it exports only the new and changed files and removes what the game removed.
+- **export**: `export.js`, every exporter in one process (models, game data, scripts and texts, pictures, textures, videos, sounds, particles, voice lines, names, the lists of files) with one Steam login and the game opened once. When neither the game's version nor the code changed since the last full run (`state/run.json`), it stops at once without downloading anything; otherwise each exporter exports what changed against its own state file and removes what the game removed. `EXPORT_STEPS=images,videos` (the workflow's `steps` input) runs only some.
 - **scenes**: the maps and scenes. Map packages are big and slow to convert, so they get their own job (and its own 5.5-hour budget) and never hold up the rest; it stops starting new maps after five hours and goes on in the next run.
 
 Both commit their state files back to `main` at the end.

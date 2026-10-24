@@ -4,7 +4,7 @@ Where every file Dotadex reads lives, which script writes it, and which part of 
 Kept current with every step of the plan in Dotadex's `TASKS.md` (section "Data: the whole game
 in datasets"); the site names every source once in `src/datasets.js`.
 
-State on 2026-10-24: six Hugging Face datasets under `Sqls1/`, the price tracker on GitHub, and Steam's CDN for one kind of picture.
+State on 2026-10-24: seven Hugging Face datasets under `Sqls1/`, the price tracker on GitHub, and Steam's CDN for one kind of picture.
 
 ## Sources
 
@@ -13,7 +13,8 @@ State on 2026-10-24: six Hugging Face datasets under `Sqls1/`, the price tracker
 | HF `dota2-data` | this repo: `gamefiles.js`; `index.js`, `data.js`, `audio.js` for `dotadex/` | every script and localization of the game as JSON, at its game path; under `dotadex/` the files made for the site |
 | HF `dota2-images` | this repo: `images.js` | every picture of the game's interface as the game keeps it |
 | HF `dota2-videos` | this repo: `videos.js` | every video of the game's interface as the game keeps it |
-| HF `dota2-models` | this repo: `index.js`, `particles.js` | models with their materials and textures, particles |
+| HF `dota2-models` | this repo: `index.js`, `particles.js` (sequences, attachments) | every model of the game with its materials and textures |
+| HF `dota2-particles` | this repo: `particles.js` | every particle system of the game, their textures, bundles, the engine's schema |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
 | HF `dota2-scenes` | this repo: `scenes.js` | scenes and maps as glb |
 | GitHub `dota2-price-tacker` `static/prices/latest.json` | dota2-price-tacker, every 20 minutes | market prices (not from the game) |
@@ -74,6 +75,13 @@ The interface's pictures and videos at their game paths, as the game keeps them 
 | `models/<path>.cloth.json`, `models/cloth.json` | `cloth.js` | cloth, hair and beard simulation; the list | `src/viewer/cloth.js` |
 | `materials/dynamic.json` | `materials.js` | materials' per-frame parameters | `src/viewer/materialPrograms.js` |
 | `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `index.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
+
+## dota2-particles
+
+Every particle system of the game (`particles.js`, only what changed, against `particles-state.json`). Models the game keeps under `particles/` (and their sequences, attachments, cloth) stay in dota2-models with the other models. The site reads it from `PARTICLES_BASE`.
+
+| Path | Script | What it is | Read by (site) |
+|---|---|---|---|
 | `particles/<path>.json`, `particles/bundles/`, `particles/textures/`, `.vsnap.json` | `particles.js` | particle systems, effects with all they spawn, their textures, snapshots | `src/viewer/particles/` |
 | `particles/model-effects.json`, `map-effects.json`, `map-cameras.json`, `attached-models.json`, `schema.json`, `coverage.json` | `particles.js` | effects models and maps start on their own, the hero page cameras, models effects attach, the engine's defaults | `src/viewer/stage.js`, `src/viewer/cardEdges.js`, `src/viewer/particles/` |
 

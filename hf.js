@@ -1,6 +1,6 @@
 const fs = require("fs");
 const zlib = require("zlib");
-const { whoAmI, repoExists, createRepo, uploadFiles, listFiles } = require("@huggingface/hub");
+const { whoAmI, repoExists, createRepo, uploadFiles, deleteFiles, listFiles } = require("@huggingface/hub");
 
 // Keeps each commit to a reasonable size
 const MAX_COMMIT_BYTES = 500 * 1e6;
@@ -27,10 +27,11 @@ async function prepareRepo(accessToken, name = "dota2-models") {
 // The sounds' phonemes too (phonemes.js), a few hundred KB a hero.
 const gzippedJson = (datasetPath) => /^([^/]+\/)?[^/]+\.json$|^data\/i18n\/[^/]+\.json$|\/phonemes\.json$/.test(datasetPath);
 
-// files: [{ path: path in the dataset, file: local file }]
-async function upload(repo, accessToken, files, title) {
+// files: [{ path: path in the dataset, file: local file }]; gzip: false leaves out the gzipped
+// copies (the game's own files in dota2-data, which pages do not load)
+async function upload(repo, accessToken, files, title, { gzip = true } = {}) {
   files = files.flatMap((entry) => {
-    if (!gzippedJson(entry.path)) return [entry];
+    if (!gzip || !gzippedJson(entry.path)) return [entry];
     const gz = `${entry.file}.gz`;
     fs.writeFileSync(gz, zlib.gzipSync(fs.readFileSync(entry.file), { level: 9 }));
     return [entry, { path: `${entry.path}.gz`, file: gz }];
@@ -80,6 +81,14 @@ async function upload(repo, accessToken, files, title) {
   await commit();
 }
 
+// Removes files from the dataset, in commits of a reasonable size
+async function remove(repo, accessToken, paths, title) {
+  for (let start = 0; start < paths.length; start += MAX_COMMIT_FILES) {
+    await deleteFiles({ repo, accessToken, paths: paths.slice(start, start + MAX_COMMIT_FILES), commitTitle: title });
+    console.log(`Removed ${Math.min(paths.length - start, MAX_COMMIT_FILES)} files`);
+  }
+}
+
 // The game's sounds come out as MP3 or WAV: the path each one has in the sounds dataset, by
 // its path without the extension. Sound lists name these, so the site asks for what is there.
 async function soundPaths(accessToken, name = "dota2-sounds") {
@@ -102,4 +111,4 @@ async function filesIn(repo, accessToken, folder, pattern) {
   return paths;
 }
 
-module.exports = { prepareRepo, upload, soundPaths, filesIn, gzippedJson };
+module.exports = { prepareRepo, upload, remove, soundPaths, filesIn, gzippedJson };

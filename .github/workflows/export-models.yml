@@ -59,6 +59,13 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: node data.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
+      # Every script and localization of the game as JSON to the dota2-data dataset (gamefiles.js);
+      # only files whose CRC changed, against gamefiles-state.json
+      - name: Export the game's scripts and texts
+        if: success() || failure()
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: node gamefiles.js '${{ secrets.USERNAME }}' '${{ secrets.PASSWORD }}'
       # New or changed sounds only, against sounds-state.json
       - name: Export sounds
         env:
@@ -86,7 +93,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
-          files=$(ls state.json data-state.json sounds-state.json audio-state.json particles-state.json particle-models.json 2>/dev/null)
+          files=$(ls state.json data-state.json gamefiles-state.json sounds-state.json audio-state.json particles-state.json particle-models.json 2>/dev/null)
           git add -- $files
           if git diff --cached --quiet; then
             echo "Nothing changed"

@@ -2,6 +2,9 @@
 // "key" "value" pairs and "key" { ... } blocks, // comments, unquoted tokens,
 // [$PLATFORM] conditions (ignored) and #base includes (returned for the caller).
 // Repeated keys in a block keep the first value, as the game does.
+// With { raw: true } the file is kept whole instead (gamefiles.js): a repeated key keeps every
+// value, the next ones as "<key>#2", "<key>#3"; #base and #include stay pairs of their block; and
+// `skipped` counts the tokens that did not fit (more than a few: the file is not KeyValues).
 
 function decode(buffer) {
   if (buffer[0] === 0xff && buffer[1] === 0xfe) {
@@ -50,20 +53,29 @@ function tokenize(text) {
   return tokens;
 }
 
-// Returns { root, bases: ["heroes/npc_dota_hero_x.txt", ...] }
-function parse(input) {
+// Returns { root, bases: ["heroes/npc_dota_hero_x.txt", ...], skipped }
+function parse(input, { raw = false } = {}) {
   const tokens = tokenize(typeof input === "string" ? input : decode(input));
   const bases = [];
   let pos = 0;
+  let skipped = 0;
+  // The name a key takes in a block that may have it already
+  const keyIn = (object, key) => {
+    if (!(key in object)) return key;
+    let n = 2;
+    while (`${key}#${n}` in object) n++;
+    return `${key}#${n}`;
+  };
 
   const block = () => {
     const object = {};
     while (pos < tokens.length && tokens[pos] !== "}") {
       const key = tokens[pos++];
       if (typeof key !== "object") {
+        skipped++;
         continue;
       }
-      if (key.s === "#base" || key.s === "#include") {
+      if (!raw && (key.s === "#base" || key.s === "#include")) {
         bases.push(tokens[pos++]?.s);
         continue;
       }
@@ -77,16 +89,22 @@ function parse(input) {
         value = next.s;
         pos++;
       } else {
+        skipped++;
         continue;
       }
-      if (!(key.s in object)) {
+      if (raw) {
+        object[keyIn(object, key.s)] = value;
+      } else if (!(key.s in object)) {
         object[key.s] = value;
       }
     }
     return object;
   };
 
-  return { root: block(), bases };
+  const root = block();
+  // Closing braces with no block open
+  skipped += tokens.length - pos;
+  return { root, bases, skipped };
 }
 
 module.exports = { parse, decode };

@@ -60,11 +60,12 @@ Write-Host "Dota 2: $Game" -ForegroundColor Cyan
 Write-Host "Mode: $Mode" -ForegroundColor Cyan
 
 # In this order: the models (with their dynamic parameters, cube maps and cloth), the game data,
-# the sounds, the particles (which list more models), the voice lines and sound lists (which
+# the game's scripts and texts, the sounds, the particles (which list more models), the voice lines and sound lists (which
 # need the sounds uploaded), the scenes, then the models the particles listed
 $steps = @(
   @{ Name = "Models"; Args = @("index.js", "--game", $Game) + $force },
   @{ Name = "Game data"; Args = @("data.js", "--game", $Game) + $force },
+  @{ Name = "Scripts and texts"; Args = @("gamefiles.js", "--game", $Game) + $force },
   @{ Name = "Sounds"; Args = @("sounds.js", "--game", $Game) + $force },
   @{ Name = "Particles"; Args = @("particles.js", "--game", $Game) + $force },
   @{ Name = "Voice lines and sound lists"; Args = @("audio.js", "--game", $Game) + $force },
@@ -84,7 +85,7 @@ foreach ($step in $steps) {
 }
 
 # The state files say what is uploaded; kept in git (pushed when you choose)
-$stateFiles = @("state.json", "data-state.json", "sounds-state.json", "audio-state.json", "scenes-state.json", "particles-state.json", "particle-models.json") | Where-Object { Test-Path -LiteralPath $_ }
+$stateFiles = @("state.json", "data-state.json", "gamefiles-state.json", "sounds-state.json", "audio-state.json", "scenes-state.json", "particles-state.json", "particle-models.json") | Where-Object { Test-Path -LiteralPath $_ }
 git add -- $stateFiles
 git diff --cached --quiet
 if ($LASTEXITCODE -ne 0) {

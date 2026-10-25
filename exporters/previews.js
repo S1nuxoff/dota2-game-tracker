@@ -14,6 +14,8 @@
 //
 //   HF_TOKEN=... node exporters/previews.js [--no-upload] [--limit N] [--pages N] [--retry-failed]
 //   HF_TOKEN=... node exporters/previews.js --meta-only     the measures of models drawn before, no drawing
+//   --view top: the view of a match instead (lib/preview-page/render.js), to previews/top/<model path>.webp,
+//   for search by screenshot (state in the same file, under "top"); --only a.glb,b.glb: these models only
 //   CHROME_PATH=...  where Chrome is when not in its usual place
 const fs = require("fs");
 const path = require("path");
@@ -34,8 +36,11 @@ const temp = path.resolve("./temp/previews");
 const PAGE_DIR = path.join(__dirname, "../lib/preview-page");
 const THREE_DIR = path.join(__dirname, "../node_modules/three");
 
-const fileUrl = (file) => `https://huggingface.co/datasets/${OWNER}/${DATASETS.models}/resolve/main/${file.split("/").map(encodeURIComponent).join("/")}`;
-const previewOf = (model) => `${PREFIX}${model.replace(/\.glb$/, ".webp")}`;
+const fileUrl = (file, repo = DATASETS.models) => `https://huggingface.co/datasets/${OWNER}/${repo}/resolve/main/${file.split("/").map(encodeURIComponent).join("/")}`;
+// The view being drawn: "front" (the cards') or "top" (a match's), set by main
+let VIEW = "front";
+let VIEW_DIR = "";
+const previewOf = (model) => `${PREFIX}${VIEW_DIR}${model.replace(/\.glb$/, ".webp")}`;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -50,10 +55,10 @@ async function modelList() {
 
 // A file of dota2-models, fetched with the token (the Hub limits anonymous requests far sooner) and
 // again after a dropped connection or a "too many requests", waiting as long as the Hub asks
-async function download(file, accessToken) {
+async function download(file, accessToken, repo) {
   for (let attempt = 1; ; attempt++) {
     try {
-      const res = await fetch(fileUrl(file), { headers: accessToken ? { authorization: `Bearer ${accessToken}` } : {} });
+      const res = await fetch(fileUrl(file, repo), { headers: accessToken ? { authorization: `Bearer ${accessToken}` } : {} });
       if (res.ok) return Buffer.from(await res.arrayBuffer());
       if (res.status !== 429 && res.status < 500) throw Object.assign(new Error(`${res.status}`), { final: true });
       if (attempt >= 8) throw new Error(`${res.status}`);
@@ -65,6 +70,43 @@ async function download(file, accessToken) {
       await new Promise((r) => setTimeout(r, 3000 * attempt));
     }
   }
+}
+
+// The tints the maps give materials: many props and trees are grey in their own files and coloured
+// where a map places them (a tint per placement, kept in the exported map scenes as each material's
+// base colour). From the JSON of every main map (scenes/dota*.glb in dota2-maps, read alone with a
+// range request), the main map first, then the tint most placements give: { vmat path: [r, g, b] }
+async function mapTints(accessToken) {
+  const list = JSON.parse(zlib.gunzipSync(await download("files.json.gz", accessToken, DATASETS.maps))).files;
+  const maps = list.map(([p]) => p).filter((p) => /^scenes\/dota(_[a-z0-9]+)*\.glb$/.test(p)).sort((a, b) => (a === "scenes/dota.glb" ? -1 : b === "scenes/dota.glb" ? 1 : a.localeCompare(b)));
+  const headers = accessToken ? { authorization: `Bearer ${accessToken}` } : {};
+  const counts = new Map();
+  const first = new Map();
+  for (const map of maps) {
+    try {
+      const head = Buffer.from(await (await fetch(fileUrl(map, DATASETS.maps), { headers: { ...headers, range: "bytes=0-19" } })).arrayBuffer());
+      const length = head.readUInt32LE(12);
+      const json = JSON.parse(Buffer.from(await (await fetch(fileUrl(map, DATASETS.maps), { headers: { ...headers, range: `bytes=20-${19 + length}` } })).arrayBuffer()));
+      for (const m of json.materials || []) {
+        const name = m.extras?.vmat?.Name?.toLowerCase();
+        const f = m.pbrMetallicRoughness?.baseColorFactor;
+        if (!name || !f || f.slice(0, 3).every((v) => v === 1)) continue;
+        const tint = f.slice(0, 3).map((v) => Math.round(v * 1000) / 1000);
+        if (!first.has(name)) first.set(name, map);
+        if (first.get(name) !== map) continue;
+        const c = counts.get(name) || new Map();
+        const k = tint.join(",");
+        c.set(k, (c.get(k) || 0) + 1);
+        counts.set(name, c);
+      }
+    } catch (error) {
+      console.log(`  ${map}: no tints (${error.message})`);
+    }
+  }
+  const tints = {};
+  for (const [name, c] of counts) tints[name] = [...c.entries()].sort((a, b) => b[1] - a[1])[0][0].split(",").map(Number);
+  console.log(`previews: tints of ${Object.keys(tints).length} materials from ${maps.length} maps`);
+  return tints;
 }
 
 // A model's measures: [width, height, depth] of its meshes as exported (skinned ones in their bind
@@ -131,6 +173,14 @@ function serve(accessToken) {
   const types = { ".html": "text/html", ".js": "text/javascript" };
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, "http://x").pathname;
+    // A scene of dota2-maps (/scene/<path>), for the views of the map
+    if (url.startsWith("/scene/")) {
+      download(decodeURIComponent(url.slice(7)), accessToken, DATASETS.maps).then(
+        (body) => res.writeHead(200, { "content-type": "application/octet-stream" }).end(body),
+        (error) => res.writeHead(502).end(String(error.message))
+      );
+      return;
+    }
     if (url.startsWith("/model/")) {
       const file = decodeURIComponent(url.slice(7));
       download(file, accessToken).then(
@@ -232,7 +282,8 @@ async function openPage(port, url) {
   };
   await waitReady();
   return {
-    render: (model, gz) => evaluate(`render(${JSON.stringify(`/model/${encodeURIComponent(gz ? `${model}.gz` : model)}`)}, ${gz})`, 600_000),
+    evaluate,
+    render: (model, gz) => evaluate(`render(${JSON.stringify(`/model/${encodeURIComponent(gz ? `${model}.gz` : model)}`)}, ${gz}, ${JSON.stringify(VIEW)})`, 600_000),
     reload: async () => {
       await call("Page.reload", {});
       await waitReady();
@@ -241,7 +292,15 @@ async function openPage(port, url) {
   };
 }
 
-async function main() {
+// From export.js (no view named): both views, the cards' then the match's
+async function main(options = {}) {
+  const view = options.view || argValue("--view");
+  if (!view && require.main !== module) {
+    await main({ view: "front" });
+    return main({ view: "top" });
+  }
+  VIEW = view || "front";
+  VIEW_DIR = VIEW === "front" ? "" : `${VIEW}/`;
   const accessToken = process.env.HF_TOKEN;
   const upload = !process.argv.includes("--no-upload");
   if (upload && !accessToken) {
@@ -260,18 +319,23 @@ async function main() {
   const paths = new Set(files.map(([p]) => p));
   const models = files.filter(([p]) => p.endsWith(".glb") && !p.startsWith(PREFIX));
   const retry = process.argv.includes("--retry-failed");
+  // Drawn models of this view: { model path: its size when drawn }
+  const drawnKey = VIEW === "front" ? "done" : VIEW;
+  state[drawnKey] ??= {};
+  const only = argValue("--only")?.split(",");
   const todo = models
-    .filter(([p, size]) => state.done[p] !== size && (retry || state.failed[p] !== size))
+    .filter(([p]) => !only || only.includes(p))
+    .filter(([p, size]) => state[drawnKey][p] !== size && (retry || state.failed[p] !== size))
     .slice(0, limit);
   const repo = upload ? await hf.prepareRepo(accessToken, DATASETS.models) : null;
 
-  // Pictures of models no longer in the dataset
-  const gone = Object.keys(state.done).filter((p) => !paths.has(p));
+  // Pictures (of this view) of models no longer in the dataset
+  const gone = Object.keys(state[drawnKey]).filter((p) => !paths.has(p));
   if (gone.length && upload) {
     await hf.remove(repo, accessToken, gone.map(previewOf).filter((p) => paths.has(p)), "Remove previews of removed models");
     for (const p of gone) {
-      delete state.done[p];
-      delete state.meta[p];
+      delete state[drawnKey][p];
+      if (VIEW === "front") delete state.meta[p];
     }
     saveState();
   }
@@ -312,6 +376,11 @@ async function main() {
   const pageUrl = `http://127.0.0.1:${server.address().port}/render.html?size=${SIZE}`;
   const pages = [];
   for (let i = 0; i < pageCount; i++) pages.push(await openPage(port, pageUrl));
+  // The match view shows things in the colours the maps give them
+  if (VIEW === "top") {
+    const tints = JSON.stringify(await mapTints(accessToken));
+    for (const page of pages) await page.evaluate(`setTints(${tints})`);
+  }
 
   // Drawn pictures go up in batches while the next ones are drawn
   let ready = [];
@@ -325,7 +394,7 @@ async function main() {
         await hf.upload(repo, accessToken, batch.map((b) => ({ path: b.preview, file: b.file })), "Update model previews", { gzip: false });
         for (const b of batch) fs.rmSync(b.file, { force: true });
       }
-      for (const b of batch) state.done[b.model] = b.size;
+      for (const b of batch) state[drawnKey][b.model] = b.size;
       saveState();
     });
   };
@@ -387,7 +456,7 @@ async function main() {
   console.log(`previews: ${drawn} drawn, ${failed} without a picture, ${Math.round((Date.now() - started) / 1000)} s`);
 }
 
-module.exports = { main };
+module.exports = { main, serve, launchChrome, openPage };
 
 if (require.main === module) {
   main().then(

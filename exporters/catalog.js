@@ -7,7 +7,7 @@
 //              about: { hype, bio, roles: [[role, level]], attribute, attack, complexity, stats: {...},
 //                       abilities: [{ id, name, text, lore, icon }] } }],
 //     items: { id: { name, prefab, slot, slotKey, type, rarity, heroes, set, icon, date, refs: { <dataset>: [prefix] },
-//            text?: its description, loot?: { drops: [item id], bonus: [[item id, rarity key]] } } },  (a treasure's, capsule's contents)
+//            text?: its description, bundle?: [item id], loot?: { drops: [item id], bonus: [[item id, rarity key]] } } },  (a treasure's, capsule's contents)
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
 //     prefabs: { prefab: its name in the game }
@@ -346,6 +346,12 @@ async function main() {
       if (id && !out.drops.includes(id)) out.drops.push(id);
     }
     return out;
+  }
+  // A bundle's items (bundle: { item name: "1" })
+  for (const [id, item] of Object.entries(itemsGame.items)) {
+    if (!item?.bundle || !items[id]) continue;
+    const ids = Object.keys(item.bundle).map((n) => idByName.get(n.toLowerCase())).filter(Boolean);
+    if (ids.length) items[id].bundle = ids;
   }
   for (const [id, item] of Object.entries(itemsGame.items)) {
     const list = item?.static_attributes?.["treasure loot list"];

@@ -242,15 +242,39 @@ async function main() {
     const m = /^panorama\/images\/(.+)_(png|jpg|jpeg|psd|tga)\.(png|jpg)$/.exec(p);
     if (m) images.set(m[1], p);
   }
-  const imageOf = (s) => images.get(s.replace(/^panorama\/images\//, "").replace(/\.(vtex|vtex_c|png|jpg|psd|tga)$/, ""));
+  const imageOf = (s) => {
+    const key = s.replace(/^(s2r:\/\/)?panorama\/images\//, "").replace(/\.(vtex|vtex_c|png|jpg|psd|tga)$/, "");
+    // a compiled name keeps its source's kind (ability_bg_psd.vtex: ability_bg)
+    return images.get(key) || images.get(key.replace(/_(png|jpg|jpeg|psd|tga)$/, ""));
+  };
+
+  // A HUD skin names its art and effects in its own panorama files (panorama/hud_skins/<name>/*.css,
+  // *.xml: s2r://panorama/images/hud/reborn/hud_custom_ti12/bg_timer_psd.vtex); read once per skin
+  const hudStrings = new Map();
+  for (const item of Object.values(itemsGame.items)) {
+    for (const mod of Object.values(item?.visuals || {})) {
+      if (!mod || typeof mod !== "object" || mod.type !== "hud_skin" || !mod.asset) continue;
+      const name = String(mod.asset).toLowerCase();
+      if (hudStrings.has(name)) continue;
+      const found = new Set();
+      for (const f of lists.data.filter((p) => p.startsWith(`panorama/hud_skins/${name}/`) && /\.(css|xml)$/.test(p))) {
+        const res = await fetch(url(DATASETS.data, f));
+        if (!res.ok) continue;
+        for (const m of (await res.text()).matchAll(/(?:s2r|file):\/\/([^"' )]+)/gi)) found.add(m[1].toLowerCase().replace(/^\{images\}\//, "panorama/images/"));
+      }
+      hudStrings.set(name, found);
+    }
+  }
 
   // An item's files, as prefixes per dataset
   function refsOf(item) {
     const refs = {};
     const add = (ds, prefix) => (refs[ds] ??= new Set()).add(prefix);
-    for (const s of strings(item)) {
+    const hud = Object.values(item.visuals || {}).find((m) => m && typeof m === "object" && m.type === "hud_skin" && m.asset);
+    for (const s of [...strings(item), ...(hud ? hudStrings.get(String(hud.asset).toLowerCase()) || [] : [])]) {
       const image = imageOf(s);
       if (image) add("images", image);
+      if (s.endsWith(".vpcf") && sets.particles.has(`${stripExt(s)}.json`)) add("particles", `${stripExt(s)}.json`);
       if (events.has(s)) for (const f of events.get(s)) if (sets.sounds.has(f)) add("sounds", f);
       if (!s.includes("/")) continue;
       // A cursor pack (resource/cursor/valve/<pack>): the cursors Dotadex took out of it

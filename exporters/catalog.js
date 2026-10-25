@@ -4,7 +4,8 @@
 //   {
 //     updated,
 //     heroes: [{ id, name, model, look, tokens, abilities, personas: [{ id, name, model, look }], items: [item id] }],
-//     items: { id: { name, prefab, slot, slotKey, type, rarity, heroes, set, icon, refs: { <dataset>: [prefix] } } },
+//     items: { id: { name, prefab, slot, slotKey, type, rarity, heroes, set, icon, date, refs: { <dataset>: [prefix] },
+//            loot?: { drops: [item id], bonus: [[item id, rarity key]] } } },  (a treasure's, capsule's contents)
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
 //     prefabs: { prefab: its name in the game }
@@ -297,6 +298,8 @@ async function main() {
       rarity: item.item_rarity || "",
       heroes: Object.keys(item.used_by_heroes || {}),
       icon: icon || refs.images?.[0] || "",
+      // When it came out (items_game's creation_date, 2026-07-30), where it says
+      date: item.creation_date || "",
       refs,
     };
     if (item.name) byName.set(item.name.toLowerCase(), id);
@@ -307,6 +310,35 @@ async function main() {
     if (!ids.length) continue;
     itemSets[key] = { name: localize(itemTokens, set.name) || key, items: ids, icon: set.portrait_image ? imageOf(set.portrait_image.toLowerCase()) || "" : "" };
     for (const id of ids) items[id].set ??= key;
+  }
+
+  // What a treasure (or capsule) gives: its loot list (static_attributes "treasure loot list") names
+  // items by name ("Name#2" a second copy), other loot lists, and the rare extras (additional_drop,
+  // escalating_chance_drop_by_rarity) with the rarity the treasure shows them as
+  const lootLists = itemsGame.loot_lists || {};
+  const idByName = new Map();
+  for (const [id, item] of Object.entries(itemsGame.items)) if (item?.name && items[id]) idByName.set(item.name.toLowerCase(), id);
+  function lootOf(listName, out = { drops: [], bonus: [] }, seen = new Set()) {
+    const list = lootLists[listName];
+    if (!list || seen.has(listName)) return out;
+    seen.add(listName);
+    for (const [key, value] of Object.entries(list)) {
+      if (value && typeof value === "object") {
+        const id = value.item && idByName.get(value.item.toLowerCase().replace(/#\d+$/, ""));
+        if (id && !out.bonus.some(([b]) => b === id)) out.bonus.push([id, value.treasure_rarity_override || ""]);
+        continue;
+      }
+      if (lootLists[key]) lootOf(key, out, seen);
+      const id = idByName.get(key.toLowerCase().replace(/#\d+$/, ""));
+      if (id && !out.drops.includes(id)) out.drops.push(id);
+    }
+    return out;
+  }
+  for (const [id, item] of Object.entries(itemsGame.items)) {
+    const list = item?.static_attributes?.["treasure loot list"];
+    if (!list || !items[id]) continue;
+    const loot = lootOf(typeof list === "object" ? list.value : list);
+    if (loot.drops.length || loot.bonus.length) items[id].loot = loot;
   }
 
   // The hero's model in dota2-models (.vmdl -> .glb), when it was exported

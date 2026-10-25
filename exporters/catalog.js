@@ -3,9 +3,11 @@
 // sounds and effects instead of folders. Written to dota2-data as catalog/catalog.json (+ .gz):
 //   {
 //     updated,
-//     heroes: [{ id, name, model, look, tokens, abilities, personas: [{ id, name, model, look }], items: [item id] }],
+//     heroes: [{ id, name, model, look, tokens, abilities, personas: [{ id, name, model, look }], items: [item id],
+//              about: { hype, bio, roles: [[role, level]], attribute, attack, complexity, stats: {...},
+//                       abilities: [{ id, name, text, lore, icon }] } }],
 //     items: { id: { name, prefab, slot, slotKey, type, rarity, heroes, set, icon, date, refs: { <dataset>: [prefix] },
-//            loot?: { drops: [item id], bonus: [[item id, rarity key]] } } },  (a treasure's, capsule's contents)
+//            text?: its description, loot?: { drops: [item id], bonus: [[item id, rarity key]] } } },  (a treasure's, capsule's contents)
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
 //     prefabs: { prefab: its name in the game }
@@ -53,6 +55,14 @@ const tokensOf = (lang) => {
   return out;
 };
 const localize = (tokens, key) => (key && key.startsWith("#") ? tokens.get(key.slice(1).toLowerCase()) : undefined);
+// The game's text as plain text: its markup (<b>, <font>, <br>) off, line breaks kept
+const plain = (s) =>
+  (s || "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\\n/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
 
 // Every string value under an item (styles, asset modifiers...), lower case; not the portrait setups,
 // which name only the shared icon backdrop
@@ -220,6 +230,8 @@ async function main() {
   const heroesData = await getJson(DATASETS.data, "dotadex/data/heroes.json");
   const itemTokens = tokensOf(await getJson(DATASETS.data, "resource/localization/items_english.txt.json"));
   for (const [k, v] of tokensOf(await getJson(DATASETS.data, "resource/localization/dota_english.txt.json"))) if (!itemTokens.has(k)) itemTokens.set(k, v);
+  const abilityTokens = tokensOf(await getJson(DATASETS.data, "resource/localization/abilities_english.txt.json"));
+  const loreTokens = tokensOf(await getJson(DATASETS.data, "resource/localization/hero_lore_english.txt.json"));
   const soundEvents = await getJson(DATASETS.sounds, "soundevents.json");
   const events = new Map(Object.entries(soundEvents).map(([k, v]) => [k.toLowerCase(), v.files || []]));
 
@@ -300,6 +312,7 @@ async function main() {
       icon: icon || refs.images?.[0] || "",
       // When it came out (items_game's creation_date, 2026-07-30), where it says
       date: item.creation_date || "",
+      text: plain(localize(itemTokens, item.item_description)) || undefined,
       refs,
     };
     if (item.name) byName.set(item.name.toLowerCase(), id);
@@ -383,9 +396,38 @@ async function main() {
     const abilities = Object.entries(hero)
       .filter(([k, v]) => /^Ability\d+$/.test(k) && v && !v.startsWith("generic_") && !v.startsWith("special_bonus"))
       .map(([, v]) => v);
+    const about = {
+      hype: plain(itemTokens.get(`${id}_hype`)),
+      bio: plain(loreTokens.get(`${id}_bio`)),
+      roles: (hero.Role || "").split(",").filter(Boolean).map((r, i) => [r, Number((hero.Rolelevels || "").split(",")[i]) || 1]),
+      attribute: { DOTA_ATTRIBUTE_STRENGTH: "Strength", DOTA_ATTRIBUTE_AGILITY: "Agility", DOTA_ATTRIBUTE_INTELLECT: "Intelligence", DOTA_ATTRIBUTE_ALL: "Universal" }[hero.AttributePrimary] || "",
+      attack: /RANGED/.test(hero.AttackCapabilities || "") ? "Ranged" : /MELEE/.test(hero.AttackCapabilities || "") ? "Melee" : "",
+      complexity: Number(hero.Complexity) || 0,
+      stats: Object.fromEntries(
+        [
+          ["strength", hero.AttributeBaseStrength, hero.AttributeStrengthGain],
+          ["agility", hero.AttributeBaseAgility, hero.AttributeAgilityGain],
+          ["intelligence", hero.AttributeBaseIntelligence, hero.AttributeIntelligenceGain],
+          ["damage", hero.AttackDamageMin && `${hero.AttackDamageMin}-${hero.AttackDamageMax}`],
+          ["attackRange", hero.AttackRange],
+          ["attackRate", hero.AttackRate && String(Number(hero.AttackRate))],
+          ["moveSpeed", hero.MovementSpeed],
+        ]
+          .filter(([, v]) => v != null && v !== "")
+          .map(([k, v, gain]) => [k, gain != null ? [v, String(Number(gain))] : v])
+      ),
+      abilities: abilities.map((a) => ({
+        id: a,
+        name: plain(abilityTokens.get(`dota_tooltip_ability_${a}`)) || a,
+        text: plain(abilityTokens.get(`dota_tooltip_ability_${a}_description`)),
+        lore: plain(abilityTokens.get(`dota_tooltip_ability_${a}_lore`)),
+        icon: sets.images.has(`panorama/images/spellicons/${a}_png.png`) ? `panorama/images/spellicons/${a}_png.png` : "",
+      })),
+    };
     heroes.push({
       id,
       name,
+      about,
       model: glbOf(hero.Model),
       tokens,
       abilities,
@@ -415,7 +457,6 @@ async function main() {
   const rules = [];
   for (let i = 0; i < ruleFiles.length; i += 16) rules.push(...(await Promise.all(ruleFiles.slice(i, i + 16).map((f) => getJson(DATASETS.data, f)))));
   const heroNames = new Map(heroes.map((h) => [h.id, h.name]));
-  const abilityTokens = tokensOf(await getJson(DATASETS.data, "resource/localization/abilities_english.txt.json"));
   const tooltip = (name) => localize(abilityTokens, `#DOTA_Tooltip_ability_${name}`) || localize(itemTokens, `#DOTA_Tooltip_ability_${name}`);
   const sounds = soundRules(rules, soundEvents, sets.sounds, { heroName: (id) => heroNames.get(id), itemName: tooltip, abilityName: tooltip });
   // Uploaded only when it changed (state/catalog.json keeps the hash of the last upload)

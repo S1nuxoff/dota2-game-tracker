@@ -14,7 +14,8 @@
 // prefixes in each dataset (a whole folder, or a model's files sharing its name), all from what the
 // item names in items_game. Everything comes from the datasets, so it runs after them:
 //
-// Also catalog/models.json, every 3D model sorted for the site's 3D page (modelIndex below).
+// Also catalog/models.json, every 3D model sorted for the site's 3D page (modelIndex below), and
+// catalog/sounds.json, when each sound plays (sound-rules.js).
 //
 // A step of export.js after files-list (the lists it reads); uploaded again only when it changed.
 //
@@ -23,10 +24,12 @@ const fs = require("fs");
 const path = require("path");
 const hf = require("../lib/hf");
 const { DATASETS } = require("../lib/datasets");
+const { soundRules } = require("./sound-rules");
 
 const OWNER = "Sqls1";
 const OUT = "catalog/catalog.json";
 const MODELS_OUT = "catalog/models.json";
+const SOUNDS_OUT = "catalog/sounds.json";
 const STATE_FILE = "state/catalog.json";
 const temp = "./temp/catalog";
 
@@ -375,13 +378,25 @@ async function main() {
   const previewState = fs.existsSync("state/previews.json") ? JSON.parse(fs.readFileSync("state/previews.json", "utf8")) : {};
   const modelNames = await getJson(DATASETS.models, "names.json");
   const models = modelIndex({ lists, modelNames, items, heroes, meta: previewState.meta || {} });
+  // The talker's rules, every .vrr of dota2-data, a few at a time
+  const ruleFiles = lists.data.filter((p) => p.endsWith(".vrr.json"));
+  const rules = [];
+  for (let i = 0; i < ruleFiles.length; i += 16) rules.push(...(await Promise.all(ruleFiles.slice(i, i + 16).map((f) => getJson(DATASETS.data, f)))));
+  const heroNames = new Map(heroes.map((h) => [h.id, h.name]));
+  const abilityTokens = tokensOf(await getJson(DATASETS.data, "resource/localization/abilities_english.txt.json"));
+  const tooltip = (name) => localize(abilityTokens, `#DOTA_Tooltip_ability_${name}`) || localize(itemTokens, `#DOTA_Tooltip_ability_${name}`);
+  const sounds = soundRules(rules, soundEvents, sets.sounds, { heroName: (id) => heroNames.get(id), itemName: tooltip, abilityName: tooltip });
   // Uploaded only when it changed (state/catalog.json keeps the hash of the last upload)
-  const hash = require("crypto").createHash("sha1").update(JSON.stringify(body)).update(JSON.stringify(models)).digest("hex");
+  const hash = require("crypto").createHash("sha1").update(JSON.stringify(body)).update(JSON.stringify(models)).update(JSON.stringify(sounds)).digest("hex");
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   const local = path.join(temp, "catalog.json");
   fs.writeFileSync(local, JSON.stringify({ updated: new Date().toISOString(), ...body }));
   const modelsLocal = path.join(temp, "models.json");
   fs.writeFileSync(modelsLocal, JSON.stringify(models));
+  const soundsLocal = path.join(temp, "sounds.json");
+  fs.writeFileSync(soundsLocal, JSON.stringify(sounds));
+  const ruled = Object.values(sounds.files).filter(([, r]) => r.length).length;
+  console.log(`sounds: ${Object.keys(sounds.files).length} files, ${ruled} with talker rules (${sounds.rules.length}), ${(fs.statSync(soundsLocal).size / 1e6).toFixed(1)} MB`);
   const types = {};
   for (const row of models.models) types[row[2]] = (types[row[2]] || 0) + 1;
   console.log(`models: ${models.models.length} (${Object.entries(types).map(([t, n]) => `${t} ${n}`).join(", ")}), ${(fs.statSync(modelsLocal).size / 1e6).toFixed(1)} MB`);
@@ -392,7 +407,7 @@ async function main() {
   }
   if (upload) {
     const repo = await hf.prepareRepo(accessToken, DATASETS.data);
-    await hf.upload(repo, accessToken, [{ path: OUT, file: local }, { path: MODELS_OUT, file: modelsLocal }], "Update the download site's catalog");
+    await hf.upload(repo, accessToken, [{ path: OUT, file: local }, { path: MODELS_OUT, file: modelsLocal }, { path: SOUNDS_OUT, file: soundsLocal }], "Update the download site's catalog");
     fs.writeFileSync(STATE_FILE, JSON.stringify({ hash }, null, 1));
   }
 }

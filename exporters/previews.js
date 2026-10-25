@@ -3,6 +3,9 @@
 // transparent background) and kept next to the models as previews/<model path>.webp
 // (previews/models/heroes/axe/axe.webp for models/heroes/axe/axe.glb).
 //
+// Each model's measures go to state/previews.json too (meta: [file size, width, height, depth, triangles,
+// animations, texture names], from the glb itself), which catalog.js turns into the site's list of models.
+//
 // Only models new or changed since the last run (state/previews.json keeps each model's size when
 // its picture was made); pictures of models gone from the dataset are removed. The models come from
 // the dataset itself (its files.json and the .glb.gz copies), so it runs after models.js, before
@@ -10,12 +13,15 @@
 // a PC), else with its software renderer.
 //
 //   HF_TOKEN=... node exporters/previews.js [--no-upload] [--limit N] [--pages N] [--retry-failed]
+//   HF_TOKEN=... node exporters/previews.js --meta-only     the measures of models drawn before, no drawing
 //   CHROME_PATH=...  where Chrome is when not in its usual place
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
 const zlib = require("zlib");
 const { spawn } = require("child_process");
+const { NodeIO } = require("@gltf-transform/core");
+const { ALL_EXTENSIONS } = require("@gltf-transform/extensions");
 const hf = require("../lib/hf");
 const { DATASETS } = require("../lib/datasets");
 
@@ -61,14 +67,77 @@ async function download(file, accessToken) {
   }
 }
 
+// A model's measures: [width, height, depth] of its meshes as exported (skinned ones in their bind
+// pose), triangles, animations, and the names of its textures (the game's, <name>_<hash>.vtex, which
+// dota2-textures keeps as <name>_<hash>.png)
+const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+async function measure(buffer) {
+  const doc = await io.readBinary(new Uint8Array(buffer));
+  const root = doc.getRoot();
+  let triangles = 0;
+  const min = [Infinity, Infinity, Infinity];
+  const max = [-Infinity, -Infinity, -Infinity];
+  for (const node of root.listNodes()) {
+    const mesh = node.getMesh();
+    if (!mesh) continue;
+    // A skinned mesh's vertices are placed by its bones, not by its node
+    const m = node.getSkin() ? null : node.getWorldMatrix();
+    for (const prim of mesh.listPrimitives()) {
+      const position = prim.getAttribute("POSITION");
+      if (!position) continue;
+      if (prim.getMode() === 4) triangles += Math.floor((prim.getIndices()?.getCount() ?? position.getCount()) / 3);
+      // From the vertices themselves: some files carry a wrong min and max
+      const array = position.getArray();
+      const lo = [Infinity, Infinity, Infinity];
+      const hi = [-Infinity, -Infinity, -Infinity];
+      for (let v = 0; v < array.length; v += 3) {
+        for (let i = 0; i < 3; i++) {
+          lo[i] = Math.min(lo[i], array[v + i]);
+          hi[i] = Math.max(hi[i], array[v + i]);
+        }
+      }
+      if (!Number.isFinite(lo[0])) continue;
+      for (const x of [lo[0], hi[0]]) {
+        for (const y of [lo[1], hi[1]]) {
+          for (const z of [lo[2], hi[2]]) {
+            const p = m ? [m[0] * x + m[4] * y + m[8] * z + m[12], m[1] * x + m[5] * y + m[9] * z + m[13], m[2] * x + m[6] * y + m[10] * z + m[14]] : [x, y, z];
+            for (let i = 0; i < 3; i++) {
+              min[i] = Math.min(min[i], p[i]);
+              max[i] = Math.max(max[i], p[i]);
+            }
+          }
+        }
+      }
+    }
+  }
+  const dims = Number.isFinite(min[0]) ? max.map((v, i) => Math.round((v - min[i]) * 1000) / 1000) : [0, 0, 0];
+  const textures = [...new Set(root.listTextures().map((t) => t.getName().replace(/\.vtex$/, "")).filter(Boolean))];
+  return [...dims, triangles, root.listAnimations().length, textures];
+}
+
+// The measures of each model served to Chrome, by model path
+const measured = new Map();
+async function measureFile(file, body) {
+  const model = file.replace(/\.gz$/, "");
+  try {
+    measured.set(model, await measure(file.endsWith(".gz") ? zlib.gunzipSync(body) : body));
+  } catch (error) {
+    console.log(`  ${model}: not measured (${error.message})`);
+  }
+}
+
 // The render page, three.js, and the models (/model/<path in dota2-models>), served to Chrome
 function serve(accessToken) {
   const types = { ".html": "text/html", ".js": "text/javascript" };
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, "http://x").pathname;
     if (url.startsWith("/model/")) {
-      download(decodeURIComponent(url.slice(7)), accessToken).then(
-        (body) => res.writeHead(200, { "content-type": "application/octet-stream" }).end(body),
+      const file = decodeURIComponent(url.slice(7));
+      download(file, accessToken).then(
+        (body) => {
+          res.writeHead(200, { "content-type": "application/octet-stream" }).end(body);
+          measureFile(file, body);
+        },
         (error) => res.writeHead(502).end(String(error.message))
       );
       return;
@@ -184,6 +253,7 @@ async function main() {
   const state = fs.existsSync(STATE_FILE) ? JSON.parse(fs.readFileSync(STATE_FILE, "utf8")) : {};
   state.done ??= {};
   state.failed ??= {};
+  state.meta ??= {};
   const saveState = () => fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 1));
 
   const files = await modelList();
@@ -199,9 +269,40 @@ async function main() {
   const gone = Object.keys(state.done).filter((p) => !paths.has(p));
   if (gone.length && upload) {
     await hf.remove(repo, accessToken, gone.map(previewOf).filter((p) => paths.has(p)), "Remove previews of removed models");
-    for (const p of gone) delete state.done[p];
+    for (const p of gone) {
+      delete state.done[p];
+      delete state.meta[p];
+    }
     saveState();
   }
+  // Measures of models drawn before measures were kept
+  if (process.argv.includes("--meta-only")) {
+    const missing = models.filter(([p, size]) => state.meta[p]?.[0] !== size).slice(0, limit);
+    console.log(`previews: ${missing.length} models to measure`);
+    let next = 0;
+    let count = 0;
+    const worker = async () => {
+      while (next < missing.length) {
+        const [model, size] = missing[next++];
+        const file = paths.has(`${model}.gz`) ? `${model}.gz` : model;
+        try {
+          await measureFile(file, await download(file, accessToken));
+          if (measured.has(model)) state.meta[model] = [size, ...measured.get(model)];
+          measured.delete(model);
+        } catch (error) {
+          console.log(`  ${model}: ${error.message}`);
+        }
+        if (++count % 500 === 0) {
+          saveState();
+          console.log(`  ${count}/${missing.length}`);
+        }
+      }
+    };
+    await Promise.all(Array.from({ length: Number(argValue("--pages")) || 12 }, worker));
+    saveState();
+    return;
+  }
+
   console.log(`previews: ${models.length} models, ${todo.length} to draw`);
   if (!todo.length) return;
 
@@ -240,6 +341,8 @@ async function main() {
       try {
         const data = await page.render(model, paths.has(`${model}.gz`));
         errorsInRow = 0;
+        if (measured.has(model)) state.meta[model] = [size, ...measured.get(model)];
+        measured.delete(model);
         if (!data) {
           // Nothing to draw (an empty model, only attachments): no picture, not tried again
           state.failed[model] = size;

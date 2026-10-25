@@ -42,11 +42,37 @@ async function modelList() {
   return JSON.parse(zlib.gunzipSync(Buffer.from(await res.arrayBuffer()))).files;
 }
 
-// The render page and three.js, served to Chrome from this repository
-function serve() {
+// A file of dota2-models, fetched with the token (the Hub limits anonymous requests far sooner) and
+// again after a dropped connection or a "too many requests", waiting as long as the Hub asks
+async function download(file, accessToken) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(fileUrl(file), { headers: accessToken ? { authorization: `Bearer ${accessToken}` } : {} });
+      if (res.ok) return Buffer.from(await res.arrayBuffer());
+      if (res.status !== 429 && res.status < 500) throw Object.assign(new Error(`${res.status}`), { final: true });
+      if (attempt >= 8) throw new Error(`${res.status}`);
+      const wait = Number(res.headers.get("retry-after")) || 5 * attempt;
+      console.log(`  ${file}: ${res.status}, again in ${wait} s`);
+      await new Promise((r) => setTimeout(r, wait * 1000));
+    } catch (error) {
+      if (error.final || attempt >= 8) throw error;
+      await new Promise((r) => setTimeout(r, 3000 * attempt));
+    }
+  }
+}
+
+// The render page, three.js, and the models (/model/<path in dota2-models>), served to Chrome
+function serve(accessToken) {
   const types = { ".html": "text/html", ".js": "text/javascript" };
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, "http://x").pathname;
+    if (url.startsWith("/model/")) {
+      download(decodeURIComponent(url.slice(7)), accessToken).then(
+        (body) => res.writeHead(200, { "content-type": "application/octet-stream" }).end(body),
+        (error) => res.writeHead(502).end(String(error.message))
+      );
+      return;
+    }
     const file = url.startsWith("/three/") ? path.join(THREE_DIR, url.slice(7)) : path.join(PAGE_DIR, url.slice(1));
     const root = url.startsWith("/three/") ? THREE_DIR : PAGE_DIR;
     if (!path.resolve(file).startsWith(root) || !fs.existsSync(file)) {
@@ -137,7 +163,7 @@ async function openPage(port, url) {
   };
   await waitReady();
   return {
-    render: (model, gz) => evaluate(`render(${JSON.stringify(fileUrl(gz ? `${model}.gz` : model))}, ${gz})`),
+    render: (model, gz) => evaluate(`render(${JSON.stringify(`/model/${encodeURIComponent(gz ? `${model}.gz` : model)}`)}, ${gz})`, 600_000),
     reload: async () => {
       await call("Page.reload", {});
       await waitReady();
@@ -180,7 +206,7 @@ async function main() {
   if (!todo.length) return;
 
   fs.mkdirSync(temp, { recursive: true });
-  const server = await serve();
+  const server = await serve(accessToken);
   const { chrome, port } = await launchChrome();
   const pageUrl = `http://127.0.0.1:${server.address().port}/render.html?size=${SIZE}`;
   const pages = [];

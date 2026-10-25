@@ -115,4 +115,6 @@ Every particle system and snapshot of the game, wherever the game keeps it (most
 
 ## State files (this repo)
 
-`state/`: what each exporter already did, so a run exports only what changed, one file each (`models.json`, `data.json`, `gamefiles.json`, `images.json`, `textures.json`, `videos.json`, `sounds.json`, `audio.json`, `particles.json` with `particle-models.json`, `scenes.json`, `names.json`, `files.json`, `catalog.json`). The workflow commits them after each run.
+`previews/<model path>.webp` in dota2-models (`exporters/previews.js`): a 320 px picture of every model for the download site, drawn in headless Chrome; new and changed models after each update.
+
+`state/`: what each exporter already did, so a run exports only what changed, one file each (`models.json`, `data.json`, `gamefiles.json`, `images.json`, `textures.json`, `videos.json`, `sounds.json`, `audio.json`, `particles.json` with `particle-models.json`, `scenes.json`, `names.json`, `files.json`, `catalog.json`, `previews.json`). The workflow commits them after each run.

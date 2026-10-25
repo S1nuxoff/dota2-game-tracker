@@ -4,7 +4,7 @@
 //   {
 //     updated,
 //     heroes: [{ id, name, model, look, tokens, abilities, personas: [{ id, name, model, look }], items: [item id] }],
-//     items: { id: { name, prefab, slot, type, rarity, heroes, set, icon, refs: { <dataset>: [prefix] } } },
+//     items: { id: { name, prefab, slot, slotKey, type, rarity, heroes, set, icon, refs: { <dataset>: [prefix] } } },
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
 //     prefabs: { prefab: its name in the game }
@@ -288,6 +288,8 @@ async function main() {
       prefab: item.prefab || "",
       // The names the game shows: the slot of the hero's loadout (LoadoutSlot_<slot>), the item's type
       slot: slotOf(item) ? localize(itemTokens, `#LoadoutSlot_${slotOf(item)}`) || slotOf(item) : "",
+      // The slot as items_game names it (head, weapon, back_persona_1), as Dotadex's links take it
+      slotKey: slotOf(item),
       type: type ? type[0].toUpperCase() + type.slice(1) : "",
       rarity: item.item_rarity || "",
       heroes: Object.keys(item.used_by_heroes || {}),

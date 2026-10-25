@@ -10,7 +10,8 @@
 //            text?: its description, bundle?: [item id], loot?: { drops: [item id], bonus: [[item id, rarity key]] } } },  (a treasure's, capsule's contents)
 //     sets: { key: { name, items, icon } },
 //     rarities: { key: { name, color, order } },
-//     prefabs: { prefab: its name in the game }
+//     prefabs: { prefab: its name in the game },
+//     events: { EVENT_ID_...: its name }
 //   }
 // A hero's own files are found by the page from tokens (its name in the game, its models' and its
 // items' folders), matched against the datasets' files.json; an item's are listed as refs: path
@@ -313,6 +314,8 @@ async function main() {
       // When it came out (items_game's creation_date, 2026-07-30), where it says
       date: item.creation_date || "",
       text: plain(localize(itemTokens, item.item_description)) || undefined,
+      // The event or battle pass it came with (EVENT_ID_INTERNATIONAL_2026), named in events below
+      event: item.event_id && item.event_id !== "EVENT_ID_NONE" ? item.event_id : undefined,
       refs,
     };
     if (item.name) byName.set(item.name.toLowerCase(), id);
@@ -454,7 +457,15 @@ async function main() {
     prefabs[prefab] = titleCase(game && game.toLowerCase().replace(/_/g, " ") === words ? game : words);
   }
 
-  const body = { heroes, items, sets: itemSets, rarities, prefabs };
+  // The events by the game's names (EVENT_ID_FALL_MAJOR_2015: #DOTA_EventName_FallMajor2015), else their own words
+  const eventNames = {};
+  for (const id of new Set(Object.values(items).map((it) => it.event).filter(Boolean))) {
+    const words = id.replace(/^EVENT_ID_/, "").toLowerCase().split("_");
+    const game = itemTokens.get(`dota_eventname_${words.join("")}`);
+    eventNames[id] = game && game !== "N/A" ? game : words.map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+  }
+
+  const body = { heroes, items, sets: itemSets, rarities, prefabs, events: eventNames };
   const previewState = fs.existsSync("state/previews.json") ? JSON.parse(fs.readFileSync("state/previews.json", "utf8")) : {};
   const modelNames = await getJson(DATASETS.models, "names.json");
   const models = modelIndex({ lists, modelNames, items, heroes, meta: previewState.meta || {} });

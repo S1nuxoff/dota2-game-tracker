@@ -349,7 +349,8 @@ async function main() {
       type: type ? type[0].toUpperCase() + type.slice(1) : "",
       rarity: item.item_rarity || "",
       heroes: Object.keys(item.used_by_heroes || {}),
-      icon: icon || refs.images?.[0] || "",
+      // not the game's stand-in for an item without a picture (econ/testitem_slot_empty)
+      icon: [icon, refs.images?.[0]].find((p) => p && !p.includes("testitem_slot_empty")) || "",
       // When it came out (items_game's creation_date, 2026-07-30), where it says
       date: item.creation_date || "",
       text: plain(localize(itemTokens, item.item_description)) || undefined,

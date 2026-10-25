@@ -253,6 +253,12 @@ async function main() {
       if (image) add("images", image);
       if (events.has(s)) for (const f of events.get(s)) if (sets.sounds.has(f)) add("sounds", f);
       if (!s.includes("/")) continue;
+      // A cursor pack (resource/cursor/valve/<pack>): the cursors Dotadex took out of it
+      if (s.startsWith("resource/cursor/")) add("data", `dotadex/images/cursors/${path.posix.basename(s)}/`);
+      // A panorama layout (file://{resources}/layout/hud/versus/....xml): the file itself
+      if (s.startsWith("file://{resources}/")) add("data", `panorama/${s.slice("file://{resources}/".length)}`);
+      // A map (a terrain's preview): its scene in dota2-maps
+      if (s.endsWith(".vmap")) add("maps", `scenes/${s.replace(/^maps\//, "").replace(/\.vmap$/, ".glb")}`);
       if (s.endsWith(".vmdl")) {
         const stem = stripExt(s);
         if (sets.models.has(`${stem}.glb`)) add("models", `${stem}.`);
@@ -270,6 +276,15 @@ async function main() {
         const png = `${stripExt(s)}.png`;
         if (sets.textures.has(png)) add("textures", png);
         if (sets.data.has(`${s}.json`)) add("data", `${s}.json`);
+      }
+    }
+    // A HUD skin (visuals type hud_skin, asset <name>): its panorama styles and layouts
+    for (const mod of Object.values(item.visuals || {})) {
+      if (mod && typeof mod === "object" && mod.type === "hud_skin" && mod.asset) {
+        const name = String(mod.asset).toLowerCase();
+        add("data", `panorama/hud_skins/${name}/`);
+        // and its art (panorama/images/hud/reborn/<name>/)
+        add("images", `panorama/images/hud/reborn/${name}/`);
       }
     }
     // Prefixes that match nothing are dropped (a texture folder the export has no pictures for)

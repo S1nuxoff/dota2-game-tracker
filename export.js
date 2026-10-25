@@ -17,7 +17,7 @@ const { gameVersion, steamLogin } = require("./lib/source");
 const STATE_FILE = "state/run.json";
 // In this order: the models first (the site shows new ones soonest), the files the site reads, the
 // game's own files, the sounds and particles, what is made from them, the lists last
-const STEPS = ["models", "data", "gamefiles", "images", "textures", "videos", "sounds", "particles", "audio", "names", "previews", "files-list", "catalog"];
+const STEPS = ["models", "data", "gamefiles", "images", "textures", "videos", "sounds", "particles", "audio", "names", "previews", "embeddings", "files-list", "catalog"];
 
 function argValue(name) {
   const index = process.argv.indexOf(name);

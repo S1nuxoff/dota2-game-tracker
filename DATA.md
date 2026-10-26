@@ -65,7 +65,7 @@ from `DOTADEX_BASE`.
 ## dota2-images and dota2-videos
 
 The interface's pictures and videos at their game paths, as the game keeps them (`images.js`,
-`videos.js`, only what changed, against `images-state.json` and `videos-state.json`).
+`videos.js`, only what changed, against `state/images.json` and `state/videos.json`).
 
 | Path | What it is | Read by (site) |
 |---|---|---|

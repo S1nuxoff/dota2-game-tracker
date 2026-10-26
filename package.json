@@ -1,5 +1,6 @@
 {
   "private": true,
+  "description": "Exports Dota 2 from the game files to public Hugging Face datasets",
   "dependencies": {
     "@gltf-transform/core": "4.5.1",
     "@gltf-transform/extensions": "4.5.1",

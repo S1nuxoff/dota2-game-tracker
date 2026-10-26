@@ -14,7 +14,7 @@ State on 2026-10-24: eight Hugging Face datasets under `Sqls1/`, the price track
 | HF `dota2-images` | this repo: `images.js` | every picture of the game's interface as the game keeps it |
 | HF `dota2-videos` | this repo: `videos.js` | every video of the game's interface as the game keeps it |
 | HF `dota2-models` | this repo: `models.js`, `particles.js` (sequences, attachments) | every model of the game with its materials and textures |
-| HF `dota2-textures` | this repo: `exporters/textures.js` | every texture outside the interface, on its own, as PNG |
+| HF `dota2-textures` | this repo: `textures.js` | every texture outside the interface, on its own, as PNG |
 | HF `dota2-particles` | this repo: `particles.js` | every particle system of the game, their textures, bundles, the engine's schema |
 | HF `dota2-sounds` | this repo: `sounds.js`, `audio.js` | every sound, sound events, phonemes |
 | HF `dota2-maps` (was dota2-scenes) | this repo: `scenes.js` | scenes and maps as glb |

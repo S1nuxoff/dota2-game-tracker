@@ -23,7 +23,7 @@ exporters/   one script per kind of data, each can also run on its own:
              models.js, data.js, gamefiles.js, images.js, textures.js, videos.js, sounds.js,
              sound-rules.js, audio.js, particles.js, scenes.js, names.js, files-list.js,
              catalog.js, previews.js, embeddings.js
-lib/         what they share: reading the game (source.js, steam.js), Valve's formats
+lib/         what they share: reading the game (source.js, steam.js, itemsgame.js), Valve's formats
              (keyvalues.js, kv3.js, resource.js, vpk-writer.js), uploading (hf.js), and the
              parts of a model's export (skins, cloth, flex, materials, web-glb, summons, ...)
 tools/       run by hand: cards.js (the datasets' cards), stage-upload.js (big uploads),

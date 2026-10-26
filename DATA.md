@@ -26,7 +26,9 @@ Every JSON at most one folder deep (and `data/i18n/`) has a gzipped copy `<file>
 (`web-glb.js`).
 
 Every dataset has `files.json` (+ `.gz`) at its root: every file with its size, and the dataset's
-revision it was listed from (`files-list.js`, against `state/files.json`).
+revision it was listed from (`files-list.js`, against `state/files.json`). dota2-images and
+dota2-models also have `names.json`: the names people know for their files (heroes, cosmetics,
+abilities, items, units), from the game's English texts (`names.js`).
 
 ## dota2-data
 

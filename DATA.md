@@ -51,6 +51,8 @@ The exporters of this repo read items_game from the game itself (`itemsgame.js`,
 
 `catalog/catalog.json` (+ `.gz`, `exporters/catalog.js`, the last step of `export.js`): the download site's catalog. Every hero (name, the tokens that name its folders and files, abilities, personas, its items) and every item of items_game with its game names (slot, type, rarity, set) and its files as path prefixes per dataset. Read by the download site (dota2-files).
 
+`catalog/sounds.json` (`exporters/sound-rules.js`, written by `catalog.js`): when each sound plays, for the download site's Sounds pages: the talker rules (a concept and its conditions) that speak each voice line, and the event that names every other sound.
+
 ### dotadex/: the files made for the site
 
 Made by this repo's exporters out of the game files, in the shape the site reads; each JSON at most

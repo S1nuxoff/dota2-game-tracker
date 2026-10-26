@@ -89,6 +89,7 @@ Every texture of the game outside `panorama/` (`materials/`, `models/`, `maps/`,
 | `materials/dynamic.json` | `materials.js` | materials' per-frame parameters | `src/viewer/materialPrograms.js` |
 | `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `models.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
 | `previews/<model path>.webp` | `previews.js` | a 320 px picture of every model for the download site, drawn in headless Chrome; new and changed models after each update | dota2-files |
+| `previews/embeddings.json`, `previews/embeddings.bin` | `embeddings.js` | a CLIP vector of every preview, for the download site's search by picture and by words | dota2-files |
 
 ## dota2-particles
 

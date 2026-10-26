@@ -91,7 +91,7 @@ Every texture of the game outside `panorama/` (`materials/`, `models/`, `maps/`,
 
 ## dota2-particles
 
-Every particle system and snapshot of the game, wherever the game keeps it (most under `particles/`, some under `models/` and `maps/`, at their game paths) (`particles.js`, only what changed, against `particles-state.json`). Models the game keeps under `particles/` (and their sequences, attachments, cloth) stay in dota2-models with the other models. The site reads it from `PARTICLES_BASE`.
+Every particle system and snapshot of the game, wherever the game keeps it (most under `particles/`, some under `models/` and `maps/`, at their game paths) (`particles.js`, only what changed, against `state/particles.json`). Models the game keeps under `particles/` (and their sequences, attachments, cloth) stay in dota2-models with the other models. The site reads it from `PARTICLES_BASE`.
 
 | Path | Script | What it is | Read by (site) |
 |---|---|---|---|

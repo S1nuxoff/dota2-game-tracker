@@ -19,6 +19,7 @@ Exports the whole of Dota 2 from the game files to public Hugging Face datasets,
 
 ```
 export.js    the whole export in one process (what the workflow runs)
+.github/workflows/export-models.yml   that workflow (Export)
 exporters/   one script per kind of data, each can also run on its own:
              models.js, data.js, gamefiles.js, images.js, textures.js, videos.js, sounds.js,
              sound-rules.js, audio.js, particles.js, scenes.js, names.js, files-list.js,

@@ -88,6 +88,7 @@ Every texture of the game outside `panorama/` (`materials/`, `models/`, `maps/`,
 | `models/<path>.cloth.json`, `models/cloth.json` | `cloth.js` | cloth, hair and beard simulation; the list | `src/viewer/cloth.js` |
 | `materials/dynamic.json` | `materials.js` | materials' per-frame parameters | `src/viewer/materialPrograms.js` |
 | `cubemaps/`, `cubemaps/index.json` | `materials.js` (run by `models.js`) | the environment cube maps materials use | `src/viewer/dotaMaterial.js` |
+| `previews/<model path>.webp` | `previews.js` | a 320 px picture of every model for the download site, drawn in headless Chrome; new and changed models after each update | dota2-files |
 
 ## dota2-particles
 
@@ -114,7 +115,5 @@ Every particle system and snapshot of the game, wherever the game keeps it (most
 | `scenes.json` | `scenes.js` | the scenes with their lights and cameras | `scripts/build-catalog.mjs` |
 
 ## State files (this repo)
-
-`previews/<model path>.webp` in dota2-models (`exporters/previews.js`): a 320 px picture of every model for the download site, drawn in headless Chrome; new and changed models after each update.
 
 `state/`: what each exporter already did, so a run exports only what changed, one file each (`models.json`, `data.json`, `gamefiles.json`, `images.json`, `textures.json`, `videos.json`, `sounds.json`, `audio.json`, `particles.json` with `particle-models.json`, `scenes.json`, `names.json`, `files.json`, `catalog.json`, `previews.json`, `embeddings.json`; `run.json` the game version and code of the last full run). The workflow commits them after each run.

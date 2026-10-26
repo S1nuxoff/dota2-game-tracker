@@ -25,6 +25,9 @@ Every JSON at most one folder deep (and `data/i18n/`) has a gzipped copy `<file>
 (`hf.js`); the site asks for that first (`src/fetchData.js`). Every model has `<model>.glb.gz`
 (`web-glb.js`).
 
+Every dataset has `files.json` (+ `.gz`) at its root: every file with its size, and the dataset's
+revision it was listed from (`files-list.js`, against `state/files.json`).
+
 ## dota2-data
 
 Every file of `scripts/` and `resource/` that is text (and the kinds below), at its game path (`gamefiles.js`, only what

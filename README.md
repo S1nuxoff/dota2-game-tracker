@@ -39,7 +39,7 @@ Every script runs from the repository's root: `node exporters/<name>.js ...`.
 
 The **Export** workflow runs every six hours with two jobs side by side:
 
-- **export**: `export.js`, every exporter in one process (models, game data, scripts and texts, pictures, textures, videos, sounds, particles, voice lines, names, the lists of files) with one Steam login and the game opened once. When neither the game's version nor the code changed since the last full run (`state/run.json`), it stops at once without downloading anything; otherwise each exporter exports what changed against its own state file and removes what the game removed. `EXPORT_STEPS=images,videos` (the workflow's `steps` input) runs only some.
+- **export**: `export.js`, every exporter in one process (models, game data, scripts and texts, pictures, textures, videos, sounds, particles, voice lines, names, the models' previews and their CLIP vectors, the lists of files, the download site's catalog) with one Steam login and the game opened once. When neither the game's version nor the code changed since the last full run (`state/run.json`), it stops at once without downloading anything; otherwise each exporter exports what changed against its own state file and removes what the game removed. `EXPORT_STEPS=images,videos` (the workflow's `steps` input) runs only some.
 - **scenes**: the maps and scenes. Map packages are big and slow to convert, so they get their own job (and its own 5.5-hour budget) and never hold up the rest; it stops starting new maps after five hours and goes on in the next run.
 
 Both commit their state files back to `main` at the end.

@@ -1,6 +1,6 @@
 # Dota 2 Game Tracker
 
-Exports the whole of Dota 2 from the game files to public Hugging Face datasets, and keeps them up to date after every game update: every model, texture, picture, video, sound, particle effect, map, script and text, at the game's own paths and in ordinary formats (glTF, PNG, MP3, JSON). [Dotadex](https://s1nuxoff.github.io/Dotadex/) is built on them, and they are open to everyone.
+Exports the whole of Dota 2 from the game files to public Hugging Face datasets, and keeps them up to date after every game update: every model, texture, picture, video, sound, particle effect, map, script and text, at the game's own paths and in ordinary formats (glTF, PNG, MP3, JSON). [Dotadex](https://s1nuxoff.github.io/Dotadex/) and [Dotadex Files](https://s1nuxoff.github.io/dota2-files/) are built on them, and they are open to everyone.
 
 | Dataset | What |
 |---|---|

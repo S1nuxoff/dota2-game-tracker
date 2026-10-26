@@ -28,7 +28,7 @@ Every JSON at most one folder deep (and `data/i18n/`) has a gzipped copy `<file>
 ## dota2-data
 
 Every file of `scripts/` and `resource/` that is text (and the kinds below), at its game path (`gamefiles.js`, only what
-changed, against `gamefiles-state.json`). No gzipped copies: pages do not load these.
+changed, against `state/gamefiles.json`). No gzipped copies: pages do not load these.
 
 | Path | What it is | Read by |
 |---|---|---|

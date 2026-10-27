@@ -1,10 +1,10 @@
 {
- "dota2-data": "5bfac7439da57635b80919c788f1edcf244ab01a",
- "dota2-images": "6ac844cd95c06d1284fb88dd2c255437cb557f04",
+ "dota2-data": "965a41327bb79c3bf38c64e423d809eea50f9c02",
+ "dota2-images": "cb78ef0ba074a9290aac6a7361aa75c709034af5",
  "dota2-videos": "91c6fcca5baf9cbb8a481d0b90e811fb19c122d5",
- "dota2-models": "293ee07caa02b1cf137625cc3646ce95776090e5",
- "dota2-sounds": "8d58b2ee8bae22e58d70cc6101c2aaf2e99acc77",
- "dota2-particles": "9ae4e1c65b0712ed8588d239671557fdfc5923bc",
- "dota2-maps": "744162c2e2b192d49e25e111fcc7a217e18f6a5c",
+ "dota2-models": "7b7f772169d22857162d5bc9f06c6055c7317520",
+ "dota2-sounds": "e10819a7c2170bcd61dc51acb61f9ab63463c42b",
+ "dota2-particles": "6431608a58d6debde9cda3e37660ed557bd2dc5c",
+ "dota2-maps": "e13dbfae8a22b87680323d3f44d3148a23cb5933",
  "dota2-textures": "ba69218c757f6a93bd1e972c3c129821102d5067"
 }

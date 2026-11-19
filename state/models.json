@@ -1,5 +1,5 @@
 {
- "manifest": "5601365306534899232",
+ "manifest": "3546973523438570792",
  "models": {
   "models/heroes/antimage/antimage_weapon.vmdl": {
    "hash": "f1fb0cb6",
@@ -314666,9 +314666,9 @@
   "models/vr/auto_chap_model.vmdl": 3089894414,
   "models/vr/helper_safearea.vmdl": 256071397
  },
- "dynamicMaterials": "20528055",
+ "dynamicMaterials": "fa63d9fe",
  "cubeMaps": {
-  "materials": "20528055",
+  "materials": "fa63d9fe",
   "files": [
    "maps/backgrounds/models/frontpage_nemestice_device/materials/metal_soft_cube_png_2a6b5c2.vtex_c",
    "maps/cavern_assets/models/crystals/bismuth_cube_psd_d6268c86.vtex_c",
@@ -314870,6 +314870,7 @@
    "materials/models/props_structures/tower_upgrade/obsidian_glass_cube_psd_e55ab80d.vtex_c",
    "materials/models/ui/eaglesong_trophy/cube_eaglesong_trophy_cube_psd_ff42adb8.vtex_c",
    "materials/particle/ice_surface_envmap_cube_tga_a394eab4.vtex_c",
+   "materials/particle/kill_effects/kill_effect_tomb_gold_cube_psd_9ab19b33.vtex_c",
    "models/creeps/darkreef/gaoler/darkreef_gaolerlamp_cube_psd_61562cd.vtex_c",
    "models/creeps/neutral_creeps/n_creep_eimermole/n_creep_eimermole_cube_psd_8f1b38b4.vtex_c",
    "models/events/crownfall/survivors/cubemaps/cf_survivors_cube_png_18f8c9e9.vtex_c",
@@ -314892,7 +314893,7 @@
    "models/props_gameplay/babyroshan_alt_silver_cube_psd_af63a293.vtex_c",
    "particles/econ/items/slardar/dota_plus_slardar/dota_plus_slardar_weapon_fx_vmat_g_tcubemap_37d5e525.vtex_c"
   ],
-  "hash": "36809600",
+  "hash": "23c3ef0f",
   "version": 2
  }
 }

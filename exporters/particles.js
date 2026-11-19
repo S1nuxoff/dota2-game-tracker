@@ -665,6 +665,31 @@ async function buildTexture(out, texture, dist, cells) {
   return [image, sheetFile];
 }
 
+// The bundles to make again: Map<root, Set of the systems in its tree>. Every root when there is
+// no previous list (the bundles changed shape), else the roots new to the list and those whose
+// tree holds a system converted this run (changed) or one the game no longer has (gone). A tree
+// is the root and the systems it spawns, through each system's children in the state, among the
+// systems reached this run
+function bundlesToMake({ roots, previousRoots, reached, systems, changed, gone }) {
+  const before = previousRoots && new Set(previousRoots);
+  const trees = new Map();
+  for (const root of roots) {
+    const files = new Set();
+    let stale = !before || !before.has(root);
+    const queue = [root];
+    while (queue.length) {
+      const file = queue.pop();
+      if (gone.has(file)) stale = true;
+      if (files.has(file) || !reached.has(file) || !systems[file]) continue;
+      files.add(file);
+      if (changed.has(file)) stale = true;
+      queue.push(...(systems[file].children ?? []));
+    }
+    if (stale) trees.set(root, files);
+  }
+  return trees;
+}
+
 async function main() {
   const game = argValue("--game");
   const accessToken = process.env.HF_TOKEN;
@@ -748,6 +773,8 @@ async function main() {
   const everySystem = vpkDir.files.filter((file) => file.endsWith(".vpcf_c")).map((file) => file.slice(0, -2));
   let frontier = [...roots, ...everySystem];
   let converted = 0;
+  // The systems converted this run, whose effects' bundles are made again
+  const changed = new Set();
   while (frontier.length) {
     const next = new Set();
     const fresh = [...new Set(frontier)].filter((file) => !reached.has(file) && crcOf(file) !== undefined);
@@ -772,6 +799,7 @@ async function main() {
         uploads.push({ path: file.replace(/\.vpcf$/, ".json"), file: json });
         state.systems[file] = { crc: crcOf(file), ...describe(system) };
         converted++;
+        changed.add(file);
       }
     }
     for (const file of fresh) {
@@ -787,11 +815,27 @@ async function main() {
 
   // Each effect an item shows with every system it spawns in one file, so the site loads an
   // effect in one request: particles/bundles/<root>.json = { "<path>.vpcf": system, ... }.
-  // Made again whenever a system changed, from all of them
+  // Made again only for the effects whose tree changed and those new to the list (all of them
+  // when the bundles change shape), from the systems of those trees alone: the runners start
+  // without the converted systems, and reading all of them again for one that changed took most
+  // of an hour
   const rootsKey = roots.slice().sort().join("|");
-  if (converted > 0 || state.bundles !== BUNDLE_VERSION || state.rootsKey !== rootsKey) {
+  const rebuildAll = state.bundles !== BUNDLE_VERSION || state.rootsKey === undefined;
+  const gone = new Set(Object.keys(state.systems).filter((file) => crcOf(file) === undefined));
+  const trees = bundlesToMake({
+    roots,
+    previousRoots: rebuildAll ? null : state.rootsKey.split("|"),
+    reached,
+    systems: state.systems,
+    changed,
+    gone,
+  });
+  // A system the game no longer has makes its effects' bundles again once, then is forgotten
+  for (const file of gone) delete state.systems[file];
+  if (trees.size) {
+    const needed = new Set([...trees.values()].flatMap((files) => [...files]));
     const all = new Map();
-    const missing = [...reached].filter((file) => {
+    const missing = [...needed].filter((file) => {
       const json = path.join(dist, file.replace(/\.vpcf$/, ".json"));
       if (fs.existsSync(json)) {
         all.set(file, JSON.parse(fs.readFileSync(json, "utf8")));
@@ -812,15 +856,11 @@ async function main() {
         }
       }
     }
-    for (const root of roots) {
+    for (const [root, files] of trees) {
       if (!all.has(root)) continue;
       const bundle = {};
-      const queue = [root];
-      while (queue.length) {
-        const file = queue.pop();
-        if (bundle[file] || !all.has(file)) continue;
-        bundle[file] = all.get(file);
-        queue.push(...(state.systems[file]?.children ?? []));
+      for (const file of files) {
+        if (all.has(file)) bundle[file] = all.get(file);
       }
       const name = `particles/bundles/${root.replace(/^particles\//, "").replace(/\.vpcf$/, ".json")}`;
       const json = path.join(dist, name);
@@ -828,10 +868,12 @@ async function main() {
       fs.writeFileSync(json, JSON.stringify(bundle));
       uploads.push({ path: name, file: json });
     }
-    state.bundles = BUNDLE_VERSION;
-    state.rootsKey = rootsKey;
-    console.log(`${roots.length} effects bundled with the systems they spawn`);
+    console.log(`${trees.size} of ${roots.length} effects bundled again with the systems they spawn (${needed.size} systems read)`);
+  } else {
+    console.log(`${roots.length} effects, their bundles unchanged`);
   }
+  state.bundles = BUNDLE_VERSION;
+  state.rootsKey = rootsKey;
 
   // The textures they draw
   // With the ones the game draws where a renderer's layer names no texture
@@ -998,4 +1040,4 @@ if (require.main === module) {
   );
 }
 
-module.exports = { buildTexture, readSheetCells, readSequences, main };
+module.exports = { buildTexture, readSheetCells, readSequences, bundlesToMake, main };

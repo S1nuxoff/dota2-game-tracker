@@ -1,5 +1,5 @@
 {
- "manifest": "8570545058950223930",
+ "manifest": "3697999485771247811",
  "models": {
   "models/heroes/antimage/antimage_weapon.vmdl": {
    "hash": "f1fb0cb6",
@@ -233657,7 +233657,7 @@
    "flex": false
   },
   "maps/ti10_assets/trees/ti10_goldenbirch001.vmdl": {
-   "hash": "d0e4c36e",
+   "hash": "a413038d",
    "deps": [
     "maps/ti10_assets/trees/ti10_dire_trees01.vmat_c",
     "maps/ti10_assets/trees/ti10_dire_trees01_vmat_g_tspecular_a4bcb692.vtex_c",
@@ -250411,7 +250411,7 @@
    "flex": false
   },
   "models/props_tree/palm_02e.vmdl": {
-   "hash": "41242f4f",
+   "hash": "76e655dd",
    "deps": [
     "maps/jungle_assets/trees/palm_jungle_frond.vmat_c",
     "maps/jungle_assets/trees/palm_jungle_frond_color_psd_2d9ba460.vtex_c",
@@ -269657,7 +269657,7 @@
    "flex": false
   },
   "models/props_tree/palm_02b.vmdl": {
-   "hash": "6647ebba",
+   "hash": "3424dca9",
    "deps": [
     "maps/jungle_assets/trees/palm_jungle_frond.vmat_c",
     "maps/jungle_assets/trees/palm_jungle_frond_color_psd_2d9ba460.vtex_c",
@@ -269682,7 +269682,7 @@
    "flex": false
   },
   "models/props_tree/palm_02d.vmdl": {
-   "hash": "7f3fea38",
+   "hash": "a82a5c85",
    "deps": [
     "materials/default/default_mask_tga_4528a0a9.vtex_c",
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
@@ -269856,7 +269856,7 @@
    "flex": true
   },
   "models/props_tree/tree_cine_00_low.vmdl": {
-   "hash": "40aa13e1",
+   "hash": "876ea770",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_cine_00_low.vmat_c",
@@ -288699,7 +288699,7 @@
    "flex": false
   },
   "models/props_tree/palm_03a.vmdl": {
-   "hash": "17268520",
+   "hash": "d68d9bb6",
    "deps": [
     "materials/default/default_mask_tga_4528a0a9.vtex_c",
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
@@ -307984,7 +307984,7 @@
    "flex": false
   },
   "models/props_tree/palm_03.vmdl": {
-   "hash": "cf288e80",
+   "hash": "b0c35d36",
    "deps": [
     "materials/default/default_mask_tga_4528a0a9.vtex_c",
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
@@ -308145,7 +308145,7 @@
    "flex": false
   },
   "models/props_tree/tree_cine_02_low.vmdl": {
-   "hash": "eae76c9e",
+   "hash": "1a6acaf4",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_cine_02_low.vmat_c",

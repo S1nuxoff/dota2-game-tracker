@@ -1,5 +1,5 @@
 {
- "manifest": "3697999485771247811",
+ "manifest": "3564761159236531329",
  "models": {
   "models/heroes/antimage/antimage_weapon.vmdl": {
    "hash": "f1fb0cb6",
@@ -228027,7 +228027,7 @@
    "flex": false
   },
   "maps/cavern_assets/models/crystals/crystal_chunk004.vmdl": {
-   "hash": "2d7c3a0e",
+   "hash": "4cea9444",
    "deps": [
     "maps/cavern_assets/models/crystals/crystal02.vmat_c",
     "maps/cavern_assets/models/crystals/crystal02_color_psd_4155c590.vtex_c",
@@ -228587,7 +228587,7 @@
    "flex": false
   },
   "maps/cavern_assets/models/spores/spores_cavern_01.vmdl": {
-   "hash": "154ee57a",
+   "hash": "890271ec",
    "deps": [
     "maps/cavern_assets/models/spores/spores_cavern_01.vmdl_c",
     "maps/cavern_assets/models/spores/spores_cavern_02.vmat_c",
@@ -230206,7 +230206,7 @@
    "flex": false
   },
   "maps/journey_assets/props/trees/journey_armandpine/journey_armandpine_01.vmdl": {
-   "hash": "398c1d3e",
+   "hash": "81c9958a",
    "deps": [
     "maps/journey_assets/props/trees/journey_armandpine/journey_armandpine_01.vmdl_c",
     "maps/journey_assets/props/trees/journey_armandpine/materials/journey_armandpine.vmat_c",
@@ -230251,7 +230251,7 @@
    "flex": false
   },
   "maps/journey_assets/props/trees/journey_armandpine/journey_armandpine_02.vmdl": {
-   "hash": "3cd0da68",
+   "hash": "43cac4b5",
    "deps": [
     "maps/journey_assets/props/trees/journey_armandpine/journey_armandpine_02.vmdl_c",
     "maps/journey_assets/props/trees/journey_armandpine/materials/journey_armandpine.vmat_c",
@@ -230296,7 +230296,7 @@
    "flex": false
   },
   "maps/journey_assets/props/trees/journey_armandpine/journey_armandpine_03.vmdl": {
-   "hash": "b5f3a882",
+   "hash": "8f18eb2",
    "deps": [
     "maps/journey_assets/props/trees/journey_armandpine/journey_armandpine_03.vmdl_c",
     "maps/journey_assets/props/trees/journey_armandpine/materials/journey_armandpine.vmat_c",
@@ -230341,7 +230341,7 @@
    "flex": false
   },
   "maps/journey_assets/props/trees/journey_fountain/journey_fountain.vmdl": {
-   "hash": "2647e09f",
+   "hash": "71018459",
    "deps": [
     "maps/journey_assets/props/trees/journey_fountain/journey_fountain.vmat_c",
     "maps/journey_assets/props/trees/journey_fountain/journey_fountain.vmdl_c",
@@ -230380,7 +230380,7 @@
    "flex": false
   },
   "maps/journey_assets/props/trees/journey_maple/journey_maple02.vmdl": {
-   "hash": "ae62dcf6",
+   "hash": "f4701b91",
    "deps": [
     "maps/journey_assets/props/trees/journey_maple/journey_maple01.vmat_c",
     "maps/journey_assets/props/trees/journey_maple/journey_maple01_color_psd_d145b2ed.vtex_c",
@@ -232140,7 +232140,7 @@
    "flex": false
   },
   "maps/jungle_assets/trees/kapok/export/kapok_001.vmdl": {
-   "hash": "b5f67922",
+   "hash": "c9878a93",
    "deps": [
     "maps/journey_assets/props/trees/journey_maple/journey_maple01_mask_psd_40d54b76.vtex_c",
     "maps/jungle_assets/trees/kapok/export/kapok_001.vmdl_c",
@@ -232160,7 +232160,7 @@
    "flex": false
   },
   "maps/jungle_assets/trees/kapok/export/kapok_002.vmdl": {
-   "hash": "2427c050",
+   "hash": "719a5d4b",
    "deps": [
     "maps/journey_assets/props/trees/journey_maple/journey_maple01_mask_psd_40d54b76.vtex_c",
     "maps/jungle_assets/trees/kapok/export/kapok_002.vmdl_c",
@@ -232180,7 +232180,7 @@
    "flex": false
   },
   "maps/jungle_assets/trees/kapok/export/kapok_003.vmdl": {
-   "hash": "6b5849fd",
+   "hash": "15f9297e",
    "deps": [
     "maps/journey_assets/props/trees/journey_maple/journey_maple01_mask_psd_40d54b76.vtex_c",
     "maps/jungle_assets/trees/kapok/export/kapok_003.vmdl_c",
@@ -232200,7 +232200,7 @@
    "flex": false
   },
   "maps/jungle_assets/trees/kapok/export/kapok_004.vmdl": {
-   "hash": "2f655448",
+   "hash": "60bf82b6",
    "deps": [
     "maps/journey_assets/props/trees/journey_maple/journey_maple01_mask_psd_40d54b76.vtex_c",
     "maps/jungle_assets/trees/kapok/export/kapok_004.vmdl_c",
@@ -232807,7 +232807,7 @@
    "flex": false
   },
   "maps/reef_assets/models/props/organic/darkreef_anenometree02.vmdl": {
-   "hash": "88c02572",
+   "hash": "1ec5f515",
    "deps": [
     "maps/reef_assets/models/props/organic/darkreef_anenometree02.vmat_c",
     "maps/reef_assets/models/props/organic/darkreef_anenometree02.vmdl_c",
@@ -232882,7 +232882,7 @@
    "flex": false
   },
   "maps/reef_assets/models/props/organic/darkreef_coraltree01.vmdl": {
-   "hash": "1e52d206",
+   "hash": "cbc26dff",
    "deps": [
     "maps/reef_assets/models/props/organic/darkreef_coraltree01.vmat_c",
     "maps/reef_assets/models/props/organic/darkreef_coraltree01.vmdl_c",
@@ -232896,7 +232896,7 @@
    "flex": false
   },
   "maps/reef_assets/models/props/organic/darkreef_kelp01.vmdl": {
-   "hash": "a6385545",
+   "hash": "e302927",
    "deps": [
     "maps/reef_assets/models/props/organic/darkreef_kelp01.vmat_c",
     "maps/reef_assets/models/props/organic/darkreef_kelp01.vmdl_c",
@@ -232930,7 +232930,7 @@
    "flex": false
   },
   "maps/reef_assets/models/props/organic/darkreef_kelp02.vmdl": {
-   "hash": "20777bc5",
+   "hash": "16fe77dc",
    "deps": [
     "maps/reef_assets/models/props/organic/darkreef_kelp01.vmat_c",
     "maps/reef_assets/models/props/organic/darkreef_kelp01_color_psd_276b4718.vtex_c",
@@ -233657,7 +233657,7 @@
    "flex": false
   },
   "maps/ti10_assets/trees/ti10_goldenbirch001.vmdl": {
-   "hash": "a413038d",
+   "hash": "1b66a7c9",
    "deps": [
     "maps/ti10_assets/trees/ti10_dire_trees01.vmat_c",
     "maps/ti10_assets/trees/ti10_dire_trees01_vmat_g_tspecular_a4bcb692.vtex_c",
@@ -250211,7 +250211,7 @@
    "flex": true
   },
   "models/props_tree/dire_tree004_sfm.vmdl": {
-   "hash": "8729a6cf",
+   "hash": "c76885d",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/dire_tree004_tint_normal_tga_dc4f8de4.vtex_c",
@@ -250300,7 +250300,7 @@
    "flex": false
   },
   "models/props_tree/dire_tree008_sfm.vmdl": {
-   "hash": "30d9f83a",
+   "hash": "ea3a2171",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/dire_tree007_moss.vmat_c",
@@ -250411,7 +250411,7 @@
    "flex": false
   },
   "models/props_tree/palm_02e.vmdl": {
-   "hash": "76e655dd",
+   "hash": "edc4c667",
    "deps": [
     "maps/jungle_assets/trees/palm_jungle_frond.vmat_c",
     "maps/jungle_assets/trees/palm_jungle_frond_color_psd_2d9ba460.vtex_c",
@@ -250522,7 +250522,7 @@
    "flex": true
   },
   "models/props_tree/tree_bamboo_03_sfm.vmdl": {
-   "hash": "e3885ce4",
+   "hash": "235caa03",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -250570,7 +250570,7 @@
    "flex": false
   },
   "models/props_tree/tree_cine_01_10k.vmdl": {
-   "hash": "1aeac0c7",
+   "hash": "878a0bf4",
    "deps": [
     "materials/models/heroes/sven/sven_diffusewarp_psd_30cf60b.vtex_c",
     "materials/models/heroes/sven/sven_fresnelwarprim_tga_574afdef.vtex_c",
@@ -251035,7 +251035,7 @@
    "flex": true
   },
   "models/props_tree/tree_pine_02_heavysnow.vmdl": {
-   "hash": "93b5480b",
+   "hash": "f417b2b7",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -251069,7 +251069,7 @@
    "flex": false
   },
   "models/props_tree/tree_pine_03b_sfm.vmdl": {
-   "hash": "e8575f55",
+   "hash": "d8b4be62",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -251142,7 +251142,7 @@
    "flex": false
   },
   "models/props_tree/cypress/tree_cypress009.vmdl": {
-   "hash": "57614f46",
+   "hash": "95200e51",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/cypress/tree_cypress001.vmat_c",
@@ -251159,7 +251159,7 @@
    "flex": false
   },
   "models/props_tree/olive/tree_oldolive.vmdl": {
-   "hash": "7bc8e341",
+   "hash": "ccc9293e",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/olive/tree_oldolive.vmat_c",
@@ -251178,7 +251178,7 @@
    "flex": false
   },
   "models/props_tree/topiary/topiary001.vmdl": {
-   "hash": "5f7fb978",
+   "hash": "7f0a5744",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/topiary/tree_topiary002.vmat_c",
@@ -269539,7 +269539,7 @@
    "flex": false
   },
   "models/props_tree/dire_tree004b_sfm.vmdl": {
-   "hash": "d13374fa",
+   "hash": "e90f8d5b",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/dire_tree004_tint_normal_tga_dc4f8de4.vtex_c",
@@ -269657,7 +269657,7 @@
    "flex": false
   },
   "models/props_tree/palm_02b.vmdl": {
-   "hash": "3424dca9",
+   "hash": "30254dc7",
    "deps": [
     "maps/jungle_assets/trees/palm_jungle_frond.vmat_c",
     "maps/jungle_assets/trees/palm_jungle_frond_color_psd_2d9ba460.vtex_c",
@@ -269682,7 +269682,7 @@
    "flex": false
   },
   "models/props_tree/palm_02d.vmdl": {
-   "hash": "a82a5c85",
+   "hash": "49422313",
    "deps": [
     "materials/default/default_mask_tga_4528a0a9.vtex_c",
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
@@ -269786,7 +269786,7 @@
    "flex": false
   },
   "models/props_tree/tree_bamboo_01_sfm.vmdl": {
-   "hash": "616d4a16",
+   "hash": "1eaefa2b",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -269805,7 +269805,7 @@
    "flex": false
   },
   "models/props_tree/tree_bamboo_02_sfm.vmdl": {
-   "hash": "32e76e82",
+   "hash": "58cf7599",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -269856,7 +269856,7 @@
    "flex": true
   },
   "models/props_tree/tree_cine_00_low.vmdl": {
-   "hash": "876ea770",
+   "hash": "5a0bdda8",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_cine_00_low.vmat_c",
@@ -269870,7 +269870,7 @@
    "flex": false
   },
   "models/props_tree/tree_cine_02_10k.vmdl": {
-   "hash": "33e8c08e",
+   "hash": "f7a83cf4",
    "deps": [
     "materials/models/heroes/sven/sven_diffusewarp_psd_30cf60b.vtex_c",
     "materials/models/heroes/sven/sven_fresnelwarprim_tga_574afdef.vtex_c",
@@ -270186,7 +270186,7 @@
    "flex": false
   },
   "models/props_tree/tree_pine_01_heavysnow.vmdl": {
-   "hash": "842237cf",
+   "hash": "69bad26c",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -270201,7 +270201,7 @@
    "flex": false
   },
   "models/props_tree/tree_pine_01_sfm.vmdl": {
-   "hash": "bec06d11",
+   "hash": "28ca908",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -270319,7 +270319,7 @@
    "flex": false
   },
   "models/props_tree/cornstack/cornstack.vmdl": {
-   "hash": "44c2a69f",
+   "hash": "98d5112c",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/cornstack/corn01.vmat_c",
@@ -270353,7 +270353,7 @@
    "flex": false
   },
   "models/props_tree/olive/tree_oldolive2.vmdl": {
-   "hash": "46d6a275",
+   "hash": "8ec0f3f3",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/olive/tree_oldolive.vmat_c",
@@ -270377,7 +270377,7 @@
    "flex": false
   },
   "models/props_tree/topiary/topiary002.vmdl": {
-   "hash": "f1babaf1",
+   "hash": "4e16a445",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/topiary/tree_topiary002.vmat_c",
@@ -288699,7 +288699,7 @@
    "flex": false
   },
   "models/props_tree/palm_03a.vmdl": {
-   "hash": "d68d9bb6",
+   "hash": "22430cd8",
    "deps": [
     "materials/default/default_mask_tga_4528a0a9.vtex_c",
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
@@ -288912,7 +288912,7 @@
    "flex": false
   },
   "models/props_tree/tree_oak_01_sfm.vmdl": {
-   "hash": "5bba5ddc",
+   "hash": "19833fa",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -288960,7 +288960,7 @@
    "flex": false
   },
   "models/props_tree/tree_oak_01b_sfm.vmdl": {
-   "hash": "b3c813bb",
+   "hash": "57cd3bbd",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -289008,7 +289008,7 @@
    "flex": false
   },
   "models/props_tree/tree_oak_02_sfm.vmdl": {
-   "hash": "50b3a420",
+   "hash": "121964cb",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
@@ -289378,7 +289378,7 @@
    "flex": false
   },
   "models/props_tree/cypress/tree_cypress008.vmdl": {
-   "hash": "9bbdb514",
+   "hash": "b9a342da",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/cypress/tree_cypress001.vmat_c",
@@ -289395,7 +289395,7 @@
    "flex": false
   },
   "models/props_tree/cypress/tree_cypress010.vmdl": {
-   "hash": "74cd750c",
+   "hash": "18690daf",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/cypress/tree_cypress001.vmat_c",
@@ -307854,7 +307854,7 @@
    "flex": false
   },
   "models/props_tree/dire_tree007_sfm.vmdl": {
-   "hash": "e061b216",
+   "hash": "f3d7ac44",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/dire_tree007_moss.vmat_c",
@@ -307984,7 +307984,7 @@
    "flex": false
   },
   "models/props_tree/palm_03.vmdl": {
-   "hash": "b0c35d36",
+   "hash": "65c9ef16",
    "deps": [
     "materials/default/default_mask_tga_4528a0a9.vtex_c",
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
@@ -308116,7 +308116,7 @@
    "flex": true
   },
   "models/props_tree/tree_cine_00_10k.vmdl": {
-   "hash": "137147ba",
+   "hash": "267ee82e",
    "deps": [
     "materials/models/heroes/sven/sven_diffusewarp_psd_30cf60b.vtex_c",
     "materials/models/heroes/sven/sven_fresnelwarprim_tga_574afdef.vtex_c",
@@ -308145,7 +308145,7 @@
    "flex": false
   },
   "models/props_tree/tree_cine_02_low.vmdl": {
-   "hash": "1a6acaf4",
+   "hash": "2c12b48f",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_cine_02_low.vmat_c",
@@ -308570,7 +308570,7 @@
    "flex": false
   },
   "models/props_tree/tree_pine_02_sfm.vmdl": {
-   "hash": "bc7e6b3c",
+   "hash": "80cf93b3",
    "deps": [
     "materials/dev/two_channel_noise_psd_93f8d443.vtex_c",
     "materials/models/props_tree/tree_00_mask_psd_52cca3c8.vtex_c",
